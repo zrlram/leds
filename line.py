@@ -1,78 +1,81 @@
 #!/usr/bin/env python
 
-# Light each LED in sequence, and repeat.
-
 import opc, time
-from math import pi, cos, sin
+from sphere_pixel import *
+from math import pi
 from numpy import arange
 
 #client = opc.Client('localhost:7890')
 client = opc.Client('192.168.30.158:7890')
 
-numLEDs = 512
+numLEDs = 513
 pixels = [ (0,0,0) ] * numLEDs
 
-# row = [40, 29, 19, 17, 16, 14, 12, 10, 8, 4, 0]    # height- rows
-         # really a string of 40 -> 29 -> 19 ... -> 8 -> 4 LEDs
+#row = [40, 40, 40, 32, 32, 32, 24, 24, 16, 8, 0]  
+#height = len(row) - 1    # this is only half of the sphere
+                         # -1 because the height is minues one! LOL
 
-row = [40, 38, 35, 33, 30, 28, 24, 16, 10, 4, 0]   # height- rows
-height = len(row)    # this is only half of the sphere
-row.reverse()
+# start with reset
+client.put_pixels(pixels)
 
-def pixel(theta, phi):
-    # LEDs are wired from top!!!
+def horizontal_ring(up):
+    phi = (pi/2) / height * up
+    for a in arange(0,2*pi, pi/20):
+        pixels[pixel(a,phi)[0]] = (200, 100, 5)
 
-    if theta < 0 or theta > 2*pi:
-        return -100
-    # theta:  0, 2pi -- over
-    # phi: -pi/2, pi/2 -- up
+    client.put_pixels(pixels)
 
-    up = int(abs(phi) / ((pi/2) / 10))           # -pi/2 --> pi/2 
-        # up == 9: equator! up == 0: top - the one with 0 LEDs
-    #over = int(round(theta / ((2 * pi) / row[up]) ))
-    #  theta = ((2 * pi) / row[up]) * over
+# horizontal_ring(2)
 
-    over = int( round ((row[up] * theta) / (2*pi) ) )
-    
-    ups = 0
+#for up in range(0,height):
+#    horizontal_ring(up)
+#    time.sleep(0.5)
 
-    if up ==1:
-        print up
-    for a in range(up+1):
-        ups = ups + row[a]
-        if up == 1: print row[a]
-    position = ups + over
+def equator_pixels():
+    for a in arange(0,2*pi, pi/20):
+        pixels[pixel(a, 0)[0]] = (190, 150, 200)
 
-    if up == 1:
-        print position, up, over, theta, phi
-        return position
-    return 0
+    client.put_pixels(pixels)
 
-#print pixel(0,0)
-#print pixel(pi/2,0)
-#print pixel(pi,0)
-#print pixel(2*pi,0)
-#print pixel(0,pi/2-0.001)
+#equator_pixels()
 
-while True:
-    # horizontally moving veritcal line :)
+def vertical_median_line():
 
+    for b in arange(-pi/2, pi/2, pi/20):
+        pixels[pixel(0, b)[0]] = (190, 150, 200)
+        client.put_pixels(pixels)
+
+#vertical_median_line()
+
+def vertical_ring(over, color=None):
+    # over we define as seen on the equator
+    theta = (2*pi)/row[0] * over
+    if color: color = (color, color, color)
+    else: color = (6*over, 6*(80-over), 200)
+    for b in arange(-pi/2,pi/2, pi/20):
+        pixels[pixel(theta,b)[0]] = color
+
+    client.put_pixels(pixels)
+
+vertical_ring(0)
+vertical_ring(1, 180)
+vertical_ring(2, 250)
+vertical_ring(3, 150)
+vertical_ring(4, 250)
+exit()
+
+for over in range(0,row[0]):
+    vertical_ring(over)
+    pixels = [ (0,0,0) ] * numLEDs
+    time.sleep(0.1)
+
+def vertical_line():
     for a in arange(0, 2*pi, pi/20):
         pixels = [ (0,0,0) ] * numLEDs
-        for b in arange(-pi/2+0.001, pi/2-0.001, pi/10):   
-            pixels[pixel(a, b)] = (190, 150, 200)
+        #for b in arange(-pi/2+0.001, pi/2-0.001, pi/10):   
+        for b in arange(0, pi/2-0.001, pi/20):   
+            pixels[pixel(a, b)[0]] = (190, 150, 200)
 
         client.put_pixels(pixels)
         time.sleep(0.2)
-
-'''
-# equator ring
-for a in arange(0, 2*pi, pi/20):
-    pixels = [ (0,0,0) ] * numLEDs
-    #for b in arange(-pi/2+0.001, pi/2-0.001, pi/10):   
-    pixels[pixel(a, pi/2-0.0001)] = (190, 50, 100)
-
-    client.put_pixels(pixels)
-    time.sleep(0.2)
-'''
 
