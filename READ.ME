@@ -1,0 +1,54 @@
+Effects I want:
+
+- rewrite all to the new model stuff
+    - try the mercator stuff in here
+
+- try out the faded_vert_line() on another sphere that has less / more pixels
+- concurrently run shows? 
+    - like having a small ring on the top and bottom blink while running sine waves or something
+- do something with raindrops falling based on gravity - many starting at diff times
+- build some helper functions
+    - loop with 'over' - do the right thing with arange not including the end
+    - loop with 'up'
+    - over goes from 0 to row[abs(up)-1]    !! have a function
+        (see horizontal_ring())
+- fix all the animations again with arange, etc.
+    - also update to use faded_pixel ?
+
+- make a small 4 LED cube. Move the beam around inbetween the four LEDs. So that the neighbors (the 4 LEDs) light up based on how close the beam is. Maybe when the beam is right on the LED, make it white. 
+    - throw a few of those ont he ball and have them all do the same animation
+- implement mercator mapping for x-y stuff
+- have like a laser pointer drawing stuff
+    - i bright pixel moving around, leaving a trail of a sine curve
+- intersect a plane with the sphere and roate it up and down
+- text: need a 5x3 font 
+     -http://stackoverflow.com/questions/14759637/python-pil-bytes-to-image
+    - i have one in a ttf file 
+- Check out this video for inspiration: https://www.facebook.com/EDMTunes/videos/1087499167960861/
+- blink all same color at different speeds
+- explode something outwards, like a heart beating
+- have two filled circles (one blue, one red) move into opposit directions around the sphere
+- fill sphere with rainbow patches (each vertical line has a slightly different rainbow color)
+ 	- rotate it
+	- same for horizontal
+- have a band going across the globe (4 pixels wide) in an angle, not horizontal, but like 15% - Then fade out the outside, and make it move up and down - it's almost like a hand moves over the pixels and the lights move with it. Sometimes go all the way down, sometimes just to the equator - fast and slow
+- within two rows of equator pixels (or three), light up multiple LEDs next to each other and rotate it around. 
+- when doing the horizontal rings up and down, light up multiple rows, not just one. Also: use like every other column, start at bottom, then move 5 pixels in slowly as lines coming up. Fade the ends. Move them all the way up, disappear, then back down.
+- text
+- Do somethign with OSC
+- Check this out for how the last few should look: https://www.kickstarter.com/projects/charliex/blinky-ball
+- balls: https://www.lightbulbsurplus.com/index.php?main_page=index&cPath=69_183_656_881
+- clear plastic balls: http://www.polycraftsupplies.co.uk/index.php/clear-plastic-balls-c-22
+- glue: https://learn.adafruit.com/assets/12699
+
+Could do better:
+- have a blue dot start somewhere and circularlly fill up the entire sphere
+    circle.exploding_dot()
+
+Do something with the clock
+Do something with LEAP
+Do something with audio and ball flickering based on that
+Get Wireless USB module?
+Something with Web content / weather / check out a Web site, news, … not sure
+Hook up the iPhone? 
+
