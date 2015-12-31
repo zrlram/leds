@@ -22,8 +22,8 @@ row = [44, 44, 40, 36, 32, 28, 20, 12]
 
 # the one I have been using all the time:
 #row = [32, 32, 32, 32, 32, 32, 16, 16, 16, 8, 0]   # powers of 2
-height = len(row)-1        # this is only half of the sphere
-                         # -1 because the height is minues one! LOL
+height = len(row) + 1        # this is only half of the sphere
+                         # +1 because the height is plus one! 8 rows, but 9 is the top. Like there are 9 gaps with 8 poles in a fence ;)
 
 # bottom only has 7 rows
 numLEDs = sum(row) * 2 - 12
