@@ -13,7 +13,7 @@ height = len(row)    # this is only half of the sphere
 lines = []
 # Upper sphere first 
 for up in range(0, height):
-  z = (up+1) / float(height) - 0.07 		# equidistant, not on circumference
+  z = (up+1) / float(height+1) - 0.07 		# equidistant, not on circumference
   phi = asin(z) 
   # phi = ((pi / 2) / (height+1)) * (up+1)		# divide by 11 pieces
   for over in range(0, row[up]):		# index starts at 0
@@ -28,7 +28,7 @@ for up in range(0, height):
 # lower sphere
 # MINUS one row here! We don't want the bottom one
 for up in range(0, height-1):
-  z = (up+1) / float(height) - 0.07 		# equidistant, not on circumference
+  z = (up+1) / float(height+1) - 0.07 		# equidistant, not on circumference
   phi = asin(z) 
   for over in range(0, row[up]):		# index starts at 0
     theta = ((2 * pi) / row[up]) * over

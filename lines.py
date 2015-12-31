@@ -113,14 +113,15 @@ class Lines:
         y_ = x*sin(angle)+y*cos(angle)
 
         if (abs(x_)<0.3 and abs(z)<0.6 and y_>0):
-            return model.hsv(0, 0, 1-abs(x_))
+            return model.hsv(0.3, 0, 1-abs(x_))
             #return model.hsv(0, 0, 1)
         if (abs(z)<0.2 and abs(x_)<0.6 and y_>0):
-            return model.hsv(0, 0, 1-abs(z))
+            return model.hsv(0.3, 0, 1-abs(z))
+            #return model.hsv(0, 0, 1-abs(z))
             #return model.hsv(0, 0, 1)
 
         # background
-        return model.hsv(0,1,1)
+        return model.hsv(0,1,0.7)
 
 
     def swiss_cross(self):

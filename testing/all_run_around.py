@@ -2,7 +2,7 @@
 
 # Open Pixel Control client: Every other light to solid white, others dark.
 
-import sys, time
+import sys, time, getopt
 sys.path.append('..')
 sys.path.append('.')
 import opc
@@ -24,7 +24,23 @@ on[0] = red
 client.put_pixels(all_black)
 client.put_pixels(on)
 
-pixel = int(raw_input("How many pixel active?"))
+pixel = 128
+try:
+	opts, args = getopt.getopt(sys.argv[1:],"p:")
+except getopt.GetoptError:
+	print 'all_run_aroudn.py -p <nof_pixels>'
+	sys.exit(2)
+for opt, arg in opts:
+    if opt == '-h':
+	print 'all_run_aroudn.py -p <nof_pixels>'
+	sys.exit()
+    elif opt in ("-p"):
+	pixel = int(arg)
+
+if pixel == 0: 
+	pixel = int(raw_input("How many pixel active?"))
+
+print "Playing with %s pixels" % pixel
 on[0] = red
 
 while 1:
@@ -34,4 +50,6 @@ while 1:
         time.sleep(0.2)
         on[a] = blue
         client.put_pixels(on)
-        print a
+        #print a
+
+

@@ -2,7 +2,7 @@ import model
 import time
 from math import sin, cos
 
-mod = model.load_model('../openpixelcontrol/layouts/my_sphere.json')
+mod = model.load_model('sphere_10.json')
 
 def trails():
 
