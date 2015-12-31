@@ -6,19 +6,22 @@ from connection import pixels, draw
 from numpy import arange
 import numpy as np
 from math import sin, cos, pi, sqrt, exp, log
+from operator import xor
 from matplotlib.pyplot import cm
 from matplotlib import colors
 import time, copy
+import termios, fcntl, sys, os
 
 mod = model.load_model('sphere_10.json')
 
 class Lines:
 
-    @staticmethod 
-    def hor_line_shader(p, **kwargs):
+    args = {}           # shader arguments
+
+    def hor_line_shader(self, p):
 
         z = p['point'][2]
-        dz = kwargs.get('dz',0)
+        dz = self.args.get('dz',0)
         dist_z = 5 * abs(z - dz)   # trail - small is large tail
 
         hue = 0.7
@@ -27,43 +30,25 @@ class Lines:
 
         return model.hsv(hue, sat, 1-value)
 
-    @staticmethod 
-    def vert_line_shader_additive(p, **kwargs):
+
+    def vert_line_shader(self, p):
 
         x = p['point'][0]
-        dx = kwargs.get('dx',0)
-        dist_x = 10 * abs(x - dx)   # trail - small is large tail
-                                    # 10 * [-1-1, 1+1]
-
-        if (dist_x < 1):
-            hue = dx
-            sat = 0.8
-            value = dist_x
-            return model.hsv(hue, sat, 1-value)
-        else:
-            return (0,0,0)
-
-
-    @staticmethod 
-    def vert_line_shader(p, **kwargs):
-
-        x = p['point'][0]
-        dx = kwargs.get('dx',0)
+        dx = self.args.get('dx',0)
         dist_x = 10 * abs(x - dx)   # trail - small is large tail
 
-        hue = dx
+        hue = 0.6
         sat = 0.8
         value = dist_x
 
         return model.hsv(hue, sat, 1-value)
 
-    @staticmethod 
-    def plane_shader(p, **kwargs):
+    def plane_shader(self, p):
 
         x = p['point'][0]
         y = p['point'][1]
         z = p['point'][2]
-        dist_in = kwargs.get('dist',0)
+        dist_in = self.args.get('dist',0)
         #print dist_in
 
         # Ax+By+Cz+D = 0 --> plane
@@ -80,17 +65,88 @@ class Lines:
 
         return model.hsv(hue, sat, value)
 
-    def __init__(self):
+    def top_beacon_shader(self,p):
+        if self.args.get('show',0):
+            dist = abs(p['point'][2]-1)
+            if dist > 0.1:
+                dist=1
+            return model.hsv(1, 0.9, 1-dist)
+        else: 
+            return (0,0,0)
+
+    def all_side_beacon_shader(self,p):
+        # run through beacon
+        if self.args.get('show',0):
+            dist_x = 1-abs(p['point'][0])
+            dist_y = 1-abs(p['point'][1])
+            dist_z = 1-abs(p['point'][2])
+            if dist_x < 0.02:
+                return model.hsv(1, 0.9, 1-dist_x)
+            if dist_y < 0.02: 
+                return model.hsv(1, 0.9, 1-dist_y)
+            if dist_z < 0.07: 
+                return model.hsv(1, 0.9, 1-dist_z)
+            return (0,0,0)
+        else: 
+            return (0,0,0)
+
+    def beacon(self):
+        now = time.time() *1000      # millis
+        if not hasattr(self, 'previous_t'): 
+            self.previous_t = now
+        if not self.args.get('show',0):
+            self.args['show'] = 0
+
+        dt = (now - self.previous_t) 
+        if dt > 200:
+            self.previous_t = now
+            self.args['show'] = xor(self.args['show'], 1)
+
+    def swiss_cross_shader(self,p):
+
+        x = p['point'][0] 
+        y = p['point'][1]
+        z = p['point'][2]
+        angle = self.args['angle']
+
+        x_ = x*cos(angle)-y*sin(angle)
+        y_ = x*sin(angle)+y*cos(angle)
+
+        if (abs(x_)<0.3 and abs(z)<0.6 and y_>0):
+            return model.hsv(0, 0, 1-abs(x_))
+            #return model.hsv(0, 0, 1)
+        if (abs(z)<0.2 and abs(x_)<0.6 and y_>0):
+            return model.hsv(0, 0, 1-abs(z))
+            #return model.hsv(0, 0, 1)
+
+        # background
+        return model.hsv(0,1,1)
+
+
+    def swiss_cross(self):
+
+        speed = 4000        # 4 seconds for one rotation
+
+        now = time.time() * 1000      # millis
+        if not hasattr(self, 'cross_t'): self.cross_t = now
+        dt = now - self.cross_t
+        if dt > speed:
+            self.cross_t = now
+
+        self.args['angle'] = dt / speed * 2*pi
+
+    def init_gravity(self):
         # for gravity 
-        self.y = 1     #initial high of the ball
-        self.v = 1     #initial velocity of the ball
-        self.e = 0.9   #coef. lost of energy in each bounce
-        self.k = 0.2   #friction with air
-        self.g = -9.81 #aceleration of gravity
+        self.y = 1     # initial high of the ball
+        self.v = 0.8     # initial velocity of the ball
+        self.e = 0.9   # coef. lost of energy in each bounce
+        self.k = 0.2   # friction with air
+        self.g = -9.81 # aceleration of gravity
         self.previous_t = 0
         
     def gravity_hor_falling(self):
 
+        if not hasattr(self, 'y'): self.init_gravity()
         now = time.time() * 1000      # millis
         if self.previous_t==0:
             self.previous_t = now
@@ -98,7 +154,7 @@ class Lines:
         dt = (now - self.previous_t) / 1000.0
         #print dt
 
-        dv = self.g*dt - self.k*self.v*dt
+        dv = self.g * dt - self.k * self.v * dt
         self.v = self.v + dv
 
         dy = self.v * dt
@@ -106,37 +162,34 @@ class Lines:
 
         #Bounce conditions
         if  self.y < -1:
-            self.v = -self.v*self.e
-
-        #print y
-        model.map_pixels(Lines.hor_line_shader, mod, dz=self.y)
+            self.v = -self.v * self.e
 
         self.previous_t = now
 
+        # we keep track of y in the object itself. But for the shader
+        # we are writing it back to args too
+        self.args['dz'] = self.y
 
-    @staticmethod 
-    def faded_hor_line():
+    def faded_hor_line(self):
         # updated to work with model and time-based!
 
-        speed = 1000.0                # 2 seconds for -1 to 1 (entire pheree)
+        speed = 1000.0                # 1 seconds for -1 to 1 (entire sphere)
         now = int(time.time() * 1000)     # millis
         dist = cos(now/speed) 
-        model.map_pixels(Lines.hor_line_shader, mod, dz=dist)
+        self.args['dz'] = dist
 
-    @staticmethod 
-    def faded_vert_line():
+    def faded_vert_line(self):
         speed = 500.0                
         now = int(time.time() * 1000)     
         dist = cos(now/speed) 
-        model.map_pixels(Lines.vert_line_shader_additive, mod, dx=dist)
+        self.args['dx'] =dist
 
-    @staticmethod 
-    def plane_angles():
+    def plane_angles(self):
         speed = 1000.0                
         now = int(time.time() * 1000)     
         #dist = cos(now/speed)
         dist = abs((now/speed % 4)-2) - 1
-        model.map_pixels(Lines.plane_shader, mod, dist=dist)
+        self.args['dist'] = dist
         
 #iterations = 10000
 #for i in range(iterations):
@@ -393,7 +446,7 @@ for el in rainbow_scale:
             time.sleep(0.2)
 
     @staticmethod 
-    def faded_vert_line():
+    def faded_vert_line2():
 
         color = (255,0,0)
 
@@ -443,10 +496,51 @@ for el in rainbow_scale:
         Lines.horizontal_ring(10)
 
 
+# setup STDIN for character reads
+fd = sys.stdin.fileno()
+
+oldterm = termios.tcgetattr(fd)
+newattr = termios.tcgetattr(fd)
+newattr[3] = newattr[3] & ~termios.ICANON & ~termios.ECHO
+termios.tcsetattr(fd, termios.TCSANOW, newattr)
+
+oldflags = fcntl.fcntl(fd, fcntl.F_GETFL)
+fcntl.fcntl(fd, fcntl.F_SETFL, oldflags | os.O_NONBLOCK)
+
+
 #lines = Lines()
 #for i in range(5000):
 #    lines.gravity_hor_falling()
 
-for i in range(1000):
-    Lines.faded_vert_line()
+lines = Lines()
+lines2 = Lines()
+#model.register_shader(lines.vert_line_shader)
+#model.register_shader(lines.hor_line_shader)
+#model.register_shader(lines.plane_shader)
+#model.register_shader(lines2.hor_line_shader)
+#model.register_shader(lines.top_beacon_shader)
+#model.register_shader(lines.all_side_beacon_shader)
+model.register_shader(lines.swiss_cross_shader)
+
+
+
+
+stop = time.time() + 10
+try:
+    while time.time() < stop:
+        try:
+            # blocks
+            # c = sys.stdin.read(1)
+            #lines.faded_vert_line()
+            #lines.faded_hor_line()
+            #lines2.gravity_hor_falling()  # uses hor_line_shader
+            #lines.plane_angles()
+            #lines.beacon()
+            lines.swiss_cross()
+
+            model.map_pixels(mod)
+        except IOError: pass
+finally:
+    termios.tcsetattr(fd, termios.TCSAFLUSH, oldterm)
+    fcntl.fcntl(fd, fcntl.F_SETFL, oldflags)
     
