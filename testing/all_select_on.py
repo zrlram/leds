@@ -20,3 +20,9 @@ on[0] = red
 # make the first pixel red though!
 client.put_pixels(black)
 client.put_pixels(on)
+
+while 1:
+    pixel = raw_input("Enter Pixel number: ")   # Python 2.x
+    on[int(pixel)] = red
+    client.put_pixels(on)
+
