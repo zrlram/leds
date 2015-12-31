@@ -1,16 +1,29 @@
 import json
 from connection import pixels, draw
 from math import floor
+import operator
 
-def map_pixels(fn, model, **kwargs):
+shaders = []            # list of shader functions to be called
+
+def register_shader(shader):
+    shaders.append(shader)
+
+def reset_shaders():
+    global shaders
+    shaders = []
+
+def map_pixels(model):
     # set all pixels by mapping each element of the "model" through 
     # "fn" and setting the corresponding pixel value. The "fn" function 
     # returns a tuple of three 8-bit RGB values.
-
+    
     for i, led in enumerate(model):
-        #pixels[i] = fn(led, **kwargs) or (100,200,200)
-        pixels[i] = fn(led, **kwargs) 
-       
+        # first one sets the base, others are 'add'-ed in
+        pixels[i] = shaders[0](led)
+        for shader in shaders[1:]:
+            values = shader(led) 
+            pixels[i] = tuple(map(operator.add, pixels[i], values))
+
     draw()
 
 _particles = None
@@ -37,7 +50,8 @@ def shader(p):
 def map_particles(particles, model):
     global _particles
     _particles = particles
-    map_pixels(shader, model)
+    register_shader(shader)
+    map_pixels(model)
 
 def load_model(filename):
 
@@ -61,5 +75,10 @@ def hsv(h,s,v,):
     r = int([v, q, p, p, t, v][i] * 255)
     g = int([t, v, v, q, p, p][i] * 255)
     b = int([p, p, t, v, v, q][i] * 255)
+
+    # cut to 0-255 range
+    r = max(0, min(r, 255))
+    g = max(0, min(g, 255))
+    b = max(0, min(b, 255))
     
     return (r, g, b)
