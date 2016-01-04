@@ -50,6 +50,6 @@ while 1:
         time.sleep(0.2)
         on[a] = blue
         client.put_pixels(on)
-        print a
+        #print a
 
 
