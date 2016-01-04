@@ -2,8 +2,8 @@
 
 import opc
 
-#client = opc.Client('localhost:7890')
-client = opc.Client('192.168.30.158:7890')
+client = opc.Client('localhost:7890')
+#client = opc.Client('192.168.30.158:7890')
 #row = [40, 38, 35, 33, 30, 28, 24, 16, 9, 4, 0]  
 #row = [40, 40, 40, 32, 32, 32, 24, 24, 16, 8, 0]  
 #row = [40, 40, 32, 32, 24, 24, 24, 16, 16, 8, 0]   # 512, multiples of 8
