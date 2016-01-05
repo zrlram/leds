@@ -94,8 +94,9 @@ def rings():
     centery = (noise(now * wanderSpeed, 1.4) - 0.5) * 1.25
     centerz = (noise(now * wanderSpeed, 1.7) - 0.5) * 1.25
 
-    mod = model.load_model('../openpixelcontrol/layouts/my_sphere.json')
-    model.map_pixels(shader, mod)
+    mod = model.load_model('sphere_10.json')
+    model.register_shader(shader)
+    model.map_pixels(mod)
 
 iterations = 1000
 for i in range(iterations):
