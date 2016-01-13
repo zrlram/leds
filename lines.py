@@ -2,6 +2,7 @@
 
 import model
 #from sphere_pixel import *
+from color import hsv
 from connection import pixels, draw
 from numpy import arange
 import numpy as np
@@ -28,7 +29,7 @@ class Lines:
         sat = 0.8
         value = dist_z
 
-        return model.hsv(hue, sat, 1-value)
+        return hsv(hue, sat, 1-value)
 
 
     def vert_line_shader(self, p):
@@ -41,7 +42,7 @@ class Lines:
         sat = 0.8
         value = dist_x
 
-        return model.hsv(hue, sat, 1-value)
+        return hsv(hue, sat, 1-value)
 
     def plane_shader(self, p):
 
@@ -63,14 +64,14 @@ class Lines:
         sat = 0.8
         value = abs(dist)
 
-        return model.hsv(hue, sat, value)
+        return hsv(hue, sat, value)
 
     def top_beacon_shader(self,p):
         if self.args.get('show',0):
             dist = abs(p['point'][2]-1)
             if dist > 0.1:
                 dist=1
-            return model.hsv(1, 0.9, 1-dist)
+            return hsv(1, 0.9, 1-dist)
         else: 
             return (0,0,0)
 
@@ -81,11 +82,11 @@ class Lines:
             dist_y = 1-abs(p['point'][1])
             dist_z = 1-abs(p['point'][2])
             if dist_x < 0.02:
-                return model.hsv(1, 0.9, 1-dist_x)
+                return hsv(1, 0.9, 1-dist_x)
             if dist_y < 0.02: 
-                return model.hsv(1, 0.9, 1-dist_y)
+                return hsv(1, 0.9, 1-dist_y)
             if dist_z < 0.07: 
-                return model.hsv(1, 0.9, 1-dist_z)
+                return hsv(1, 0.9, 1-dist_z)
             return (0,0,0)
         else: 
             return (0,0,0)
@@ -113,15 +114,15 @@ class Lines:
         y_ = x*sin(angle)+y*cos(angle)
 
         if (abs(x_)<0.3 and abs(z)<0.6 and y_>0):
-            return model.hsv(0.3, 0, 1-abs(x_))
-            #return model.hsv(0, 0, 1)
+            return hsv(0.3, 0, 1-abs(x_))
+            #return hsv(0, 0, 1)
         if (abs(z)<0.2 and abs(x_)<0.6 and y_>0):
-            return model.hsv(0.3, 0, 1-abs(z))
-            #return model.hsv(0, 0, 1-abs(z))
-            #return model.hsv(0, 0, 1)
+            return hsv(0.3, 0, 1-abs(z))
+            #return hsv(0, 0, 1-abs(z))
+            #return hsv(0, 0, 1)
 
         # background
-        return model.hsv(0,1,0.7)
+        return hsv(0,1,0.7)
 
 
     def swiss_cross(self):
@@ -516,14 +517,12 @@ fcntl.fcntl(fd, fcntl.F_SETFL, oldflags | os.O_NONBLOCK)
 lines = Lines()
 lines2 = Lines()
 #model.register_shader(lines.vert_line_shader)
-#model.register_shader(lines.hor_line_shader)
+model.register_shader(lines.hor_line_shader)
 #model.register_shader(lines.plane_shader)
 #model.register_shader(lines2.hor_line_shader)
 #model.register_shader(lines.top_beacon_shader)
 #model.register_shader(lines.all_side_beacon_shader)
-model.register_shader(lines.swiss_cross_shader)
-
-
+#model.register_shader(lines.swiss_cross_shader)
 
 
 stop = time.time() + 10
@@ -533,11 +532,11 @@ try:
             # blocks
             # c = sys.stdin.read(1)
             #lines.faded_vert_line()
-            #lines.faded_hor_line()
+            lines.faded_hor_line()
             #lines2.gravity_hor_falling()  # uses hor_line_shader
             #lines.plane_angles()
             #lines.beacon()
-            lines.swiss_cross()
+            #lines.swiss_cross()
 
             model.map_pixels(mod)
         except IOError: pass
