@@ -5,22 +5,42 @@ import sys
 import Queue
 import traceback
 import time
+import signal
 
 import shows
 import model
+import controls_model
 
-# Ideas borrowed from https://github.com/baaahs/lights
+# Ideas and a bunch of code borrowed from https://github.com/baaahs/lights
+
+def _stacktraces(signum, frame):
+    txt = []
+    for threadId, stack in sys._current_frames().items():
+        txt.append("\n# ThreadID: %s" % threadId)
+        for filename, lineno, name, line in traceback.extract_stack(stack):
+            txt.append('File: "%s", line %d, in %s' % (filename, lineno, name))
+            if line:
+                txt.append("  %s" % (line.strip()))
+
+    print "\n".join(txt)
+
+signal.signal(signal.SIGQUIT, _stacktraces)
 
 class ShowRunner(threading.Thread):
 
-    def __init__(self, geometry, queue, max_showtime=240):
+    def __init__(self, geometry, queue, cm, max_showtime=240):
         super(ShowRunner, self).__init__(name="ShowRunner")
 
         self.geometry = geometry
         self.queue = queue
+        self.cm = cm
+
+        self.cm.add_listener(self)
+        self.cm.show_runner = self 
 
         self.running = True
         self.max_show_time = max_showtime
+
 
         self.shows = dict(shows.load_shows())
         self.random_eligible_shows = []
@@ -48,6 +68,8 @@ class ShowRunner(threading.Thread):
         # lower numbers mean faster speeds, higher is slower
         self.speed_x = 1.0
 
+        self.cm.set_max_time(self.max_show_time)
+
     def next_show(self, name=None):
 
         show = None
@@ -65,11 +87,31 @@ class ShowRunner(threading.Thread):
 
         self.prev_show = self.show
 
+        # unregister shaders
+        model.reset_shaders()
+
         self.show = show(self.geometry)
         print "Next show:" + self.show.name
         self.framegen = self.show.next_frame()
 
         self.show_runtime = 0
+
+        # deal with controls
+        self.cm.del_listener(self.prev_show)
+        self.cm.add_listener(self.show)
+        try:
+            self.show.set_controls_model(self.cm)
+        except AttributeError:
+            pass
+
+        try:
+            self.show.control_refreshAll()
+        except AttributeError:
+            pass
+
+        self.cm.set_show_name(name)
+        self.cm.set_message("[%s]" % name)
+
 
     def get_next_frame(self):
         ''' returns a delay or None '''
@@ -154,6 +196,17 @@ class ShowRunner(threading.Thread):
                 traceback.print_exc()
                 self.next_show()
 
+    def control_speed_changed(self):
+        print "Setting default show speed to %f" % self.cm.speed_multi
+
+        # speed_x is opposite of speedMulti, so we have to invert speedMulti
+        self.speed_x = 1.0 / self.cm.speed_multi
+
+    def control_max_time_changed(self):
+        self.max_show_time = int(self.cm.max_time)
+
+    def control_brightness_changed(self, val):
+        self.model.set_brightness(val)
 
     def status(self):
 
@@ -201,18 +254,21 @@ class ShowRunner(threading.Thread):
 
 class Server(threading.Thread):
     def __init__(self, geometry, args):
+        self.args = args
         self.geometry = geometry 
        
         # this is going to be the ShowRunner 
         self.runner = None
         self.queue = Queue.LifoQueue()
+        self.controls_model = controls_model.ControlsModel()
+
  
         self.running = False
         self._create_services()
 
     def _create_services(self):
 
-        self.runner = ShowRunner(self.geometry, self.queue)
+        self.runner = ShowRunner(self.geometry, self.queue, self.controls_model)
 
         # invoking specific shows from command line
         if args.shows:
@@ -277,7 +333,7 @@ class Server(threading.Thread):
         }
 
         # this method blocks until KeyboardInterrupt
-        cherrypy.quickstart(OrbWeb(self.queue, self.runner),
+        cherrypy.quickstart(OrbWeb(self.queue, self.runner, self.controls_model),
                             '/',
                             config=config)
 

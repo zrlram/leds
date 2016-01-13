@@ -2,9 +2,11 @@ import cherrypy
 import time
 
 class OrbWeb(object):
-    def __init__(self, queue, runner):
+    def __init__(self, queue, runner, cm):
         self.queue = queue
         self.runner = runner
+
+        self.cm = cm
 
         self.show_library = show_library = {}
 
@@ -78,6 +80,7 @@ class OrbWeb(object):
                 'name': self.runner.show.name,
                 'run_time': int(self.runner.show_runtime * 1000)
             },
+            'message': self.cm.message,
             'max_time': int(self.runner.max_show_time * 1000),
         }
 
