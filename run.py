@@ -8,10 +8,11 @@ import time
 import signal
 
 import shows
-import model
+from model import Model
 import controls_model
 
 # Ideas and a bunch of code borrowed from https://github.com/baaahs/lights
+
 
 def _stacktraces(signum, frame):
     txt = []
@@ -25,6 +26,7 @@ def _stacktraces(signum, frame):
     print "\n".join(txt)
 
 signal.signal(signal.SIGQUIT, _stacktraces)
+
 
 class ShowRunner(threading.Thread):
 
@@ -55,7 +57,7 @@ class ShowRunner(threading.Thread):
             if ok_for_random:
                 self.random_eligible_shows.append(name)
 
-        print "Shows: %s" % str(self.shows)
+        print "Shows: %s" % ', '.join([s for s in self.shows])
         print "Random eligible shows: %s" % str(self.random_eligible_shows)
 
         self.randseq = self.random_show_name()
@@ -88,7 +90,7 @@ class ShowRunner(threading.Thread):
         self.prev_show = self.show
 
         # unregister shaders
-        model.reset_shaders()
+        self.geometry.reset_shaders()
 
         self.show = show(self.geometry)
         print "Next show:" + self.show.name
@@ -256,15 +258,15 @@ class Server(threading.Thread):
     def __init__(self, geometry, args):
         self.args = args
         self.geometry = geometry 
-       
+
         # this is going to be the ShowRunner 
         self.runner = None
         self.queue = Queue.LifoQueue()
         self.controls_model = controls_model.ControlsModel()
-
  
         self.running = False
         self._create_services()
+
 
     def _create_services(self):
 
@@ -299,6 +301,18 @@ class Server(threading.Thread):
             except Exception, e:
                 print "Exception stopping orb!"
                 traceback.print_exc()
+
+    def start_headless(self):
+
+        "Run without the web interface"
+        print "Running without web interface"
+        try:
+            while True:
+                time.sleep(999) # control-c breaks out of time.sleep
+        except KeyboardInterrupt:
+            print "Exiting on keyboard interrupt"
+
+        self.stop()
 
     def start_web(self):
         "Starting Web interface"
@@ -337,7 +351,6 @@ class Server(threading.Thread):
                             '/',
                             config=config)
 
-
 if __name__=='__main__':
 
     import argparse
@@ -346,7 +359,9 @@ if __name__=='__main__':
     parser.add_argument('--list', action='store_true', help='List available shows')
     parser.add_argument('shows', metavar='show_name', type=str, nargs='*',
                         help='name of show (or shows) to run')
-
+    parser.add_argument('--headless', action='store_true', default=False,
+                        help='run headless or with web')
+    
     args = parser.parse_args()
 
     if args.list:
@@ -354,12 +369,15 @@ if __name__=='__main__':
         print ', '.join([s[0] for s in shows.load_shows()])
         sys.exit(0)
 
-    geometry = model.load_model('sphere_10.json')
+    geometry = Model('sphere_10.json')
     app = Server(geometry, args)
 
     try:
         app.start()     # start related service threads
-        app.start_web()
+        if args.headless:
+            app.start_headless()
+        else:
+            app.start_web()
 
     except Exception, e:
         print "Unhandled exception running orb!"

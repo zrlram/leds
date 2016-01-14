@@ -2,60 +2,43 @@ import json
 from connection import pixels, draw
 import operator
 
-shaders = []            # list of shader functions to be called
+class Model(object):
 
-def register_shader(shader):
-    shaders.append(shader)
+    shaders = []            # list of shader functions to be called
+    model = None
 
-def reset_shaders():
-    global shaders
-    shaders = []
+    def __init__(self, model_file):
+        self.load_model(model_file)
 
-def map_pixels(model):
-    # set all pixels by mapping each element of the "model" through 
-    # "fn" and setting the corresponding pixel value. The "fn" function 
-    # returns a tuple of three 8-bit RGB values.
-    
-    for i, led in enumerate(model):
-        # first one sets the base, others are 'add'-ed in
-        pixels[i] = shaders[0](led)
-        for shader in shaders[1:]:
-            values = shader(led) 
-            pixels[i] = tuple(map(operator.add, pixels[i], values))
+    def register_shader(self,shader):
+        self.shaders.append(shader)
 
-    draw()
+    def reset_shaders(self):
+        global shaders
+        shaders = []
 
-_particles = None
+    def map_pixels(self):
+        # set all pixels by mapping each element of the "model" through 
+        # "fn" and setting the corresponding pixel value. The "fn" function 
+        # returns a tuple of three 8-bit RGB values.
+        
+        for i, led in enumerate(self.model):
+            # first one sets the base, others are 'add'-ed in
+            pixels[i] = self.shaders[0](led)
+            for shader in self.shaders[1:]:
+                values = shader(led) 
+                pixels[i] = tuple(map(operator.add, pixels[i], values))
 
-def shader(p):
-    r = 0
-    g = 0
-    b = 0
+        draw()
 
-    for particle in _particles:
-        dx = (p['point'][0] - particle['point'][0]) or 0
-        dy = (p['point'][1] - particle['point'][1]) or 0
-        dz = (p['point'][2] - particle['point'][2]) or 0
-        dist2 = dx**2 + dy**2 + dz**2
+    _particles = None
 
-        intensity = particle['intensity'] / (1+particle['falloff'] * dist2)
+    def load_model(self,filename):
 
-        r += particle['color'][0] * intensity
-        r += particle['color'][1] * intensity
-        r += particle['color'][2] * intensity
+        with open(filename) as data_file:    
+            data = json.load(data_file)
+        print "Loading model: %s" % filename
 
-    return (int(r),int(g),int(b))
+        self.model = data
 
-def map_particles(particles, model):
-    global _particles
-    _particles = particles
-    # do this in the init() of the show: register_shader(shader)
-    map_pixels(model)
-
-def load_model(filename):
-
-    with open(filename) as data_file:    
-        data = json.load(data_file)
-    print "Loading model: %s" % filename
-    return data
 
