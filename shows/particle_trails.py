@@ -1,19 +1,40 @@
-import model
 import time
 from color import hsv
 from math import sin, cos
-import looping_show
+import looping_shader_show
 
-class ParticleTrails(looping_show.LoopingShow):
+class ParticleTrails(looping_shader_show.LoopingShaderShow):
 
     name = "Particle Trails"
+    _particles = None
 
     def __init__(self, geometry):
-        looping_show.LoopingShow.__init__(self, geometry)
-        # register a shader here
-        model.register_shader(model.shader)
+        looping_shader_show.LoopingShaderShow.__init__(self, geometry, self.shader)
 
-    def update_at_progess(self, progress, new_loop, loop_instance):
+    def shader(self, p):
+        r = 0
+        g = 0
+        b = 0
+
+        if not self._particles:
+            return
+
+        for particle in self._particles:
+            dx = (p['point'][0] - particle['point'][0]) or 0
+            dy = (p['point'][1] - particle['point'][1]) or 0
+            dz = (p['point'][2] - particle['point'][2]) or 0
+            dist2 = dx**2 + dy**2 + dz**2
+
+            intensity = particle['intensity'] / (1+particle['falloff'] * dist2)
+
+            r += particle['color'][0] * intensity
+            r += particle['color'][1] * intensity
+            r += particle['color'][2] * intensity
+
+        return (int(r),int(g),int(b))
+
+
+    def update_at_progress(self, progress, new_loop, loop_instance):
 
         now = 0.003 * time.time() * 1000     # millis
         numParticles = 20
@@ -35,7 +56,7 @@ class ParticleTrails(looping_show.LoopingShow):
                 'color': hsv(hue, 0.5, 0.8)
             })
 
-        model.map_particles(particles, self.geometry)
+        self._particles = particles
         
 
 __shows__ = [

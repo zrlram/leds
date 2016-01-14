@@ -1,22 +1,21 @@
-import model
 import time
 import simplexnoise
 from math import sin, cos, sqrt
 from color import hsv
-import looping_show
+import looping_shader_show
 
-class Rings(looping_show.LoopingShow):
+class Rings(looping_shader_show.LoopingShaderShow):
 
     name = "Rings"
 
     def __init__(self, geometry):
-        looping_show.LoopingShow.__init__(self, geometry)
-        model.register_shader(self.shader)
+        looping_shader_show.LoopingShaderShow.__init__(self, geometry, 
+            self.shader)
 
     speed = 0.002
     wspeed = 0.01
     scale = 0.1
-    ringScale = 3
+    ringScale = 2
     wanderSpeed = 0.0005
     dx = 0
     dz = 0
@@ -81,7 +80,7 @@ class Rings(looping_show.LoopingShow):
             min(max(pow(3.0 * abs(n), 1.5), 0), 0.9)
         )
 
-    def update_at_progess(self, progress, new_loop, loop_instance):
+    def update_at_progress(self, progress, new_loop, loop_instance):
 
         now = time.time()       # millis
 
@@ -101,8 +100,6 @@ class Rings(looping_show.LoopingShow):
         self.centerx = (Rings.noise(now * self.wanderSpeed, 0.9) - 0.5) * 1.25
         self.centery = (Rings.noise(now * self.wanderSpeed, 1.4) - 0.5) * 1.25
         self.centerz = (Rings.noise(now * self.wanderSpeed, 1.7) - 0.5) * 1.25
-
-        model.map_pixels(self.geometry)
 
 
 __shows__ = [

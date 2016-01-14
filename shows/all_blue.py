@@ -3,6 +3,7 @@ from connection import pixels, draw
 class Blue():
 
     name = "Testing - All Blue"
+    ok_for_random = False
 
     def __init__(self, geometry):
         self.red = (255, 0, 0)
