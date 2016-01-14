@@ -1,4 +1,17 @@
 from math import floor
+from matplotlib.pyplot import cm
+import numpy as np
+
+rainbow = []
+
+def create_rainbow():
+
+    # create a rainbow color table
+    m = cm.ScalarMappable(cmap=cm.rainbow)
+    # 18 colors
+    rainbow_scale = [x for x in m.to_rgba(np.linspace(0,1,18))]
+    for el in rainbow_scale:
+        rainbow.append(tuple([int(x*256) for x in el][:3]))
 
 def hsv(h,s,v,):
     # convert HSV colors to RGB
