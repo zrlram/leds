@@ -87,6 +87,7 @@ class ShowRunner(threading.Thread):
             name = self.randseq.next()
             show = self.shows[name]
 
+        self.clear()
         self.prev_show = self.show
 
         # unregister shaders
@@ -240,8 +241,7 @@ class ShowRunner(threading.Thread):
                 self.running = False
                 print "ShowRunner shutting down"
             elif msg == "clear":
-                # TBD: self.clear()
-                print "clear() not implemented yet"
+                self.clear()
                 time.sleep(2)
             elif msg.startswith("run_show:"):
                 self.running = True
@@ -253,6 +253,8 @@ class ShowRunner(threading.Thread):
         else:
             print "ignoring unknown msg:", str(msg)
 
+    def clear(self):
+        self.geometry.clear()
 
 class Server(threading.Thread):
     def __init__(self, geometry, args):
