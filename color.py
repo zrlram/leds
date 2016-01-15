@@ -1,6 +1,7 @@
 from math import floor
 from matplotlib.pyplot import cm
 import numpy as np
+import colorsys
 
 rainbow = []
 
@@ -36,4 +37,22 @@ def hsv(h,s,v,):
     b = max(0, min(b, 255))
     
     return (r, g, b)
+
+def rgb_to_hsv(rgb):
+    "convert a rgb[0-255] tuple to hsv[0.0-1.0]"
+    f = float(255)
+    return colorsys.rgb_to_hsv(rgb[0]/f, rgb[1]/f, rgb[2]/f)
+
+
+def morph_color(color1, color2, fract):
+    # Interpolates between colors. Fract = 1 is all color 2
+
+    c1 = rgb_to_hsv(color1)
+    c2 = rgb_to_hsv(color2)
+
+    morph_h = c1[0] + ((c2[0] - c1[0]) * fract)
+    morph_s = c1[1] + ((c2[1] - c1[1]) * fract)
+    morph_v = c1[2] + ((c2[2] - c1[2]) * fract)
+
+    return hsv(morph_h, morph_s, morph_v)
 
