@@ -62,14 +62,6 @@ class ControlsModel(object):
         # it's colors appropriately
         self.colorized = 0.0
 
-        # These are modifiers that a show can interpret as it wishes.
-        # The first step is a set of binary on/off ones. Only the first 5
-        # are exposed on the iPhone UI.
-        self.modifiers = [False,False,False,False,False,False,False]
-        # The second set is incremented each time a user taps the corresponding
-        # button. They can be reset to 0 by an app using reset_steps()
-        self.step_modifiers = [0,0,0,0]
-
         self.listeners = set()
 
         self._tap_times = []
