@@ -32,7 +32,7 @@ class ControlsModel(object):
 
         self.show_name = ""
 
-        self.time_limits = [30, 20 * 60]
+        self.time_limits = [10, 20 * 60]
         self.max_time = 42.0
 
         self.brightness = 1.0

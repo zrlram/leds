@@ -25,43 +25,17 @@
 
     function makeShows() {
 
+        s = "";
         for(var i=0; i<showNames.length; i++) {
             var name = showNames[i];
             var show = shows[name];
-            var s = "<div class='ui segment show ";
-            if (show.random) {
-                s += "random ";
-            }
-            s += show.type;
-            s += "'><div class='ui header'>"+name+"";
-
-
-            if (show.type == "master") {
-                s += "<button class='ui right floated primary start button' data-name='"+name+"'>Start</button>";
-            }
-            for (var control_name in show.controls) {
-                if (show.controls[control_name] == "color") {
-                    s += " <input name='foo' class='jscolor picker floated ui right button' value='5050ff' readonly='true' >";
-                }
-
-            }
-
-            "</div></div>";
-
-            $("#showList").append(s);
-
-            $('.jscolor').each(function(i, obj) {
-                if (!obj.hasOwnProperty("hasPicker")) {
-                    var picker = new jscolor(obj, {});
-                    obj.hasPicker = true;
-                }
-                obj.value = '';
-            });
-
+            s += "<a class='item show start' data-name='"+name+"'>"+name+"</a>";
         }
 
-        $(".start.button").bind("click", startShow);
-        $(".jscolor").bind("change", changeColor);
+
+        $("#showList").append(s);
+
+        $(".show.start").bind("click", startShow);
     }
 
     function changeColor(evt) {
@@ -78,6 +52,28 @@
                 B.showError("Unable to set color: "+err);
             }
         });
+    }
+
+    function showControls() {
+        var name = $("#currentShowName").text();
+        var show = shows[name];
+        // console.log("name", name, "show", show.controls);
+        s = "";
+        for (var control_name in show.controls) {
+            if (show.controls[control_name] == "color") {
+                s += "Color <input class='jscolor picker ui button' value='5050ff' readonly='true' >";
+            }
+        }
+        $("#showControls").html(s);
+
+        $('.jscolor').each(function(i, obj) {
+            if (!obj.hasOwnProperty("hasPicker")) {
+                var picker = new jscolor(obj, {});
+                obj.hasPicker = true;
+            }
+            obj.value = '';
+        });
+        $(".jscolor").bind("change", changeColor);
     }
 
     function startShow(evt) {
@@ -97,7 +93,9 @@
                 el.removeClass("loading");
                 updateStatus();
             }
-        })
+        });
+
+
     }
 
     var statusTimeout = null;
@@ -137,15 +135,14 @@
 
         B.api("/status", {
             success: function(data) {
-                console.log("Got status data ", data);
+                // console.log("Got status data ", data);
                 if (data.show) {
                     $("#currentShowName").text(data.show.name);
-
                     $("#currentShowRunTime").text(formatDuration(data.show.run_time))
                 }
                 $('#statusIcon').css("background-color", "lightgreen");
                 $("#maxShowRuntime").text(formatDuration(data.max_time));
-
+                showControls();
             }
             , error: function(xhr, status, err) {
                 console.log("Status err ", err);
@@ -168,8 +165,85 @@
         loadShows();
         updateStatus();
 
+        /*
+        $('#speed-plus').click(function(value) {
+                B.api("/config", {
+                    data: {
+                        speed: 0.1,     // relative change
+                        command: "set_speed"
+                    }
+                    , success: function(data) {
+                        console.log("data",data);
+                        $('#speed-value').text(data.speed)
+                    }
+                    , error: function(xhr, status, err) {
+                        B.showError("Unable to set speed: "+err);
+                    }
+                });
+        }); 
+        */
+
+        $('#speed-range').range({ min: 0, max: 1, start: 0.1, step: 0.1,
+           onChange: function(value) {
+                B.api("/config", {
+                    data: {
+                        speed: value,     
+                        command: "set_speed"
+                    }
+                    , success: function(data) {
+                        console.log("data",data);
+                        $('#speed-value').text(data.speed)
+                    }
+                    , error: function(xhr, status, err) {
+                        B.showError("Unable to set speed: "+err);
+                    }
+                });
+           }
+        });
+        $('#brightness-range').range({ min: 0, max: 1, start: 0.9, step: 0.1,
+           onChange: function(value) {
+                B.api("/config", {
+                    data: {
+                        brightness: value, 
+                        command: "set_brightness"
+                    }
+                    , success: function(data) {
+                        console.log("data",data);
+                        // $('#brigthness-value').text(data.brigthness)
+                    }
+                    , error: function(xhr, status, err) {
+                        B.showError("Unable to set brightness: "+err);
+                    }
+                });
+           }
+        });
+        $('#max-show-time-range').range({ min: 10, max: 20*60, start: 4 * 60,
+           onChange: function(value) {
+                B.api("/config", {
+                    data: {
+                        runtime: value,     
+                        command: "set_max_runtime"
+                    }
+                    , success: function(data) {
+                        console.log("data",data);
+                        $('#max-show-time-value').text(data.max_runtime)
+                    }
+                    , error: function(xhr, status, err) {
+                        B.showError("Unable to set max show runtime: "+err);
+                    }
+                });
+           }
+        });
+
+        // in case there are controls for the current show already
+        $('.jscolor').each(function(i, obj) {
+            if (!obj.hasOwnProperty("hasPicker")) {
+                var picker = new jscolor(obj, {});
+                obj.hasPicker = true;
+            }
+            obj.value = '';
+        });
+        $(".jscolor").bind("change", changeColor);
+
     });
-
-
-
 })();
