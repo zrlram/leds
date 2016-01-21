@@ -37,19 +37,47 @@
 
 
             if (show.type == "master") {
-                s += "<button class='ui right floated primary start button' data-name='"+name+"'>Start</button>"
+                s += "<button class='ui right floated primary start button' data-name='"+name+"'>Start</button>";
             }
-            if (show.controls_eyes) {
-                s += "<button class='ui right floated secondary eyes button' data-name='"+name+"'>Eyes Only</button>"
+            for (var control_name in show.controls) {
+                if (show.controls[control_name] == "color") {
+                    s += " <input name='foo' class='jscolor picker floated ui right button' value='5050ff' readonly='true' >";
+                }
+
             }
 
             "</div></div>";
 
-            $("#showList").append(s)
+            $("#showList").append(s);
+
+            $('.jscolor').each(function(i, obj) {
+                if (!obj.hasOwnProperty("hasPicker")) {
+                    var picker = new jscolor(obj, {});
+                    obj.hasPicker = true;
+                }
+                obj.value = '';
+            });
+
         }
 
         $(".start.button").bind("click", startShow);
-        $(".eyes.button").bind("click", startEOShow);
+        $(".jscolor").bind("change", changeColor);
+    }
+
+    function changeColor(evt) {
+        var color = $(this).context.value;
+        console.log("Changing color to " + color);
+        // $(this).context.value = ''; 
+        B.api("/config", {
+            data: {
+                ix: 0,
+                color: color,
+                command: "set_color"
+            }
+            , error: function(xhr, status, err) {
+                B.showError("Unable to set color: "+err);
+            }
+        });
     }
 
     function startShow(evt) {
@@ -64,26 +92,6 @@
             }
             , error: function(xhr, status, err) {
                 B.showError("Unable to run show: "+err);
-            }
-            , complete: function() {
-                el.removeClass("loading");
-                updateStatus();
-            }
-        })
-    }
-
-    function startEOShow(evt) {
-        console.log("start EO show this=",this," evt=",evt);
-        var el = $(this);
-        var name = el.data("name")
-
-        el.addClass("loading");
-        B.api("/start_eo_show", {
-            data: {
-                name: name
-            }
-            , error: function(xhr, status, err) {
-                B.showError("Unable to run EO show: "+err);
             }
             , complete: function() {
                 el.removeClass("loading");
@@ -121,17 +129,6 @@
         return out.join("");
     }
 
-    function updateResetState(isParty, d) {
-        $(".ui.eye.button."+(isParty ? "left": "right")).removeClass("active");
-
-        if (d.mode) {
-            $(".ui.eye.button." + (isParty ? "left": "right") + "." + d.mode).addClass("active");
-            $("#"+(isParty ? "left": "right")+"State").text(d.mode.toUpperCase());
-        }
-
-        $("#"+(isParty ? "left": "right")+"ResetTime").text(formatDuration(d.duration));
-    }
-
     function updateStatus() {
         if (statusTimeout) {
             clearTimeout(statusTimeout);
@@ -146,89 +143,33 @@
 
                     $("#currentShowRunTime").text(formatDuration(data.show.run_time))
                 }
-
-                if (data.eo_show) {
-                    $("#currentEOShowName").text(data.eo_show.name);
-                    $("#eoShowItem").show();
-                } else {
-                    $("#eoShowItem").hide();
-                }
-
+                $('#statusIcon').css("background-color", "lightgreen");
                 $("#maxShowRuntime").text(formatDuration(data.max_time));
 
-                if (data.reset_state) {
-                    updateResetState(true, data.reset_state.party);
-                    updateResetState(false, data.reset_state.business);
-                }
             }
             , error: function(xhr, status, err) {
                 console.log("Status err ", err);
+                $('#statusIcon').css("background-color", "red");
             }
             , complete: function() {
                 if (!statusTimeout) {
                     statusTimeout = setTimeout(updateStatus, 5000);
                 }
             }
+            , timeout: 3000 // sets timeout to 3 seconds
         });
     }
 
-    function stopEOShow() {
-        B.api("/stop_eo_show", {
-            success:function() {
-                updateStatus();
-            }
-        });
-    }
-
-    function setEyeState() {
-        var el = $(this);
-
-        var mode = "none";
-        if (el.hasClass("on")) {
-            mode = "on";
-        } else if (el.hasClass("off")) {
-            mode = "off"
-        } else if (el.hasClass("reset")) {
-            mode = "reset"
-        }
-
-        var isParty = el.hasClass("left");
-
-        var data = {
-            is_party: isParty,
-            mode: mode
-        }
-
-        el.addClass("loading");
-        B.api("/set_reset_state", {
-            data: data
-            , success:function(d) {
-                if (d.ok) {
-                    // Do nothing
-                } else {
-                    B.showError("Something went wrong. That didn't work :(");
-                }
-                updateStatus();
-            }
-            , error: function(xhr, status, err) {
-                B.showError("ERROR: "+err);
-            }
-            , complete: function() {
-                el.removeClass("loading");
-            }
-        })
-    }
 
     $(document).ready(function() {
         console.log("document ready");
 
-        $("i.eo.show.remove.icon").bind("click", stopEOShow);
-
-        $(".eye.button").bind("click", setEyeState);
-
         // Load the show names
         loadShows();
         updateStatus();
+
     });
+
+
 
 })();

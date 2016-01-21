@@ -9,6 +9,7 @@ import signal
 
 import shows
 from model import Model
+from web_controller import WebController
 import controls_model
 
 # Ideas and a bunch of code borrowed from https://github.com/baaahs/lights
@@ -30,12 +31,13 @@ signal.signal(signal.SIGQUIT, _stacktraces)
 
 class ShowRunner(threading.Thread):
 
-    def __init__(self, geometry, queue, cm, max_showtime=240):
+    def __init__(self, geometry, queue, cm, wc, max_showtime=240):
         super(ShowRunner, self).__init__(name="ShowRunner")
 
         self.geometry = geometry
         self.queue = queue
         self.cm = cm
+        self.wc = wc
 
         self.cm.add_listener(self)
         self.cm.show_runner = self 
@@ -96,6 +98,10 @@ class ShowRunner(threading.Thread):
         self.show = show(self.geometry)
         print "Next show:" + self.show.name
         self.framegen = self.show.next_frame()
+        try:
+            self.show.start()    # if show has a start() call it. Registers shaders, etc.
+        except:
+            pass
 
         self.show_runtime = 0
 
@@ -113,7 +119,6 @@ class ShowRunner(threading.Thread):
             pass
 
         self.cm.set_show_name(name)
-        self.cm.set_message("[%s]" % name)
 
 
     def get_next_frame(self):
@@ -265,6 +270,7 @@ class Server(threading.Thread):
         self.runner = None
         self.queue = Queue.LifoQueue()
         self.controls_model = controls_model.ControlsModel()
+        self.wc = WebController(self.controls_model)
  
         self.running = False
         self._create_services()
@@ -272,7 +278,7 @@ class Server(threading.Thread):
 
     def _create_services(self):
 
-        self.runner = ShowRunner(self.geometry, self.queue, self.controls_model)
+        self.runner = ShowRunner(self.geometry, self.queue, self.controls_model, self.wc)
 
         # invoking specific shows from command line
         if args.shows:
@@ -349,7 +355,7 @@ class Server(threading.Thread):
         }
 
         # this method blocks until KeyboardInterrupt
-        cherrypy.quickstart(OrbWeb(self.queue, self.runner, self.controls_model),
+        cherrypy.quickstart(OrbWeb(self.queue, self.runner, self.controls_model, self.wc),
                             '/',
                             config=config)
 

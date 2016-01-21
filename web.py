@@ -2,18 +2,21 @@ import cherrypy
 import time
 
 class OrbWeb(object):
-    def __init__(self, queue, runner, cm):
+    def __init__(self, queue, runner, cm, wc):
         self.queue = queue
         self.runner = runner
 
         self.cm = cm
+        self.wc = wc
 
         self.show_library = show_library = {}
 
         for name in runner.shows:
             show_library[name] = s = {
-                'type': "master"
+                'type': "master",
             }
+            if hasattr(runner.shows[name],'controls'):
+                show_library[name]['controls'] = runner.shows[name].controls
             if name in runner.random_eligible_shows:
                 s['random'] = True
 
@@ -80,7 +83,6 @@ class OrbWeb(object):
                 'name': self.runner.show.name,
                 'run_time': int(self.runner.show_runtime * 1000)
             },
-            'message': self.cm.message,
             'max_time': int(self.runner.max_show_time * 1000),
         }
 
@@ -96,4 +98,37 @@ class OrbWeb(object):
             return {"ok": False, "msg": "You didn't say please"}
 
         return {"ok": True}
+
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    def config(self):
+        """ test with:
+
+       curl -X POST    -H "Content-Type: application/json" -d '{"command": "set_color", "ix": 0, "color": "red"}' http://192.168.30.162:1072/config
+
+        """
+
+        try:
+            data = cherrypy.request.json
+        except:
+            return {"ok": False, "msg": "No data provided"}
+
+        if not data.get("command"):
+            return {"ok": False, "msg": "Tell me what to do!"}
+
+        command = data.get("command")
+        if command == "set_color":
+            print data
+            ix = data.get("ix",0)
+            color = data.get("color", "blue")
+            self.wc.set_color(ix, color)
+
+            return {"ok": True, "done": "set color %s to %s" % (ix, color)}
+
+        else:
+            return {"ok": False, "msg": "Not a command I know"}
+
+        return {"ok": False}
+
 

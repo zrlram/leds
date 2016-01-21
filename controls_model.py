@@ -2,45 +2,6 @@ import time
 
 
 class ControlsModel(object):
-    """
-    Holds the state of the user interface for the overall show server. This
-    is useful both for re-establishing state in clients that come and go, like
-    the TouchOSC client, but also as THE place that shows come to in order
-    to understand how they should modify their behavior.
-
-    From the show side, there are a lot of un-encapsulated properties/attributes
-    of a ControlsModel instance that can be read. Some key ones are:
-
-        speed_multi
-        intensified
-        colorized
-        modifiers[]
-
-    Shows should try to change what they are doing based on these values. See
-    the individual documentation below for more detail about each of them.
-
-    This class understands OSC messages and will update it's internal
-    state based on received messages. What happens based on which message
-    can be see in incomingOSC()
-
-    The normal MVC interaction is that an OSC message comes in, modifying the
-    state stored here. This class then notifies all of it's listeners about
-    the state change (via some form of control_XXX method call). One of those
-    listeners is probably an instance of the TouchOSC class, which then
-    broadcasts a whole bunch of messages to TouchOSC clients so that their
-    UIs all stay in sync based on whatever the state modification was.
-
-    Presumably state modifications could come from other UIs like a web
-    interface, although nothing like that is currently implemented.
-
-    In general, a show implementation should read from here, but almost
-    certainly shouldn't be writing to this object. If anything DOES want
-    to write to this guy, then it should be using the setters to ensure that
-    appropriate notifications are sent to interested listeners.
-
-    """
-
-    
 
     def __init__(self):
 
@@ -61,13 +22,11 @@ class ControlsModel(object):
         # will be handled by the system, otherwise it is left to the show to modify
         # it's colors appropriately
         self.colorized = 0.0
-
+   
+        # who has to be informed of changes?
         self.listeners = set()
 
         self._tap_times = []
-
-        # A message that is shown in the UI
-        self.message = ""
 
         self.show_names = []
 
@@ -77,6 +36,9 @@ class ControlsModel(object):
         self.max_time = 42.0
 
         self.brightness = 1.0
+
+        # The RGB values of the chosen colors
+        self.chosen_colors = [ (255, 255, 0), (0,255,255) ]         # Just two colors that can be set and used
 
 
     def add_listener(self, listener):
@@ -170,6 +132,30 @@ class ControlsModel(object):
             except AttributeError:
                 pass # ignore
 
+    def set_color_rgb(self, c_ix, data):
+        """
+        Sets the color at index c_ix to the value given by rgb data in
+        three-tuple. 
+        """
+        if c_ix < 0 or c_ix > 1: 
+            print "Don't understand color ix %d" % c_ix 
+            return
+
+        if len(data) < 3: 
+            print "Not enough data values to set rgb color: %s" % (str(data))
+            return
+
+        self.chosen_colors[c_ix] = (data[0],data[1],data[2])
+
+        self._notify_color_changed(c_ix)
+
+    def _notify_color_changed(self, c_ix):
+        print "_notify_color_changed"
+        for listener in self.listeners:
+            try: 
+                listener.control_color_changed(c_ix)
+            except AttributeError:
+                pass # ignore
 
 
     def set_intensified(self, val):
@@ -257,17 +243,5 @@ class ControlsModel(object):
             except AttributeError:
                 pass # ignore      
 
-
-    def set_message(self, msg):
-        self.message = msg
-        self._notify_message_changed()
-
-    def _notify_message_changed(self):
-        print "_notify_message_changed"
-        for listener in self.listeners:
-            try:
-                listener.control_message_changed()
-            except AttributeError:
-                pass # ignore      
 
 
