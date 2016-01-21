@@ -16,6 +16,9 @@ class Model(object):
     def reset_shaders(self):
         self.shaders = []
 
+    def get_shaders(self):
+        return self.shaders
+
     def map_pixels(self):
         # set all pixels by mapping each element of the "model" through 
         # "fn" and setting the corresponding pixel value. The "fn" function 
@@ -50,5 +53,9 @@ class Model(object):
 
     def set_pixel(self, pixel, color):
         pixels[pixel] = color
+    
+    def draw(self):
+        draw()      
 
-
+    def get_nof_pixels(self):
+        return len(pixels)
