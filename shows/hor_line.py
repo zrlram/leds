@@ -10,10 +10,10 @@ class HorizontalLine(looping_shader_show.LoopingShaderShow):
 
     name = "Horizontal Line"
 
-    dz = 0
-
     def __init__(self, geometry):
         looping_shader_show.LoopingShaderShow.__init__(self, geometry, self.shader)
+
+        self.dz = 0
 
     def shader(self, p):
 

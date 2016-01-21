@@ -21,7 +21,7 @@ def load_shows(path=None):
             # module must explicitly export shows
             if hasattr(mod, '__shows__'):
                 _shows.extend(mod.__shows__)
-
+            
         except Exception, e:
             print "Exception loading module from %s, skipping" % m
             import traceback
