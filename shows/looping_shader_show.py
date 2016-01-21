@@ -4,21 +4,27 @@ class LoopingShaderShow(looping_show.LoopingShow):
 
     name = "Looping Shader Show"                 # show should overwrite this
 
-    shader_registered = False
-
     def __init__(self, geometry, shader):
         looping_show.LoopingShow.__init__(self, geometry)
         self.shader = shader
+        self.shader_registered = False
 
-    def next_frame(self):
+    def start(self):
 
-        if not self.shader_registered:
+        if not self.geometry.get_shaders():
             print "Registering Shader: %s" % self.shader
             self.geometry.register_shader(self.shader)
             self.shader_registered = True
 
+    def next_frame(self):
+
         while True:
             value = looping_show.LoopingShow.next_frame(self).next()
-            self.geometry.map_pixels()
+            try:
+                self.geometry.map_pixels()
+            except IndexError:
+                self.start()   # we might not have a shader registered!
+                self.geometry.map_pixels()     # try again
+                
             yield value
 
