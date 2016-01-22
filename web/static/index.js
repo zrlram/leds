@@ -1,6 +1,7 @@
 (function() {
     var shows = {};
     var showNames = [];
+    var controls_initialized = 0;
 
     function loadShows() {
         B.api("/shows", {        
@@ -58,13 +59,49 @@
         var name = $("#currentShowName").text();
         var show = shows[name];
         // console.log("name", name, "show", show.controls);
-        s = "";
-        for (var control_name in show.controls) {
+
+        $("#showControls").html("");         // rest first
+
+        var i = 0;
+        for (control_name in show.controls) {
             if (show.controls[control_name] == "color") {
-                s += "Color <input class='jscolor picker ui button' value='5050ff' readonly='true' >";
+                $("#showControls").append( "<div class='item'>Color <input class='ui jscolor picker button' value='5050ff' readonly='true' ></div>");
             }
+            // take care of ranges, which are represented as arrays
+            if( Object.prototype.toString.call( show.controls[control_name] ) === '[object Array]' ) {
+
+                entry = show.controls[control_name];
+                min_value = entry[0];
+                max_value = entry[1];
+                // if it's there
+                start = entry[2] || (max_value - min_value) / 2;
+
+                $("#showControls").append( "<div class='item' >" + control_name + " <div class='ui range' id='control_range"+i+"'></div></div>");
+
+                $('#control_range'+i).range({ min: min_value, max: max_value, start: start, step: (max_value - min_value) / 10,
+                       onChange: function(value) {
+                            B.api("/config", {
+                                data: {
+                                    value: value,     
+                                    command: "set_range"
+                                }
+                                , success: function(data) {
+                                    console.log("data",data);
+                                    $('#range-value').text(data.value)
+                                }
+                                , error: function(xhr, status, err) {
+                                    B.showError("Unable to set range value: "+err);
+                                }
+                            })
+                        }
+
+                });
+
+            }
+            i++;
+
         }
-        $("#showControls").html(s);
+
 
         $('.jscolor').each(function(i, obj) {
             if (!obj.hasOwnProperty("hasPicker")) {
@@ -80,6 +117,9 @@
         console.log("start show this=",this," evt=",evt);
         var el = $(this);
         var name = el.data("name")
+
+        // make sure the controls are being shown 
+        controls_initialized = 0
 
         el.addClass("loading");
         B.api("/start_show", {
@@ -142,7 +182,10 @@
                 }
                 $('#statusIcon').css("background-color", "lightgreen");
                 $("#maxShowRuntime").text(formatDuration(data.max_time));
-                showControls();
+                if (!controls_initialized) {
+                    showControls();
+                    controls_initialized = 1;
+                }       
             }
             , error: function(xhr, status, err) {
                 console.log("Status err ", err);

@@ -7,7 +7,7 @@ B = new function() {
     var B = this;
 
     B.api = function(url, settings) {
-        console.log(settings.data);
+        // console.log(settings.data);
         if (settings.data) {
             settings.data = JSON.stringify(settings.data)
             settings.type = "POST"

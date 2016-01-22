@@ -119,27 +119,33 @@ class OrbWeb(object):
 
         command = data.get("command")
         if command == "set_color":
-            # print data
             ix = data.get("ix",0)
-            color = data.get("color", "blue")
+            color = data.get("color", "5050ff")
             self.wc.set_color(ix, color)
 
             return {"ok": True, "done": "set color %s to %s" % (ix, color)}
+           
         elif command == "set_speed":
             speed = data.get("speed",0)
             self.wc.set_speed(speed)
             return {"ok": True, "done": "change speed to %s" % (self.cm.speed_multi), 'speed': self.cm.speed_multi}
+
         elif command == "set_brightness":
             brightness = data.get("brightness",0)
             self.wc.set_brightness(brightness)
             return {"ok": True, "done": "change brightness to %s" % (self.cm.brightness), 'brightness': self.cm.brightness}
+
         elif command == "set_max_runtime":
             max_time = data.get("runtime",0)
             self.wc.set_max_runtime(max_time)
             return {"ok": True, "done": "change max runtime to %s" % (self.cm.max_time), 'max_runtime': self.cm.max_time}
+
+        elif command == "set_range":
+            value = data.get("value",0)
+            self.wc.set_custom_range_value(value)
+            return {"ok": True, "done": "change range value to %s" % (self.cm.custom_range_value), 'max_runtime': self.cm.custom_range_value}
+
         else:
             return {"ok": False, "msg": "Not a command I know"}
-
-        return {"ok": False}
 
 

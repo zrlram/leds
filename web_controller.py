@@ -5,6 +5,8 @@ class WebController(object):
 
 
     def set_color(self, c_ix, color):
+        
+        color = (int(color[0:2], 16), int(color[2:4], 16), int(color[4:6], 16)) 
         self.cm.set_color_rgb(c_ix, color)
 
     def set_speed(self, speed):
@@ -15,3 +17,7 @@ class WebController(object):
 
     def set_max_runtime(self, runtime):
         self.cm.set_max_time(runtime)
+
+    # a show can have a range slider to select any variable
+    def set_custom_range_value(self, value):
+        self.cm.set_custom_range_value(value)
