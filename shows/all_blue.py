@@ -17,18 +17,20 @@ class Blue():
     def set_controls_model(self, cm):
         self.cm = cm
 
-    # the color control_color_changed(self, x_ix) class is in the super class!
-    # def control_color_changed(self, x_ix)
+    def control_color_changed(self, c_ix):
+        if c_ix == 0:       # use the primarty color
+            self.color = self.cm.chosen_colors[c_ix]
 
     def next_frame(self):
 
-        for i in range(self.geometry.get_nof_pixels()):
-            self.geometry.set_pixel(i, self.color)
+        while True:
+            for i in range(self.geometry.get_nof_pixels()):
+                self.geometry.set_pixel(i, self.color)
 
-        self.geometry.set_pixel(0, Blue.red)
-        self.geometry.draw()
+            self.geometry.set_pixel(0, Blue.red)
+            self.geometry.draw()
 
-        yield 2 # TBD
+            yield 2 
 
 __shows__ = [
               (Blue.name, Blue)
