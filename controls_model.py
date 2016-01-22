@@ -13,33 +13,27 @@ class ControlsModel(object):
         # yourself, you will need to respect this value.
         self.speed_multi = 1.0
 
-        # A value that ranges from -1.0 (maximum calm) to 1.0 (maximum intensity).
-        # It should be interpretted by each show in a show appropriate manner
-        self.intensified = 0.0
-
-        # A value that ranges from -1.0 (totally monochrome) to 1.0 (max color).
-        # If the currently running show does not set handles_colorized to True this
-        # will be handled by the system, otherwise it is left to the show to modify
-        # it's colors appropriately
-        self.colorized = 0.0
-   
         # who has to be informed of changes?
         self.listeners = set()
 
         self._tap_times = []
 
         self.show_names = []
-
+        # current show's name
         self.show_name = ""
 
+        # shortest and longest possible show time 
         self.time_limits = [10, 20 * 60]
         self.max_time = 42.0
 
         self.brightness = 1.0
 
-        # The RGB values of the chosen colors
-        self.chosen_colors = [ (255, 255, 0), (0,255,255) ]         # Just two colors that can be set and used
+        # The RGB values of the chosen colors. There are two
+        # To keep things generic, there are two colors that can be set 
+        self.chosen_colors = [ (255, 255, 0), (0,255,255) ]         
 
+        # custom range to be used by shows - they have to set the extremes
+        self.range = [0,1]
 
     def add_listener(self, listener):
         self.listeners.add(listener)
@@ -47,17 +41,19 @@ class ControlsModel(object):
     def del_listener(self, listener):
         self.listeners.discard(listener)
 
+    # not really used 
+    '''
     def _notify_refresh(self):
         for listener in self.listeners:
             try:
                 listener.control_refresh_all()
             except AttributeError:
                 pass # whatever...
+    '''
 
 
     def speed_reset(self):
         self.speed_multi = 1.0
-
         self._notify_speed_changed()
 
     def speed_change_rel(self, amt):
@@ -158,20 +154,6 @@ class ControlsModel(object):
                 pass # ignore
 
 
-    def set_intensified(self, val):
-        self.intensified = val
-
-        self._notify_intensified_changed()
-
-
-    def _notify_intensified_changed(self):
-        print "_notify_intensified_changed"
-        for listener in self.listeners:
-            try:
-                listener.control_intensified_changed()
-            except AttributeError:
-                pass # ignore
-
     def set_colorized(self, val):
         self.colorized = val
 
@@ -242,6 +224,20 @@ class ControlsModel(object):
                 listener.control_max_time_changed()
             except AttributeError:
                 pass # ignore      
+
+    def set_custom_range_value(self, value):
+        self.custom_range_value = value
+        self._notify_custom_range_value_changed()
+
+    def _notify_custom_range_value_changed(self):
+        print "_notify_max_time_changed"
+        for listener in self.listeners:
+            try:
+                listener.custom_range_value_changed()
+            except AttributeError:
+                pass # ignore      
+
+    
 
 
 
