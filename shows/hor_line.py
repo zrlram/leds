@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-from color import hsv
-import time
-from math import cos
+from color import hsv, rgb_to_hsv
+#import time
+#from math import cos
 
 import looping_shader_show
 
@@ -10,28 +10,52 @@ class HorizontalLine(looping_shader_show.LoopingShaderShow):
 
     name = "Horizontal Line"
 
+    # a list signifies a range slider
+    #   trail: [min, max, start]
+    # controls = { 'trail': [0, 10], 'color': 'color' }
+    controls = { 'Trail Length': [0, 10, 5], 'color': 'color' }
+
+    # implicitly registered in super class
+    # def set_controls_model(self,cm)
+
     def __init__(self, geometry):
         looping_shader_show.LoopingShaderShow.__init__(self, geometry, self.shader)
 
         self.dz = 0
 
+        # configurable controls
+        self.trail = 5
+        self.color = (50,50,255)
+        # self.speed = 1000
+
+    def control_color_changed(self, c_ix):
+        if c_ix == 0:       # use the primarty color
+            self.color = self.cm.chosen_colors[c_ix]
+
+    def custom_range_value_changed(self):
+        self.trail = self.cm.custom_range_value
+
     def shader(self, p):
 
         z = p['point'][2]
-        dist_z = 5 * abs(z - self.dz)   # trail - small is large tail
+        dist_z = self.trail * abs(z - self.dz)   # trail - small is large tail
 
-        hue = 0.7
-        sat = 0.8
-        value = dist_z
-
-        return hsv(hue, sat, 1-value)
+        color_hsv = rgb_to_hsv(self.color)  # set the intesity to the distance
+    
+        return hsv (color_hsv[0], color_hsv[1], 1-dist_z)
 
     def update_at_progress(self, progress, new_loop, loop_instance):
 
-        speed = 1000.0                # 1 seconds for -1 to 1 (entire sphere)
-        now = int(time.time() * 1000)     # millis
-        dist = cos(now/speed) 
-        self.dz = dist
+        #now = int(time.time() * 1000)     # millis
+        #dist = cos(now/self.speed) 
+        #self.dz = dist
+        # print "progress", progress, loop_instance
+        if (loop_instance % 2):
+            # up
+            self.dz = 1 - 2 * progress
+        else:
+            # down
+            self.dz = - (1 - 2 * progress)
 
 __shows__ = [
               (HorizontalLine.name, HorizontalLine)

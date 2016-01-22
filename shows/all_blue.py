@@ -17,9 +17,8 @@ class Blue():
     def set_controls_model(self, cm):
         self.cm = cm
 
-    def control_color_changed(self, c_ix):
-        if c_ix == 0:       # for now we only use the primarty color
-            self.color = self.cm.chosen_color[c_ix]
+    # the color control_color_changed(self, x_ix) class is in the super class!
+    # def control_color_changed(self, x_ix)
 
     def next_frame(self):
 

@@ -28,6 +28,16 @@ class LoopingShow(object):
     def set_controls_model(self, cm):
         self.cm = cm
 
+    # this might be strange, but we can actually just register a color change
+    # listener for all classes. If the actual show exposes it, it can use it.
+    # otherwise it won't get called anyways!
+    def control_color_changed(self, c_ix):
+        if c_ix == 0:       # use the primarty color
+            self.color = self.cm.chosen_color[c_ix]
+        if c_ix == 1:       
+            self.color2 = self.cm.chosen_color[c_ix]
+
+
     def update_at_progress(self, progress, new_loop, loop_instance):
         """
         This is the main method that should be overridden by a subclass. This

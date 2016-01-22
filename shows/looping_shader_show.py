@@ -18,8 +18,9 @@ class LoopingShaderShow(looping_show.LoopingShow):
 
     def next_frame(self):
 
+        gen = looping_show.LoopingShow.next_frame(self)
         while True:
-            value = looping_show.LoopingShow.next_frame(self).next()
+            value = gen.next()
             try:
                 self.geometry.map_pixels()
             except IndexError:
