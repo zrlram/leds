@@ -1,18 +1,28 @@
-class Blue():
+import looping_show
+import color as col
+
+class Blue(looping_show.LoopingShow):
 
     name = "Testing - All Blue"
     ok_for_random = False
 
     red = (255, 0, 0)
-    black = (0, 0, 0)
+    blue = (50, 50, 255)
 
     # dict with name of control and type - the name defines the change method
     # implement the function :  control_<name>_changed(self, __parameters__)
-    controls = { 'color': 'color' }
+    controls = { 'color': 'color' , 'rainbow': 'checkbox'}
 
     def __init__(self, geometry):
-        self.color = Blue.black
+        looping_show.LoopingShow.__init__(self, geometry)
+
+        self.color = Blue.blue
         self.geometry = geometry
+        self.rainbow = 0
+
+        self.duration = 4
+
+        col.create_rainbow()
 
     def set_controls_model(self, cm):
         self.cm = cm
@@ -21,16 +31,20 @@ class Blue():
         if c_ix == 0:       # use the primarty color
             self.color = self.cm.chosen_colors[c_ix]
 
-    def next_frame(self):
+    def custom_checkbox_value_changed(self, checkbox):
+        self.rainbow = self.cm.checkbox[checkbox]
 
-        while True:
-            for i in range(self.geometry.get_nof_pixels()):
-                self.geometry.set_pixel(i, self.color)
+    def update_at_progress(self, progress, new_loop, loop_instance):
 
-            self.geometry.set_pixel(0, Blue.red)
-            self.geometry.draw()
+        color = self.color
+        if self.rainbow:
+            color = col.rainbow[int(progress*18)]
+        for i in range(self.geometry.get_nof_pixels()):
+            self.geometry.set_pixel(i, color)
 
-            yield 2 
+        self.geometry.set_pixel(0, Blue.red)
+        self.geometry.draw()
+
 
 __shows__ = [
               (Blue.name, Blue)
