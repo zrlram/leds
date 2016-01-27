@@ -14,7 +14,7 @@ def create_rainbow():
     for el in rainbow_scale:
         rainbow.append(tuple([int(x*256) for x in el][:3]))
 
-def hsv(h,s,v,):
+def hsv(h,s,v):
     # convert HSV colors to RGB
     # Normal hsv range is in [0,1], RGB is in [0,255]
     # Hue values will wrap
@@ -43,6 +43,21 @@ def rgb_to_hsv(rgb):
     f = float(255)
     return colorsys.rgb_to_hsv(rgb[0]/f, rgb[1]/f, rgb[2]/f)
 
+def set_V(rgb, factor):
+    f = float(255)
+    _hsv = colorsys.rgb_to_hsv(rgb[0]/f, rgb[1]/f, rgb[2]/f)
+    _hsv[2] *= factor
+    return _hsv
+    
+def get_V(rgb):
+    f = float(255)
+    return colorsys.rgb_to_hsv(rgb[0]/f, rgb[1]/f, rgb[2]/f)[2]
+
+def set_brightness_multiplier(rgb, factor):
+    # multipies the brightness with factor and returns an rgb again
+    f = float(255)
+    _hsv = colorsys.rgb_to_hsv(rgb[0]/f, rgb[1]/f, rgb[2]/f)
+    return hsv(_hsv[0], _hsv[1], _hsv[2] * factor)
 
 def morph_color(color1, color2, fract):
     # Interpolates between colors. Fract = 1 is all color 2
