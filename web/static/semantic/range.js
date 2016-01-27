@@ -29,6 +29,7 @@ $.fn.range = function(parameters) {
 				step            = settings.step,
 				start           = settings.start,
 				input           = settings.input,
+                range_id        = settings.range_id,
 
 				eventNamespace  = '.' + namespace,
 				moduleNamespace = 'module-' + namespace,
@@ -198,6 +199,7 @@ $.fn.range.settings = {
 	step         : 1,
 	start        : 0,
 	input        : false,
+    range_id     : 0,
 	
 	onChange     : function(value){},
 

@@ -41,11 +41,11 @@
 
     function changeColor(evt) {
         var color = $(this).context.value;
-        console.log("Changing color to " + color);
-        // $(this).context.value = ''; 
+        var id = parseInt($(this).context.id);
+        // console.log("Changing color "+id+" to " + color);
         B.api("/config", {
             data: {
-                ix: 0,
+                ix: id,
                 color: color,
                 command: "set_color"
             }
@@ -54,6 +54,23 @@
             }
         });
     }
+    
+    function changeCheckbox(evt) {
+        var value = $(this).context.value; 
+        console.log("checkbox value", value);
+        var id = parseInt($(this).context.id);
+        B.api("/config", {
+            data: {
+                checkbox: id, 
+                value: value,     
+                command: "set_checkbox"
+            }
+            , error: function(xhr, status, err) {
+                B.showError("Unable to set checkbox value: "+err);
+            }
+        });
+    }
+
 
     function showControls() {
         var name = $("#currentShowName").text();
@@ -62,11 +79,17 @@
 
         $("#showControls").html("");         // rest first
 
-        var i = 0;
+        var color = 0;
+        var range = 0;
+        var checkbox = 0;
         for (control_name in show.controls) {
+            
+            // building color sliders
             if (show.controls[control_name] == "color") {
-                $("#showControls").append( "<div class='item'>Color <input class='ui jscolor picker button' value='5050ff' readonly='true' ></div>");
+                $("#showControls").append( "<div class='item'>"+control_name+"&nbsp;<input class='ui jscolor picker button' id='"+color+"' value='5050ff' readonly='true' ></div>");
+                color++;
             }
+            
             // take care of ranges, which are represented as arrays
             if( Object.prototype.toString.call( show.controls[control_name] ) === '[object Array]' ) {
 
@@ -76,32 +99,41 @@
                 // if it's there
                 start = entry[2] || (max_value - min_value) / 2;
 
-                $("#showControls").append( "<div class='item' >" + control_name + " <div class='ui range' id='control_range"+i+"'></div></div>");
+                $("#showControls").append( "<div class='item' >" + control_name + " <div class='ui item range' id='control_range"+ range +"'></div></div>");
 
-                $('#control_range'+i).range({ min: min_value, max: max_value, start: start, step: (max_value - min_value) / 10,
+                $('#control_range'+ range).range({ min: min_value, max: max_value, start: start, step: (max_value - min_value) / 10, range_id: range,
                        onChange: function(value) {
-                            B.api("/config", {
+                           B.api("/config", {
                                 data: {
+                                    // such a hack. SORRY
+                                    range: $(this)[0].range_id,
                                     value: value,     
                                     command: "set_range"
                                 }
                                 , success: function(data) {
-                                    console.log("data",data);
                                     $('#range-value').text(data.value)
                                 }
                                 , error: function(xhr, status, err) {
                                     B.showError("Unable to set range value: "+err);
                                 }
                             })
-                        }
+                       }
 
                 });
-
+                range++;
             }
-            i++;
+            
+            // take care of checkboxes
+            if (show.controls[control_name] == "checkbox") {
+
+                entry = show.controls[control_name];
+
+                $("#showControls").append( "<div class='item' >" + control_name + " <input type='checkbox' class='ui item checkbox' id='"+ checkbox +"' value=1></input></div>");
+
+                checkbox++;
+            }
 
         }
-
 
         $('.jscolor').each(function(i, obj) {
             if (!obj.hasOwnProperty("hasPicker")) {
@@ -111,6 +143,8 @@
             obj.value = '';
         });
         $(".jscolor").bind("change", changeColor);
+
+        $(".checkbox").bind("change", changeCheckbox);
     }
 
     function startShow(evt) {
@@ -226,7 +260,7 @@
         }); 
         */
 
-        $('#speed-range').range({ min: 0, max: 1, start: 0.1, step: 0.1,
+        $('#speed-range').range({ min: 0, max: 4, start: 0.1, step: 0.1,
            onChange: function(value) {
                 B.api("/config", {
                     data: {
@@ -243,7 +277,7 @@
                 });
            }
         });
-        $('#brightness-range').range({ min: 0, max: 1, start: 0.9, step: 0.1,
+        $('#brightness-range').range({ min: 0, max: 1, start: 1.0, step: 0.1,
            onChange: function(value) {
                 B.api("/config", {
                     data: {
@@ -277,6 +311,24 @@
                 });
            }
         });
+
+        /*
+        $('#dither').click(function(value) {
+                B.api("/config", {
+                    data: {
+                        speed: 0.1,     // relative change
+                        command: "set_speed"
+                    }
+                    , success: function(data) {
+                        console.log("data",data);
+                        $('#speed-value').text(data.speed)
+                    }
+                    , error: function(xhr, status, err) {
+                        B.showError("Unable to set speed: "+err);
+                    }
+                });
+        }); 
+    */
 
         // in case there are controls for the current show already
         $('.jscolor').each(function(i, obj) {

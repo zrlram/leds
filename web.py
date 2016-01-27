@@ -142,10 +142,27 @@ class OrbWeb(object):
 
         elif command == "set_range":
             value = data.get("value",0)
-            self.wc.set_custom_range_value(value)
-            return {"ok": True, "done": "change range value to %s" % (self.cm.custom_range_value), 'max_runtime': self.cm.custom_range_value}
+            range = data.get("range",0)
+            self.wc.set_custom_range_value(range, value)
+            return {"ok": True, "done": "change range %s value to %s" % (range, value)}
+
+        elif command == "set_checkbox":
+            value = data.get("value",0)
+            checkbox = data.get("checkbox",0)
+            self.wc.set_custom_checkbox_value(checkbox, value)
+            return {"ok": True, "done": "change checkbox %s value to %s" % (checkbox, value)}
+
+        elif command == "set_config":
+            command = data.get("command",0)
+            value = data.get("value",0)
+            self.wc.set_config(command, value)
+            return {"ok": True, "done": "change fc config %s to %s" % (command, value)}
+
 
         else:
             return {"ok": False, "msg": "Not a command I know"}
+
+
+
 
 

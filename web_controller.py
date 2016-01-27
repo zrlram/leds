@@ -19,5 +19,11 @@ class WebController(object):
         self.cm.set_max_time(runtime)
 
     # a show can have a range slider to select any variable
-    def set_custom_range_value(self, value):
-        self.cm.set_custom_range_value(value)
+    def set_custom_range_value(self, range, value):
+        self.cm.set_custom_range_value(range, value)
+
+    def set_custom_checkbox_value(self, checkbox, value):
+        self.cm.set_custom_checkbox_value(checkbox, value)
+
+    def set_config(self, key, value):
+        self.cm.set_config(key, value)
