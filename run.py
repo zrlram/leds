@@ -45,7 +45,6 @@ class ShowRunner(threading.Thread):
         self.running = True
         self.max_show_time = max_showtime
 
-
         self.shows = dict(shows.load_shows())
         self.random_eligible_shows = []
 
@@ -214,7 +213,7 @@ class ShowRunner(threading.Thread):
         self.max_show_time = int(self.cm.max_time)
 
     def control_brightness_changed(self, val):
-        self.model.set_brightness(val)
+        self.geometry.set_brightness(val)
 
     def status(self):
 
