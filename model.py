@@ -1,6 +1,7 @@
 import json
 from connection import pixels, draw
 import operator
+from color import set_brightness_multiplier
 
 class Model(object):
 
@@ -9,6 +10,7 @@ class Model(object):
         self.load_model(model_file)
 
         self.shaders = []            # list of shader functions to be called
+        self._brightness = 1.0
 
     def register_shader(self,shader):
         self.shaders.append(shader)
@@ -32,8 +34,13 @@ class Model(object):
             for shader in self.shaders[1:]:
                 values = shader(led) 
                 pixels[i] = tuple(map(operator.add, pixels[i], values))
-
+            if self._brightness != 1.0:
+                # adjust brightness
+                pixels[i] = set_brightness_multiplier(pixels[i], self._brightness)
         draw()
+
+    def set_brightness(self, val):
+        self._brightness = val
 
     def clear(self):
         black = (0,0,0)
@@ -52,7 +59,10 @@ class Model(object):
         self.model = data
 
     def set_pixel(self, pixel, color):
-        pixels[pixel] = color
+        if self._brightness != 1.0:
+            pixels[pixel] = set_brightness_multiplier(color, self._brightness)
+        else:
+            pixels[pixel] = color
     
     def draw(self):
         draw()      
