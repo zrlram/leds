@@ -6,10 +6,10 @@ import looping_shader_show
 class ParticleTrails(looping_shader_show.LoopingShaderShow):
 
     name = "Particle Trails"
-    _particles = None
 
     def __init__(self, geometry):
         looping_shader_show.LoopingShaderShow.__init__(self, geometry, self.shader)
+        self._particles = None
 
     def shader(self, p):
         r = 0
