@@ -1,8 +1,4 @@
-#!/usr/bin/env python
-
 from color import hsv, rgb_to_hsv
-#import time
-#from math import cos
 
 import looping_shader_show
 
@@ -26,13 +22,12 @@ class HorizontalLine(looping_shader_show.LoopingShaderShow):
         # configurable controls
         self.trail = 5
         self.color = (50,50,255)
-        # self.speed = 1000
 
     def control_color_changed(self, c_ix):
         if c_ix == 0:       # use the primarty color
             self.color = self.cm.chosen_colors[c_ix]
 
-    def custom_range_value_changed(self):
+    def custom_range_value_changed(self, range):
         self.trail = self.cm.custom_range_value
 
     def shader(self, p):
@@ -46,10 +41,6 @@ class HorizontalLine(looping_shader_show.LoopingShaderShow):
 
     def update_at_progress(self, progress, new_loop, loop_instance):
 
-        #now = int(time.time() * 1000)     # millis
-        #dist = cos(now/self.speed) 
-        #self.dz = dist
-        # print "progress", progress, loop_instance
         if (loop_instance % 2):
             # up
             self.dz = 1 - 2 * progress
