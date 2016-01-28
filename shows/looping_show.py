@@ -1,6 +1,6 @@
 import time
-
 import math
+from collections import OrderedDict
 
 class LoopingShow(object):
     """
@@ -13,6 +13,7 @@ class LoopingShow(object):
     """
 
     name = "Looping Show"                       # show should overwrite this
+    controls = OrderedDict()
 
     def __init__(self, geometry):
         # Some convenience variables
@@ -165,6 +166,7 @@ class LoopingShow(object):
         self._last_frame_at = time.time()
         self._progress = 0.0
         self._loop_instance = 0
+        self.elapsed_time = 0
         is_first_loop = True
 
         while True:
@@ -176,9 +178,9 @@ class LoopingShow(object):
             # We presume our speed between the last call and this call has
             # been constant at the speed that is currently set.
             now = time.time()            
-            elapsed_time = now - self._last_frame_at
+            self.elapsed_time = now - self._last_frame_at
 
-            distance_traveled = elapsed_time * speed
+            distance_traveled = self.elapsed_time * speed
 
             new_location = self._progress + distance_traveled 
             new_prog, loops = math.modf(new_location)
@@ -187,7 +189,7 @@ class LoopingShow(object):
             self._progress = new_prog
 
             is_new = loops > 0 or is_first_loop
-            # print "%f [%f, %f]=%f %f update(%f, %s, %d)" % (elapsed_time, 
+            # print "%f [%f, %f]=%f %f update(%f, %s, %d)" % (self.elapsed_time, 
             #         self._hertz, self.cm.speed_multi, speed, 
             #         distance_traveled, 
             #         self._progress, str(is_new), self._loop_instance)    
