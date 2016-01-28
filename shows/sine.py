@@ -1,5 +1,5 @@
 import looping_shader_show
-from color import rgb_to_hsv, hsv, rainbow, create_rainbow
+from color import rgb_to_hsv, hsv, rainbow, create_rainbow, set_V
 from math import sin, atan2, pi
 
 
@@ -63,8 +63,7 @@ class Sine(looping_shader_show.LoopingShaderShow):
             if self.rainbow:
                 self.color = rainbow[int((self.shift / (2 * pi)) *18)]
 
-            color_hsv = rgb_to_hsv(self.color)  # set the intesity to the distance
-            return hsv (color_hsv[0], color_hsv[1], 1.0-dist*3)
+            return set_V(self.color, absolute=1.0-dist*3.0)  # set the intesity to the distance
 
         else:
             return self.background
