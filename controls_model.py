@@ -1,6 +1,5 @@
 import time
 
-
 class ControlsModel(object):
 
     def __init__(self):
@@ -33,7 +32,10 @@ class ControlsModel(object):
         self.chosen_colors = [ (255, 255, 0), (0,255,255) ]         
 
         # custom range to be used by shows - they have to set the extremes
-        self.range = [0,1]
+        self.ranges = [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]
+
+        # custom booleans / checkboxes
+        self.checkbox = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 
     def add_listener(self, listener):
         self.listeners.add(listener)
@@ -225,19 +227,35 @@ class ControlsModel(object):
             except AttributeError:
                 pass # ignore      
 
-    def set_custom_range_value(self, value):
-        self.custom_range_value = value
-        self._notify_custom_range_value_changed()
+    def set_custom_checkbox_value(self, checkbox, value):
+        self.checkbox[checkbox] = value
+        self._notify_custom_checkbox_value_changed(checkbox)
 
-    def _notify_custom_range_value_changed(self):
-        print "_notify_max_time_changed"
+    def _notify_custom_checkbox_value_changed(self, checkbox):
+        print "_notify_custom_checkbox_change"
         for listener in self.listeners:
             try:
-                listener.custom_range_value_changed()
+                listener.custom_checkbox_value_changed(checkbox)
             except AttributeError:
                 pass # ignore      
 
-    
+
+    def set_custom_range_value(self, range, value):
+        self.ranges[range] = value
+        self._notify_custom_range_value_changed(range)
+
+    def _notify_custom_range_value_changed(self, range):
+        print "_notify_custom_range_change"
+        for listener in self.listeners:
+            try:
+                listener.custom_range_value_changed(range)
+            except AttributeError, e:
+                pass # ignore      
+
+    def set_config(self, key, value):
+        # if ..
+        # fc_config.xx    
+        pass
 
 
 
