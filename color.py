@@ -43,11 +43,18 @@ def rgb_to_hsv(rgb):
     f = float(255)
     return colorsys.rgb_to_hsv(rgb[0]/f, rgb[1]/f, rgb[2]/f)
 
-def set_V(rgb, factor):
+def set_V(rgb, factor=1.0, absolute=None):
     f = float(255)
     _hsv = colorsys.rgb_to_hsv(rgb[0]/f, rgb[1]/f, rgb[2]/f)
-    _hsv[2] *= factor
-    return _hsv
+
+    if factor!=1.0:
+        v = _hsv[2] * factor
+    elif absolute:
+        v = absolute
+    else:
+        v = _hsv[2]
+        
+    return hsv(_hsv[0], _hsv[1], v)
     
 def get_V(rgb):
     f = float(255)
