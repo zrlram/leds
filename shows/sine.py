@@ -1,6 +1,6 @@
 import looping_shader_show
 from color import rgb_to_hsv, hsv, rainbow, create_rainbow
-from math import sin, atan, pi
+from math import sin, atan2, pi
 
 
 class Sine(looping_shader_show.LoopingShaderShow):
@@ -55,9 +55,7 @@ class Sine(looping_shader_show.LoopingShaderShow):
         y = p['point'][1]
         z = p['point'][2]
 
-        phi = 0
-        if x!=0:
-            phi = atan(y/x)
+        phi = atan2(y, x) + pi      # from 0 to 2pi
         dist = abs(z - sin((phi+self.shift)*self.frequency) * self.amplitude)
         #dist = abs(z - sin((phi)*self.frequency) * self.amplitude)
         if dist < 0.2:
