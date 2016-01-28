@@ -162,8 +162,8 @@ class ShowRunner(threading.Thread):
             try:
 
                 self.check_queue()
-                start = time.time()
 
+                start = time.time()
                 self.show_runtime = start - show_started_at
 
                 if start >= next_frame_at:
@@ -189,6 +189,7 @@ class ShowRunner(threading.Thread):
                     # more that .023s which yields roughly the max DMX framerate
                     # of 44hz
 
+                    # TBD -- need to do some profiling here. Do we really have the luxury of sleepign ???
                     to_sleep = 0.023 
                     until_next = next_frame_at - time.time()
 
@@ -357,6 +358,9 @@ class Server(threading.Thread):
         cherrypy.quickstart(OrbWeb(self.queue, self.runner, self.controls_model, self.wc),
                             '/',
                             config=config)
+
+        # turn off logging (speed up?)
+        cherrypy.config.update({ "environment": "embedded" })
 
 if __name__=='__main__':
 
