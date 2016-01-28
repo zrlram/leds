@@ -7,6 +7,8 @@ import traceback
 import time
 import signal
 
+import cProfile
+
 import shows
 from model import Model
 from web_controller import WebController
@@ -33,6 +35,9 @@ class ShowRunner(threading.Thread):
 
     def __init__(self, geometry, queue, cm, wc, max_showtime=240):
         super(ShowRunner, self).__init__(name="ShowRunner")
+
+        self.profile = None
+        self.do_profiling = True
 
         self.geometry = geometry
         self.queue = queue
@@ -74,6 +79,18 @@ class ShowRunner(threading.Thread):
         self.cm.set_max_time(self.max_show_time)
 
     def next_show(self, name=None):
+
+        if self.profile:
+            # Stop it
+            print "****** Stopping profiling"
+            self.profile.disable()
+            self.profile.dump_stats("Stats")
+        elif self.do_profiling:
+            # Start a profiler
+            self.do_profiling = False
+            self.profile = cProfile.Profile()
+            print "****** Starting profiling"
+            self.profile.enable()
 
         show = None
         if name:
