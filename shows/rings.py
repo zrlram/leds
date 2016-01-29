@@ -3,29 +3,39 @@ import simplexnoise
 from math import sin, cos, sqrt
 from color import hsv
 import looping_shader_show
+from collections import OrderedDict
 
 class Rings(looping_shader_show.LoopingShaderShow):
 
     name = "Rings"
 
+    controls = OrderedDict()
+    controls.update({'scale': [0,1,0.1,0.1]})
+    controls.update({'ringScale': [0,5,2,0.25]})
+
     def __init__(self, geometry):
         looping_shader_show.LoopingShaderShow.__init__(self, geometry, 
             self.shader)
+        self.scale = 0.1
+        self.ringScale = 2
+        self.speed = 0.002
+        self.wspeed = 0.01
+        self.wanderSpeed = 0.0005
+        self.dx = 0
+        self.dz = 0
+        self.dw = 0
+        self.hue = 0
+        self.saturation = 0
+        self.spacing = 0
+        self.centerx = 0
+        self.centery = 0
+        self.centerz = 0
 
-    speed = 0.002
-    wspeed = 0.01
-    scale = 0.1
-    ringScale = 2
-    wanderSpeed = 0.0005
-    dx = 0
-    dz = 0
-    dw = 0
-    hue = 0
-    saturation = 0
-    spacing = 0
-    centerx = 0
-    centery = 0
-    centerz = 0
+    def custom_range_value_changed(self, range):
+        if range==0:
+            self.scale = self.cm.ranges[range]
+        if range==1:
+            self.ringScale = self.cm.ranges[range]
 
     @staticmethod
     def fractalNoise(x,y,z,w):
@@ -75,7 +85,7 @@ class Rings(looping_shader_show.LoopingShaderShow):
 
         # TBD: abs(n) is my doing, was just n
         return hsv(
-            self.hue + 0.2 * m,
+            (self.hue + 0.2 * m) %1,
             self.saturation,
             min(max(pow(3.0 * abs(n), 1.5), 0), 0.9)
         )
