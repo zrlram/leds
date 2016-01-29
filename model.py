@@ -1,9 +1,42 @@
 import json
-from connection import pixels, draw
+from connection import pixels, draw, row, numLEDs
 import operator
 from color import set_brightness_multiplier
 import multiprocessing 
 from math import ceil
+
+HALF_POINT = sum(row) - 1
+
+HOR_RINGS_TOP_DOWN = []
+# top
+count = 0
+for h in range(len(row)-1, -1, -1):
+    r = []
+    for element in range(HALF_POINT-count,HALF_POINT-count-row[h],-1):
+        r.append(element)
+    HOR_RINGS_TOP_DOWN.append(r)
+    count += row[h]
+# bottom
+for h in range(0, len(row)-1):
+    r = []
+    for element in range(count,count+row[h]):
+        r.append(element)
+    HOR_RINGS_TOP_DOWN.append(r)
+    count += row[h]
+
+HOR_RINGS_MIDDLE_OUT = []
+count = 0
+for h in range(0, len(row)):
+    r = []
+    for element in range(count,count+row[h]):
+        r.append(element)
+    # bottom
+    if h < 7:
+        for element in range(HALF_POINT+count+1,HALF_POINT+count+1+row[h]):
+            r.append(element)
+    HOR_RINGS_MIDDLE_OUT.append(r)
+    count += row[h]
+
 
 class Model(object):
 
@@ -13,6 +46,8 @@ class Model(object):
 
         self.shaders = []            # list of shader functions to be called
         self._brightness = 1.0
+
+        self.numLEDs = numLEDs
 
     def register_shader(self,shader):
         self.shaders.append(shader)
