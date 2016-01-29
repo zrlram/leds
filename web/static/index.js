@@ -75,8 +75,10 @@
     function showControls() {
         var name = $("#currentShowName").text();
         var show = shows[name];
+        // console.log("shows",shows);
         // console.log("name", name, "show", show.controls);
 
+        
         $("#showControls").html("");         // rest first
 
         var color = 0;
@@ -98,10 +100,11 @@
                 max_value = entry[1];
                 // if it's there
                 start = entry[2] || (max_value - min_value) / 2;
+                step = entry[3] || (max_value - min_value) / 10;
 
-                $("#showControls").append( "<div class='item' >" + control_name + " <div class='ui item range' id='control_range"+ range +"'></div></div>");
+                $("#showControls").append( "<div class='item' >" + control_name + " <span id='range_"+control_name+"'></span><div class='ui item range' id='control_range"+ range +"'></div></div>");
 
-                $('#control_range'+ range).range({ min: min_value, max: max_value, start: start, step: (max_value - min_value) / 10, range_id: range,
+                $('#control_range'+ range).range({ min: min_value, max: max_value, start: start, step: step, range_id: range,
                        onChange: function(value) {
                            B.api("/config", {
                                 data: {
