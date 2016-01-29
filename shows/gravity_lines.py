@@ -81,7 +81,7 @@ class GravityLine(looping_shader_show.LoopingShaderShow):
         if  self.y <= -0.9:
             self.v = -self.v * self.e
 
-        print self.v
+        # print self.v
 
         # TBD: Reset conditions
         if progress > 0.9:
