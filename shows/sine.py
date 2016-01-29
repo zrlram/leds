@@ -63,7 +63,9 @@ class Sine(looping_shader_show.LoopingShaderShow):
             if self.rainbow:
                 self.color = rainbow[int((self.shift / (2 * pi)) *18)]
 
-            return set_V(self.color, absolute=1.0-dist*3.0)  # set the intesity to the distance
+            # intensity = 1.0-dist*3.0
+            intensity = 1 - (dist / 0.2)
+            return set_V(self.color, absolute=intensity)  # set the intesity to the distance
 
         else:
             return self.background

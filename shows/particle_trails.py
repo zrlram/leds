@@ -47,7 +47,7 @@ class ParticleTrails(looping_shader_show.LoopingShaderShow):
             theta = now + 0.04 * i
             x = radius * cos(theta)
             y = radius * sin(theta + 10.0 * sin(theta * 0.15))
-            hue = now * 0.01 + s * 0.2
+            hue = (now * 0.01 + s * 0.2) % 1 
 
             particles.append({
                 "point": [x, 0, y],

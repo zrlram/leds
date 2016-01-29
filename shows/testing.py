@@ -43,7 +43,7 @@ class Testing(looping_shader_show.LoopingShaderShow):
             phi = around :: F=0, B=pi
             theta = up
         '''
-        print "range_change",range, self.cm.ranges[range]
+        #print "range_change",range, self.cm.ranges[range]
 
         if range == 0:
             self.point1 = self.cm.ranges[range]
@@ -95,8 +95,9 @@ class Testing(looping_shader_show.LoopingShaderShow):
 
             color_hsv = rgb_to_hsv(self.color)  # set the intesity to the distance
             #return hsv (color_hsv[0], color_hsv[1], 1.0-dist*1/self.trail)
-            # dist = dist / self.trail
-            intensity = cos(dist)
+            dist = dist / self.trail
+            intensity = 1-dist
+            # intensity = cos(dist)
             return hsv (color_hsv[0], color_hsv[1], intensity)
 
         else:
