@@ -1,5 +1,6 @@
 from color import hsv, rgb_to_hsv
 from math import sin, sqrt, tan, cos
+import color as col
 
 import looping_shader_show
 
@@ -10,7 +11,7 @@ class PacMan(looping_shader_show.LoopingShaderShow):
     # a list signifies a range slider
     #   trail: [min, max, start]
     # controls = { 'trail': [0, 10], 'color': 'color' }
-    controls = { 'color': 'color' }
+    controls = { 'color': 'color' , 'rainbow': 'checkbox'}
 
     # implicitly registered in super class
     # def set_controls_model(self,cm)
@@ -23,15 +24,18 @@ class PacMan(looping_shader_show.LoopingShaderShow):
         # configurable controls
         self.color = (250,250,0)
         self.background = (0,0,0)
+        self.rainbow = 0
 
         self.duration = 1
+
+        col.create_rainbow()
 
     def control_color_changed(self, c_ix):
         if c_ix == 0:       
             self.color = self.cm.chosen_colors[c_ix]
 
-    #def custom_range_value_changed(self, range):
-        #self.trail = self.cm.ranges[range]
+    def custom_checkbox_value_changed(self, checkbox):
+        self.rainbow = self.cm.checkbox[checkbox]
 
     def shader(self, p):
 
@@ -58,6 +62,8 @@ class PacMan(looping_shader_show.LoopingShaderShow):
     def update_at_progress(self, progress, new_loop, loop_instance):
 
         self.angle = sin(progress)
+        if self.rainbow:
+            self.color = col.rainbow[int(progress*18)]
 
 
 __shows__ = [
