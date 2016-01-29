@@ -2,6 +2,8 @@ import json
 from connection import pixels, draw
 import operator
 from color import set_brightness_multiplier
+import multiprocessing 
+from math import ceil
 
 class Model(object):
 
@@ -20,16 +22,10 @@ class Model(object):
 
     def get_shaders(self):
         return self.shaders
-
-    def map_pixels(self):
-        # set all pixels by mapping each element of the "model" through 
-        # "fn" and setting the corresponding pixel value. The "fn" function 
-        # returns a tuple of three 8-bit RGB values.
     
-        # print "active shaders: %s" % self.shaders
-        
-        for i, led in enumerate(self.model):
-            # first one sets the base, others are 'add'-ed in
+    def worker(self, start, end):
+        for i in range(start, end):
+            led = self.model[i]
             pixels[i] = self.shaders[0](led)
             for shader in self.shaders[1:]:
                 values = shader(led) 
@@ -37,6 +33,28 @@ class Model(object):
             if self._brightness != 1.0:
                 # adjust brightness
                 pixels[i] = set_brightness_multiplier(pixels[i], self._brightness)
+
+    def map_pixels(self):
+        # set all pixels by mapping each element of the "model" through 
+        # "fn" and setting the corresponding pixel value. The "fn" function 
+        # returns a tuple of three 8-bit RGB values.
+    
+        # print "active shaders: %s" % self.shaders
+
+        nprocs = 4
+        chunksize = int(ceil(len(self.model) / float(nprocs)))
+
+        # multiple_results = [pool.apply_async(os.getpid, ()) for i in range(4)]
+        # print [res.get(timeout=1) for res in multiple_results]
+
+        procs = []
+        for i in range(nprocs):
+            p = multiprocessing.Process(
+                target=self.worker,
+                args=(chunksize * i,chunksize * (i + 1)))
+            procs.append(p)
+            p.start()
+
         draw()
 
     def set_brightness(self, val):

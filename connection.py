@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
 import opc
+import multiprocessing
+from ctypes import c_ubyte
 
 client = opc.Client('localhost:7890')
 #client = opc.Client('192.168.30.158:7890')
@@ -28,7 +30,10 @@ height = len(row) + 1        # this is only half of the sphere
 # bottom only has 7 rows
 numLEDs = sum(row) * 2 - 12
 print "num LEDs: ", numLEDs
-pixels = [ (0,0,0) ] * numLEDs
+# pixels = [ (0,0,0) ] * numLEDs
+
+pixels = multiprocessing.Array((c_ubyte * 3), numLEDs, lock=False)
+
 # draw()
 
 def set_pixel(pos, color):
