@@ -53,7 +53,7 @@ class PacMan(looping_shader_show.LoopingShaderShow):
         z = p['point'][2]
      
         x_rot = x
-        y_rot = y                   # will hold the rotated variables
+        # y_rot = y                   # will hold the rotated variables
 
         # moving packman - we need to rotate x and y
         if self.move:
@@ -62,19 +62,26 @@ class PacMan(looping_shader_show.LoopingShaderShow):
                                             # map to circle
 
             x_rot = x * cos(rotate) - y * sin(rotate)           
-            y_rot = y * cos(rotate) + x * sin(rotate)
+            #y_rot = y * cos(rotate) + x * sin(rotate)
 
         # This is PacMan, believe it or not, well, almost
-        y_ = 1 - x_rot**2 - z**2
+        # y_ = 1 - x_rot**2 - z**2
         z_ = tan(self.angle) * x_rot
 
+        # Learning: The perfect math does not always create the best visual representation
+        # and cheating is more fun and faster too ;)
+
         if x_rot < 0: return self.color     # the non-mouth half of pacman
-        if y_ < abs(y_rot) and z_ < abs(z):
+        #if y_ < abs(y_rot) and z_ < abs(z):
+        if z_ < abs(z):
             color_hsv = rgb_to_hsv(self.color)  
-            #dist = ((x_rot-x)**2 + (y_rot-y_)**2 + (z-z_)**2)  * 4
-            dist = ((y_rot-y_)**2 + (z-z_)**2)  * 4
-            if dist > 1: dist = 1
-            intensity = dist
+            # -- dist = ((x_rot-x)**2 + (y_rot-y_)**2 + (z-z_)**2)  * 4
+            # working: dist = ((y_rot-y_)**2 + (z-z_)**2)  * 4
+            dist = abs(z-z_)
+            intensity = 1
+            if dist < 0.1:
+                intensity = 0.8
+            #if dist > 1: dist = 1
             # intensity = cos(dist)
             return hsv (color_hsv[0], color_hsv[1], intensity)
         else:
@@ -84,7 +91,7 @@ class PacMan(looping_shader_show.LoopingShaderShow):
     def update_at_progress(self, progress, new_loop, loop_instance):
 
         self.progress = progress
-        self.angle = sin((self.progress*8) % 1)
+        self.angle = sin((self.progress*8) % 1) 
         if self.rainbow:
             self.color = col.rainbow[int(progress*18)]
 
