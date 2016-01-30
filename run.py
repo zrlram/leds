@@ -37,7 +37,7 @@ class ShowRunner(threading.Thread):
         super(ShowRunner, self).__init__(name="ShowRunner")
 
         self.profile = None
-        self.do_profiling = True
+        self.do_profiling = False
 
         self.geometry = geometry
         self.queue = queue
@@ -107,6 +107,8 @@ class ShowRunner(threading.Thread):
 
         self.clear()
         self.prev_show = self.show
+        self.show_runtime = 0
+        self.show_started_at = time.time()
 
         # unregister shaders
         self.geometry.reset_shaders()
@@ -118,8 +120,6 @@ class ShowRunner(threading.Thread):
             self.show.start()    # if show has a start() call it. Registers shaders, etc.
         except:
             pass
-
-        self.show_runtime = 0
 
         # deal with controls
         self.cm.del_listener(self.prev_show)
@@ -358,6 +358,7 @@ class Server(threading.Thread):
                 # 'engine.timeout_monitor.on' : True,
                 # 'engine.timeout_monitor.frequency' : 240,
                 # 'response.timeout' : 60*15
+                'server.thread_pool': 8,
             },
 
             '/index': {
