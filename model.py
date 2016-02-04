@@ -59,6 +59,8 @@ class Model(object):
         return self.shaders
     
     def worker(self, start, end):
+	if end>len(pixels)-1: end=len(pixels)-1
+	if len(self.shaders)<0: return
         for i in range(start, end):
             led = self.model[i]
             pixels[i] = self.shaders[0](led)
@@ -76,7 +78,7 @@ class Model(object):
     
         # print "active shaders: %s" % self.shaders
 
-        nprocs = 4
+        nprocs = 8
         chunksize = int(ceil(len(self.model) / float(nprocs)))
 
         # multiple_results = [pool.apply_async(os.getpid, ()) for i in range(4)]
