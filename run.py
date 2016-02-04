@@ -358,7 +358,7 @@ class Server(threading.Thread):
                 # 'engine.timeout_monitor.on' : True,
                 # 'engine.timeout_monitor.frequency' : 240,
                 # 'response.timeout' : 60*15
-                'server.thread_pool': 8,
+                'server.thread_pool': 6,
             },
 
             '/index': {
