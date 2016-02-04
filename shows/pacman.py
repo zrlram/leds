@@ -25,6 +25,7 @@ class PacMan(looping_shader_show.LoopingShaderShow):
         looping_shader_show.LoopingShaderShow.__init__(self, geometry, self.shader)
 
         self.progress = 1.0
+	self.angle = 0
 
         # configurable controls
         self.color = (250,250,0)
