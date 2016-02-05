@@ -35,8 +35,6 @@ class PacMan(looping_shader_show.LoopingShaderShow):
 
         self.duration = 8
 
-        col.create_rainbow()
-
     def control_color_changed(self, c_ix):
         if c_ix == 0:       
             self.color = self.cm.chosen_colors[c_ix]
@@ -94,7 +92,7 @@ class PacMan(looping_shader_show.LoopingShaderShow):
         self.progress = progress
         self.angle = sin((self.progress*8) % 1) 
         if self.rainbow:
-            self.color = col.rainbow[int(progress*18)]
+            self.color = col.rainbow[int(progress*len(col.rainbow))]
 
 
 __shows__ = [
