@@ -1,10 +1,15 @@
-from math import floor
-from matplotlib.pyplot import cm
-import numpy as np
 import colorsys
 
-rainbow = []
+# red, orange, yellow, green, blue, indigo, violet
+rainbow_simpel =  [(255,0,0), (255,127,0), (255,255,0), (0,255,0),
+            (0,0,255), (75,0,130), (139,0,255)]
 
+rainbow = [ (127, 0, 255), (97, 46, 253), (67, 92, 250), (37, 134, 245), 
+            (7, 171, 237), (142, 253, 171), (172, 245, 153), (202, 228, 134), 
+            (232, 203, 113), (255, 171, 92), (255, 134, 69), (255, 92, 46), 
+            (255, 46, 23), (255, 0, 0)]
+
+'''
 def create_rainbow():
 
     # create a rainbow color table
@@ -12,7 +17,9 @@ def create_rainbow():
     # 18 colors
     rainbow_scale = [x for x in m.to_rgba(np.linspace(0,1,18))]
     for el in rainbow_scale:
+        print(tuple([int(x*255) for x in el][:3]))
         rainbow.append(tuple([int(x*255) for x in el][:3]))
+'''
 
 def hsv(h,s,v):
 
