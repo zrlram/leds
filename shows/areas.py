@@ -49,8 +49,8 @@ class Areas(looping_show.LoopingShow):
             _list = model.HOR_RINGS_TOP_DOWN
         elif self.mode ==2:
             _list = model.HOR_RINGS_MIDDLE_OUT
-        #elif self.mode ==3:
-        #    _list = model.HOR_RINGS_MIDDLE_OUT
+        elif self.mode ==3:
+            _list = model.HOR_RINGS_TOP_DOWN
         else:
             _list = [[x for x in range(model.numLEDs)]]
 
