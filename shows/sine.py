@@ -1,17 +1,20 @@
 import looping_shader_show
-from color import rgb_to_hsv, hsv, rainbow, create_rainbow, set_V
+from color import rainbow, set_V
 from math import sin, atan2, pi
+from collections import OrderedDict
 
 
 class Sine(looping_shader_show.LoopingShaderShow):
 
     name = "Sine"
 
-    controls = { 'Color': 'color', 
-                 'Rainbow': 'checkbox',
-                 'Background': 'color',
-                 'Amplitude': [0,1,0.5],
-                 'Frequency': [0,10,4.0]}
+    controls = OrderedDict()
+    controls.update({ 'Color': 'color'})
+    controls.update({'Rainbow': 'checkbox'})
+    controls.update({'Background': 'color'})
+    controls.update({'Amplitude': [0,1,0.5]})
+    controls.update({'Frequency': [0,10,4.0]})
+    controls.update({'Laser Drawing': 'checkbox'})
 
 
     def __init__(self, geometry):
@@ -22,14 +25,14 @@ class Sine(looping_shader_show.LoopingShaderShow):
 
         # configurable controls
         self.color = (50,50,255)
-        self.background = (10,10,10)
+        self.background = (0,0,0)
         self.frequency = 4.0
         self.amplitude = 0.5
         self.rainbow = 0
+        self.laser = 0          # is it drawing it slowly on the sphere?
+        self.laser_pos = .0      # and what's its position?
 
         self.duration = 10       # make the show slower!
-
-        create_rainbow()
 
     def control_color_changed(self, c_ix):
         if c_ix == 0:       # use the primarty color
@@ -46,7 +49,10 @@ class Sine(looping_shader_show.LoopingShaderShow):
             print "amp", self.amplitude
 
     def custom_checkbox_value_changed(self, checkbox):
-        self.rainbow = self.cm.checkbox[checkbox]
+        if checkbox==0:
+            self.rainbow = self.cm.checkbox[checkbox]
+        if checkbox==1:
+            self.laser = self.cm.checkbox[checkbox]
 
     
     def sine_shader(self, p):
@@ -56,15 +62,21 @@ class Sine(looping_shader_show.LoopingShaderShow):
         z = p['point'][2]
 
         phi = atan2(y, x) + pi      # from 0 to 2pi
-        dist = abs(z - sin((phi+self.shift)*self.frequency) * self.amplitude)
+        if self.laser:
+            dist = abs(z - sin(phi*self.frequency) * self.amplitude)
+        else:
+            dist = abs(z - sin((phi+self.shift)*self.frequency) * self.amplitude)
         #dist = abs(z - sin((phi)*self.frequency) * self.amplitude)
         if dist < 0.2:
 
-            if self.rainbow:
-                self.color = rainbow[int((self.shift / (2 * pi)) *18)]
+            intensity = 1 - (dist / 0.2)
+
+            if self.laser:
+                if abs(self.laser_pos - phi) < 0.08:
+                    #print self.laser_pos, phi, self.laser_pos - phi
+                    return set_V((255,255,0), absolute=intensity )
 
             # intensity = 1.0-dist*3.0
-            intensity = 1 - (dist / 0.2)
             return set_V(self.color, absolute=intensity)  # set the intesity to the distance
 
         else:
@@ -75,8 +87,10 @@ class Sine(looping_shader_show.LoopingShaderShow):
     def update_at_progress(self, progress, new_loop, loop_instance):
 
         self.shift = progress * 2 * pi
-        # TBD - change color to rainbow over time
-        # self.color = 
+        self.laser_pos += pi/22 % (2*pi)
+        self.laser_pos %= (2*pi)
+        if self.rainbow:
+            self.color = rainbow[int((self.shift / (2 * pi)) *18)]
         
 
 __shows__ = [
