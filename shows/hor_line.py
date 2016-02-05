@@ -1,4 +1,4 @@
-from color import hsv, rgb_to_hsv
+from color import hsv, rgb_to_hsv, rainbow
 
 import looping_shader_show
 
@@ -9,7 +9,9 @@ class HorizontalLine(looping_shader_show.LoopingShaderShow):
     # a list signifies a range slider
     #   trail: [min, max, start]
     # controls = { 'trail': [0, 10], 'color': 'color' }
-    controls = { 'Trail Length': [0.1, 1, 0.5, 0.01], 'color': 'color' }
+    controls = { 'Trail Length': [0.1, 1, 0.5, 0.01], 
+                 'color': 'color',
+                 'rainbow': 'checkbox'}
 
     # implicitly registered in super class
     # def set_controls_model(self,cm)
@@ -23,10 +25,15 @@ class HorizontalLine(looping_shader_show.LoopingShaderShow):
         self.trail = 0.5
         self.color = (50,50,255)
         self.background = (0,0,0)
+        self.rainbow = 0
 
     def control_color_changed(self, c_ix):
         if c_ix == 0:       # use the primarty color
             self.color = self.cm.chosen_colors[c_ix]
+
+    def custom_checkbox_value_changed(self, checkbox):
+        if checkbox==0:
+            self.rainbow = self.cm.checkbox[checkbox]
 
     def custom_range_value_changed(self, range):
         self.trail = self.cm.ranges[range]
@@ -55,6 +62,9 @@ class HorizontalLine(looping_shader_show.LoopingShaderShow):
         else:
             # down
             self.dz = - (1 - 2 * progress)
+
+        if self.rainbow:
+            self.color = rainbow[int(loop_instance%len(rainbow))]
 
 __shows__ = [
               (HorizontalLine.name, HorizontalLine)

@@ -1,13 +1,16 @@
 #!/usr/bin/env python
 
-from color import hsv, rgb_to_hsv
+from color import hsv, rgb_to_hsv, rainbow
 
 import looping_shader_show
 
 class VerticalLine(looping_shader_show.LoopingShaderShow):
 
     name = "Vertical Line"
-    controls = { 'Trail Length': [0.1, 1, 0.5, 0.01], 'color': 'color' }
+    controls = { 'Trail Length': [0.1, 1, 0.5, 0.01], 
+                 'color': 'color',
+                 'rainbow': 'checkbox'
+                 }
 
 
     def __init__(self, geometry):
@@ -17,10 +20,15 @@ class VerticalLine(looping_shader_show.LoopingShaderShow):
         self.trail = 0.5
         self.color = (50,50,255)
         self.background = (0,0,0)
+        self.rainbow = 0
 
     def control_color_changed(self, c_ix):
         if c_ix == 0:       # use the primarty color
             self.color = self.cm.chosen_colors[c_ix]
+
+    def custom_checkbox_value_changed(self, checkbox):
+        if checkbox==0:
+            self.rainbow = self.cm.checkbox[checkbox]
 
     def custom_range_value_changed(self, range):
         self.trail = self.cm.ranges[range]
@@ -47,6 +55,9 @@ class VerticalLine(looping_shader_show.LoopingShaderShow):
         else:
             # other side
             self.dx = - (1 - 2 * progress)
+
+        if self.rainbow:
+            self.color = rainbow[int(loop_instance%len(rainbow))]
 
 
 __shows__ = [

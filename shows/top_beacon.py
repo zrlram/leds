@@ -68,7 +68,7 @@ class Top_Beacon(looping_shader_show.LoopingShaderShow):
 
         print loop_instance % 18
         if self.rainbow:
-            self.color = col.rainbow[int(loop_instance%18)]
+            self.color = col.rainbow[int(loop_instance%len(col.rainbow))]
 
 
 __shows__ = [
