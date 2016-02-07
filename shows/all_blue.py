@@ -22,8 +22,6 @@ class Blue(looping_show.LoopingShow):
 
         self.duration = 4
 
-        col.create_rainbow()
-
     def set_controls_model(self, cm):
         self.cm = cm
 
