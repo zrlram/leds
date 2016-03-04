@@ -14,7 +14,7 @@ class Audio(looping_show.LoopingShow):
     #max -10.9559531292 84.0577667883
     #min -27.7098972444 40.331492511
     audio_maxLoud = -11
-    audio_minLoud = -28
+    audio_minLoud = -35
     audio_maxPitch = 6000
     audio_minPitch = 500
 
@@ -26,6 +26,7 @@ class Audio(looping_show.LoopingShow):
         # init audio
         p = pyaudio.PyAudio()
 
+        # sometimes input_device_index is 2?
         self.stream = p.open(format=pyaudio.paInt16,
                         channels=1,
                         rate=44100,
@@ -43,7 +44,7 @@ class Audio(looping_show.LoopingShow):
         self.cm = cm
 
     '''
-    http://stackoverflow.com/questions/9082431/frequency-analysis-in-python
+        http://stackoverflow.com/questions/9082431/frequency-analysis-in-python
         Using zero-crossing in the time domain to look for the pitch. No FFT!
     '''
     def get_pitch(self, signal):
@@ -52,7 +53,7 @@ class Audio(looping_show.LoopingShow):
         return round(len(index) * 44100 / (2*np.prod(len(signal))))
 
     '''  
-    http://dsp.stackexchange.com/questions/16438/why-fft-does-not-retrieve-original-amplitude-when-increasing-signal-length 
+        http://dsp.stackexchange.com/questions/16438/why-fft-does-not-retrieve-original-amplitude-when-increasing-signal-length 
     '''
     def get_fft(self, y, fs):
         """ Get the FFT of a given signal and corresponding frequency bins.
@@ -98,12 +99,18 @@ class Audio(looping_show.LoopingShow):
                 #print "available", self.stream.get_read_available()
                 pass
 
+        ''' TBD if we want more details, not just pitch and loud
         (mag, freq) = self.get_fft(samps, 44100)
         print freq, mag
         # next step is to take some frequencies and map them to RGB ... maybe visualize the output first. Woudl be nice to have X
+        '''
 
         print "pitch",pitch, "loud", loud
 
+        if loud < Audio.audio_minLoud:
+            Audio.audio_minLoud = loud
+        if loud > Audio.audio_maxLoud:
+            Audio.audio_maxLoud = loud
         #Audio.audio_minLoud = min(Audio.audio_minLoud, loud) 
         #Audio.audio_maxLoud = max(Audio.audio_maxLoud, loud)
         Audio.audio_minPitch = min(Audio.audio_minPitch, pitch) 
