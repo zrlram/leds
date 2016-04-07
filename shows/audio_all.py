@@ -13,8 +13,8 @@ class Audio(looping_show.LoopingShow):
     name = "Audio Ball"
     #max -10.9559531292 84.0577667883
     #min -27.7098972444 40.331492511
-    audio_maxLoud = -11
-    audio_minLoud = -35
+    audio_maxLoud = -30
+    audio_minLoud = -30
     audio_maxPitch = 6000
     audio_minPitch = 500
 
@@ -30,7 +30,7 @@ class Audio(looping_show.LoopingShow):
         self.stream = p.open(format=pyaudio.paInt16,
                         channels=1,
                         rate=44100,
-                        input_device_index = 0,
+                        input_device_index = 2,
                         input=True,
                         frames_per_buffer=1024)
 
@@ -105,7 +105,7 @@ class Audio(looping_show.LoopingShow):
         # next step is to take some frequencies and map them to RGB ... maybe visualize the output first. Woudl be nice to have X
         '''
 
-        print "pitch",pitch, "loud", loud
+        # print "pitch",pitch, "loud", loud
 
         if loud < Audio.audio_minLoud:
             Audio.audio_minLoud = loud
@@ -134,7 +134,7 @@ class Audio(looping_show.LoopingShow):
 
         loud = max(0,min(loud,1))
 
-        print "l",round(loud , 1), "p",round(pitch, 1)
+        print "l",round(loud , 1), "p",round(pitch, 1), "minL:", Audio.audio_minLoud, Audio.audio_maxLoud
 
         # color
         color = col.hsv(pitch,pitch,loud)
