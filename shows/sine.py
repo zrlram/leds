@@ -88,9 +88,8 @@ class Sine(looping_shader_show.LoopingShaderShow):
         '''
 
         # rotate this baby
-        #rotate = self.shift
-        #rotate = 0
-        rotate2 = self.shift
+        rotate = self.shift
+        rotate2 = 0
 
         # around z-axis
         x_rot = x * cos (rotate) - y * sin (rotate)
