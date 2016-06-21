@@ -7,8 +7,6 @@ colors - determining the time each color should be shown or
 the overall duration of the animation is a detail that the library
 user must handle.
 
-All functions take and return Color objects
-
 There are two main functions you'll want to use.  The first
 generates a simple linear transition between two Colors:
 
