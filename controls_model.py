@@ -25,7 +25,7 @@ class ControlsModel(object):
         self.time_limits = [10, 20 * 60]
         self.max_time = 42.0
 
-        self.brightness = 1.0
+        self.brightness = 0.8
 
         # The RGB values of the chosen colors. There are two
         # To keep things generic, there are two colors that can be set 
@@ -60,7 +60,8 @@ class ControlsModel(object):
 
     def speed_change_rel(self, amt):
         # Scale this value some so it's a log scale or similar?
-        self.speed_multi = 1.0 + amt
+        #self.speed_multi = 1.0 + amt
+        self.speed_multi = amt
         if self.speed_multi <= 0.0:
             self.speed_multi = 0.01
 

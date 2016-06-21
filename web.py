@@ -84,6 +84,8 @@ class OrbWeb(object):
                 'run_time': int(self.runner.show_runtime * 1000)
             },
             'max_time': int(self.runner.max_show_time * 1000),
+            'speed': self.cm.speed_multi,
+            'brightness': self.cm.brightness
         }
 
         return out

@@ -33,7 +33,7 @@ signal.signal(signal.SIGQUIT, _stacktraces)
 
 class ShowRunner(threading.Thread):
 
-    def __init__(self, geometry, queue, cm, wc, max_showtime=240):
+    def __init__(self, geometry, queue, cm, wc, max_showtime=60):
         super(ShowRunner, self).__init__(name="ShowRunner")
 
         self.profile = None

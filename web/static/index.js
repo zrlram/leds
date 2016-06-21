@@ -74,6 +74,11 @@
 
     function showControls() {
         var name = $("#currentShowName").text();
+        console.log("shows", shows, shows.length);
+        if (shows === undefined || Object.keys(shows).length == 0) {
+            console.log("no shows yet, waiting");
+            setTimeout(showControls, 1000);  
+        }
         var show = shows[name];
         // console.log("shows",shows);
         // console.log("name", name, "show", show.controls);
@@ -138,6 +143,59 @@
 
         }
 
+        $('#speed-range').range({ min: 0, max: 4, start: speed, step: 0.1,
+           onChange: function(value) {
+                B.api("/config", {
+                    data: {
+                        speed: value,     
+                        command: "set_speed"
+                    }
+                    , success: function(data) {
+                        console.log("data",data);
+                        $('#speed-value').text(data.speed)
+                    }
+                    , error: function(xhr, status, err) {
+                        B.showError("Unable to set speed: "+err);
+                    }
+                });
+           }
+        });
+        $('#brightness-range').range({ min: 0, max: 1, start: brightness, step: 0.1,
+           onChange: function(value) {
+                B.api("/config", {
+                    data: {
+                        brightness: value, 
+                        command: "set_brightness"
+                    }
+                    , success: function(data) {
+                        console.log("data",data);
+                        // $('#brigthness-value').text(data.brigthness)
+                    }
+                    , error: function(xhr, status, err) {
+                        B.showError("Unable to set brightness: "+err);
+                    }
+                });
+           }
+        });
+        // times are in seconds
+        $('#max-show-time-range').range({ min: 10, max: 20*60, start: max_runtime,
+           onChange: function(value) {
+                B.api("/config", {
+                    data: {
+                        runtime: value,     
+                        command: "set_max_runtime"
+                    }
+                    , success: function(data) {
+                        console.log("data",data);
+                        $('#max-show-time-value').text(data.max_runtime)
+                    }
+                    , error: function(xhr, status, err) {
+                        B.showError("Unable to set max show runtime: "+err);
+                    }
+                });
+           }
+        });
+
         $('.jscolor').each(function(i, obj) {
             if (!obj.hasOwnProperty("hasPicker")) {
                 var picker = new jscolor(obj, {});
@@ -175,7 +233,11 @@
 
     }
 
+    // some global parameters
     var statusTimeout = null;
+    var speed = 0;
+    var max_runtime = 0;
+    var brightness = 0;
 
     function formatDuration(d) {
         if (!d) return "0s";
@@ -212,13 +274,16 @@
 
         B.api("/status", {
             success: function(data) {
-                // console.log("Got status data ", data);
+                console.log("Got status data ", data);
                 if (data.show) {
                     $("#currentShowName").text(data.show.name);
                     $("#currentShowRunTime").text(formatDuration(data.show.run_time))
                 }
                 $('#statusIcon').css("background-color", "lightgreen");
                 $("#maxShowRuntime").text(formatDuration(data.max_time));
+                max_runtime = data.max_time / 1000;    // store to initialize the control correctly
+                brightness = data.brightness;
+                speed = data.speed;             // again, for the controls
                 if (!controls_initialized) {
                     showControls();
                     controls_initialized = 1;
@@ -263,57 +328,6 @@
         }); 
         */
 
-        $('#speed-range').range({ min: 0, max: 4, start: 0.1, step: 0.1,
-           onChange: function(value) {
-                B.api("/config", {
-                    data: {
-                        speed: value,     
-                        command: "set_speed"
-                    }
-                    , success: function(data) {
-                        console.log("data",data);
-                        $('#speed-value').text(data.speed)
-                    }
-                    , error: function(xhr, status, err) {
-                        B.showError("Unable to set speed: "+err);
-                    }
-                });
-           }
-        });
-        $('#brightness-range').range({ min: 0, max: 1, start: 1.0, step: 0.1,
-           onChange: function(value) {
-                B.api("/config", {
-                    data: {
-                        brightness: value, 
-                        command: "set_brightness"
-                    }
-                    , success: function(data) {
-                        console.log("data",data);
-                        // $('#brigthness-value').text(data.brigthness)
-                    }
-                    , error: function(xhr, status, err) {
-                        B.showError("Unable to set brightness: "+err);
-                    }
-                });
-           }
-        });
-        $('#max-show-time-range').range({ min: 10, max: 20*60, start: 4 * 60,
-           onChange: function(value) {
-                B.api("/config", {
-                    data: {
-                        runtime: value,     
-                        command: "set_max_runtime"
-                    }
-                    , success: function(data) {
-                        console.log("data",data);
-                        $('#max-show-time-value').text(data.max_runtime)
-                    }
-                    , error: function(xhr, status, err) {
-                        B.showError("Unable to set max show runtime: "+err);
-                    }
-                });
-           }
-        });
 
         /*
         $('#dither').click(function(value) {
