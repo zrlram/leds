@@ -116,7 +116,7 @@ class Sine(looping_shader_show.LoopingShaderShow):
         self.laser_pos += pi/22 % (2*pi)
         self.laser_pos %= (2*pi)
         if self.rainbow:
-            self.color = rainbow[int((self.shift / (2 * pi)) *18%len(rainbow))]
+            self.color = rainbow[int(((self.shift / (2 * pi)) * len(rainbow)) % len(rainbow))]
         
 
 __shows__ = [
