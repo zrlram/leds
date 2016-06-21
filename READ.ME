@@ -1,23 +1,125 @@
-Effects I want:
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+      650    0.040    0.000  239.343    0.368 ./run.py:140(get_next_frame)
+      650    0.058    0.000  239.303    0.368 /home/pi/leds/shows/looping_shader_show.py:19(next_frame)
+      650   18.847    0.029  239.028    0.368 /home/pi/leds/model.py:24(map_pixels)
+   325000   31.695    0.000  168.898    0.001 /home/pi/leds/shows/vert_line.py:27(shader)
+   325000   67.093    0.000   84.489    0.000 /home/pi/leds/color.py:17(hsv)
+   325000   20.447    0.000   51.296    0.000 /home/pi/leds/color.py:41(rgb_to_hsv)
+      650    0.200    0.000   51.282    0.079 /home/pi/leds/connection.py:37(draw)
+      650   32.106    0.049   51.082    0.079 /home/ram/led/leds.new/opc.py:119(put_pixels)
+   325000   23.619    0.000   30.848    0.000 /usr/lib/python2.7/colorsys.py:116(rgb_to_hsv)
+  2275000   18.261    0.000   18.261    0.000 {max}
+  2275000   17.248    0.000   17.248    0.000 {min}
+   325650    4.300    0.000    4.300    0.000 {_struct.pack}
+   325000    2.615    0.000    2.615    0.000 {math.floor}
+   325000    1.418    0.000    1.418    0.000 {abs}
+      650    1.010    0.002    1.010    0.002 {method 'send' of '_socket.socket' objects}
+        1    0.553    0.553    0.553    0.553 ./run.py:147(random_show_name)
+     1345    0.192    0.000    0.501    0.000 ./run.py:244(check_queue)
+     1345    0.055    0.000    0.309    0.000 /usr/lib/python2.7/Queue.py:184(get_nowait)
+     1345    0.165    0.000    0.254    0.000 /usr/lib/python2.7/Queue.py:150(get)
+      650    0.155    0.000    0.218    0.000 /home/pi/leds/shows/looping_show.py:159(next_frame)
+      650    0.123    0.000    0.123    0.000 {method 'join' of 'str' objects}
+     3991    0.042    0.000    0.042    0.000 {time.time}
+     1345    0.029    0.000    0.038    0.000 /usr/lib/python2.7/Queue.py:237(_qsize)
+      650    0.038    0.000    0.038    0.000 /home/pi/leds/shows/vert_line.py:36(update_at_progress)
+     1345    0.035    0.000    0.035    0.000 {method 'acquire' of 'thread.lock' objects}
+      650    0.014    0.000    0.024    0.000 /home/ram/led/leds.new/opc.py:77(_ensure_connected)
+     1951    0.019    0.000    0.019    0.000 /home/ram/led/leds.new/opc.py:73(_debug)
+      650    0.018    0.000    0.018    0.000 {math.modf}
+     1345    0.016    0.000    0.016    0.000 {method 'release' of 'thread.lock' objects}
+     2648    0.015    0.000    0.015    0.000 {len}
+        1    0.007    0.007    0.007    0.007 /home/pi/leds/shows/looping_shader_show.py:12(start)
+        1    0.000    0.000    0.005    0.005 /usr/lib/python2.7/socket.py:223(meth)
+        1    0.005    0.005    0.005    0.005 {method 'connect' of '_socket.socket' objects}
+        1    0.000    0.000    0.002    0.002 /home/pi/leds/controls_model.py:200(set_show_name)
+        1    0.002    0.002    0.002    0.002 ./run.py:81(next_show)
 
-- rewrite all to the new model stuff
-    - try the mercator stuff in here
+NEW TEST CASE
+    - fix the globe with those flaky pixels
 
-- try out the faded_vert_line() on another sphere that has less / more pixels
+- Use audio for beat detection and an overlay to determine timing for shows
+
+Finish up Pi:
+- https://k3a.me/how-to-make-raspberrypi-truly-read-only-reliable-and-trouble-free/
+
+https://www.youtube.com/watch?v=ImzLmxeIeX8         -- check how their line faces out also and ideas for shows
+https://www.facebook.com/enviraldesign/videos/846912412082223/?fref=nf      == same as above - llok at 3:50 there are these highlights going through
+- http://www.enviral-design.com/geopix/geopix-getting-started/ - this is the software
+
+
+Cool: https://www.youtube.com/watch?v=YLthO-ewYvk
+
+SPECTRUM THING
+    - build a mapping from 2D into 3D (to map the x-y of a spectrum analyzer)
+    - getting audio:
+        - https://www.raspberrypi.org/forums/viewtopic.php?t=35838&p=454041
+        - http://yukara-13.hatenablog.com/entry/2013/12/05/025655
+        - http://www.aicbt.com/raspberry-pi-sleep-monitor/
+        - https://www.raspberrypi.org/forums/viewtopic.php?f=32&t=71062
+        - http://stackoverflow.com/questions/2648151/python-frequency-detection
+        - http://stackoverflow.com/questions/12344951/detect-beat-and-play-wav-file-in-a-syncronised-manner
+        - https://github.com/ddf/Minim/blob/master/src/ddf/minim/analysis/BeatDetect.java
+        - https://github.com/chrisgagne/ColorCyclingLEDs/blob/master/ColorCyclingLEDsInputLiteMinimBeatDetect/ColorCyclingLEDsInputLite.pde
+        - http://www.swharden.com/blog/2010-03-05-realtime-fft-graph-of-audio-wav-file-or-microphone-input-with-python-scipy-and-wckgraph/
+        - https://zolmeister.com/2012/10/back-light-music-leds.html
+
+We have a speed issue
+    - does multithreading in model really help?  How many processes?
+    - try pypy again - now without matplotlib
+        - why is it slower?
+    + can we reduce web threads? 8 seems like a lot
+    - fix shader color intensity thing - optimize
+    + Remove log output!        DID that work?
+    + try laptop and see how performance is
+    + try without the Web interface! is it slow too?
+    - use GPU for pixels?
+    - use numpy for some of my pixel mapping? maybe with matrix multiplication on that?
+
+    ? fix runtime reset when a new show is started.
+    ? when a new show is shown (not start_new_show()) - the controls need to be set (e.g., when opening the interface, the controls are not there)
+
+    - maybe have an inter process communication through sockets to de-couple the Web server and the shows into different processes and run shows in pypy 
+
+    - use color brewer for palettes or circling through colors
+    
+         
+- have a ring falling down. When the pixel hits the sine wave, make it stop and show the sine wave. Sine wave falling in place
+    - change amplitide over time
+    - have a vertical one as well and move both
+    - change the angle as well while running
+- Eyes on pacman
+- yellow rings parting from the middle (vertically)
+- two large object (or more) that move around, on intersection, additive colors
+
+Make a bee pattern... pulsate the yellow
+
+Verify spehere geometry with actual sphere
+
+Use shows from baas
+    - implement other baas shaders / shows
+
+Look into OpenCL -- parallelize the entire model of mapping to LEDs
+    - pi3d  https://github.com/tipam/pi3d
+
+Do something with audio and ball flickering based on that
+    - https://learn.adafruit.com/raspberry-pi-spectrum-analyzer-display-on-rgb-led-strip
+
+- try the mercator stuff in here
+
 - concurrently run shows? 
-    - like having a small ring on the top and bottom blink while running sine waves or something
 - do something with raindrops falling based on gravity - many starting at diff times
-- build some helper functions
-    - loop with 'over' - do the right thing with arange not including the end
-    - loop with 'up'
-    - over goes from 0 to row[abs(up)-1]    !! have a function
-        (see horizontal_ring())
-- fix all the animations again with arange, etc.
-    - also update to use faded_pixel ?
+- sunrise
+- stars
+- ocean?
+- fire?
+    - see processing example
+- smiley
+
+- add a black film to the globe? Or use different vinyl?
 
 - make a small 4 LED cube. Move the beam around inbetween the four LEDs. So that the neighbors (the 4 LEDs) light up based on how close the beam is. Maybe when the beam is right on the LED, make it white. 
     - throw a few of those ont he ball and have them all do the same animation
-- implement mercator mapping for x-y stuff
 - have like a laser pointer drawing stuff
     - i bright pixel moving around, leaving a trail of a sine curve
 - intersect a plane with the sphere and roate it up and down
@@ -37,9 +139,6 @@ Effects I want:
 - text
 - Do somethign with OSC
 - Check this out for how the last few should look: https://www.kickstarter.com/projects/charliex/blinky-ball
-- balls: https://www.lightbulbsurplus.com/index.php?main_page=index&cPath=69_183_656_881
-- clear plastic balls: http://www.polycraftsupplies.co.uk/index.php/clear-plastic-balls-c-22
-- glue: https://learn.adafruit.com/assets/12699
 
 Could do better:
 - have a blue dot start somewhere and circularlly fill up the entire sphere
@@ -47,8 +146,4 @@ Could do better:
 
 Do something with the clock
 Do something with LEAP
-Do something with audio and ball flickering based on that
-Get Wireless USB module?
 Something with Web content / weather / check out a Web site, news, … not sure
-Hook up the iPhone? 
-

@@ -1,1 +1,18 @@
+sudo apt-get install git
+git clone https://github.com/zrlram/leds.git
+git clone git://github.com/scanlime/fadecandy
+cd fadecandy/server
+make submodules
+make
+sudo mv fcserver /usr/local/bin
+sudo vi /etc/rc.local
+    #  /usr/local/bin/fcserver /usr/local/bin/fcserver.json >/var/log/fcserver.log 2>&1 &
+sudo cp ~/led/fadecandy/ram.json /usr/local/bin/fcserver.json
+sudo apt-get install python-pyaudio
+sudo apt-get install python-numpy
 sudo pip install -U cherrypy
+
+sudo apt-get install python-dev
+pip install http://pypi.python.org/packages/source/S/SoundAnalyse/SoundAnalyse-0.1.1.tar.gz
+pip install python-matplotlib
+
