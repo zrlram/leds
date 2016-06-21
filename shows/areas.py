@@ -42,6 +42,11 @@ class Areas(looping_show.LoopingShow):
 
             self.clear()
 
+            # udpate mode every now and then
+            if (loop_instance % 5 == 0):
+                self.mode = (self.mode + 1) % 4
+                print "Changing mode to %s" % self.mode
+
         
         if self.mode == 0:
             _list = [[x for x in range(model.numLEDs)]]
@@ -76,6 +81,8 @@ class Areas(looping_show.LoopingShow):
                 self.geometry.set_pixel(i, c)
 
         self.geometry.draw()
+
+
     
 
 __shows__ = [

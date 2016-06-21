@@ -30,7 +30,7 @@ class PacMan(looping_shader_show.LoopingShaderShow):
         # configurable controls
         self.color = (250,250,0)
         self.background = (0,0,0)
-        self.rainbow = 0
+        self.rainbow = 1
         self.move = 0
 
         self.duration = 8

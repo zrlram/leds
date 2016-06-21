@@ -25,7 +25,7 @@ class HorizontalLine(looping_shader_show.LoopingShaderShow):
         self.trail = 0.5
         self.color = (50,50,255)
         self.background = (0,0,0)
-        self.rainbow = 0
+        self.rainbow = 1
 
     def control_color_changed(self, c_ix):
         if c_ix == 0:       # use the primarty color

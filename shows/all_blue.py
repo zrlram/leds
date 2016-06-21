@@ -4,7 +4,6 @@ import color as col
 class Blue(looping_show.LoopingShow):
 
     name = "Testing - All Blue"
-    ok_for_random = False
 
     red = (255, 0, 0)
     blue = (50, 50, 255)
@@ -18,7 +17,7 @@ class Blue(looping_show.LoopingShow):
 
         self.color = Blue.blue
         self.geometry = geometry
-        self.rainbow = 0
+        self.rainbow = 1
 
         self.duration = 4
 

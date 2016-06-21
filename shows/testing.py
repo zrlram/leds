@@ -6,6 +6,7 @@ from collections import OrderedDict
 class Testing(looping_shader_show.LoopingShaderShow):
 
     name = "Testing"
+    ok_for_random = False
 
     # Defining the controls themselves
     controls = OrderedDict()

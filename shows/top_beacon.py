@@ -19,8 +19,8 @@ class Top_Beacon(looping_shader_show.LoopingShaderShow):
         looping_shader_show.LoopingShaderShow.__init__(self, geometry, self.beacon_shader)
         self.show = False
         self.color = (255, 0, 0)
-        self.rainbow = 0
-        self.all = 0
+        self.rainbow = 1
+        self.all = 1
 
     def control_color_changed(self, c_ix):
         if c_ix == 0:       # use the primarty color
