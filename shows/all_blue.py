@@ -35,7 +35,7 @@ class Blue(looping_show.LoopingShow):
 
         color = self.color
         if self.rainbow:
-            color = col.rainbow[int(progress*18)]
+            color = col.rainbow[int(progress*len(rainbow))]
         for i in range(self.geometry.get_nof_pixels()):
             self.geometry.set_pixel(i, color)
 

@@ -134,7 +134,7 @@ class Audio(looping_show.LoopingShow):
 
         loud = max(0,min(loud,1))
 
-        print "l",round(loud , 1), "p",round(pitch, 1), "minL:", Audio.audio_minLoud, Audio.audio_maxLoud
+        # DEBUG: print "l",round(loud , 1), "p",round(pitch, 1), "minL:", Audio.audio_minLoud, Audio.audio_maxLoud
 
         # color
         color = col.hsv(pitch,pitch,loud)
