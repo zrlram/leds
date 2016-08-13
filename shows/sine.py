@@ -28,7 +28,7 @@ class Sine(looping_shader_show.LoopingShaderShow):
         self.background = (0,0,0)
         self.frequency = 4.0
         self.amplitude = 0.5
-        self.rainbow = 0
+        self.rainbow = 1
         self.laser = 0          # is it drawing it slowly on the sphere?
         self.laser_pos = .0      # and what's its position?
 
@@ -74,42 +74,14 @@ class Sine(looping_shader_show.LoopingShaderShow):
         z = p['point'][2]
 
         phi = atan2(y, x) + pi      # from 0 to 2pi
-        #phi2 = atan2(z, x) + pi      # from 0 to 2pi
-        # z_ = sin((phi+self.shift)*self.frequency) * self.amplitude
         z_ = sin(phi*self.frequency) * self.amplitude
-        #y_ = sin((phi2+self.shift)*self.frequency) * self.amplitude
-        '''
-        if self.laser:
-            dist = abs(z - sin(phi*self.frequency) * self.amplitude)
-        else:
-            dist = abs(z - z_)
-            dist2 = abs(y - y_)
-        #dist = abs(z - sin((phi)*self.frequency) * self.amplitude)
-        '''
 
-        # rotate this baby
         rotate = self.shift
-        rotate2 = 0
+        x_rot = x * cos(rotate) - z_ * sin(rotate)
+        z_rot = x * sin(rotate) + z_ * cos(rotate)
 
-        # around z-axis
-        x_rot = x * cos (rotate) - y * sin (rotate)
-        y_rot = y * cos (rotate) + x * sin (rotate)
-        z_rot = z_
-        # around x-axis
-        x_rot2 = x_rot
-        y_rot2 = y_rot * cos (rotate2) - z_rot * sin (rotate2)
-        z_rot2 = z_rot * cos (rotate2) + y_rot * sin (rotate2)
-
-
-        # \addplot3+[domain=-0:30,samples=200,samples y=0,ultra thick](x-5,{5*sin(deg(1.2*x))},3*x);
-
-        phi = atan2(y_rot2, x_rot2) + pi      # from 0 to 2pi
-        #phi2 = atan2(z, x) + pi      # from 0 to 2pi
-        # z_ = sin((phi+self.shift)*self.frequency) * self.amplitude
-        z_ = sin(phi*self.frequency) * self.amplitude
-
-        #dist = sqrt((z-z_rot2) ** 2 + (y-y_rot2) ** 2 + (x-x_rot2) ** 2)
-        dist = abs(z-z_)
+        #dist = sqrt( (z_rot - z)**2 + (x_rot - x)**2 )
+        dist = sqrt( (z_rot - z)**2 )
 
         if dist < 0.2:
             intensity = 1-dist/0.2
@@ -144,7 +116,7 @@ class Sine(looping_shader_show.LoopingShaderShow):
         self.laser_pos += pi/22 % (2*pi)
         self.laser_pos %= (2*pi)
         if self.rainbow:
-            self.color = rainbow[int((self.shift / (2 * pi)) *18)]
+            self.color = rainbow[int((self.shift / (2 * pi)) *18%len(rainbow))]
         
 
 __shows__ = [
