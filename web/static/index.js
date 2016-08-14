@@ -56,7 +56,10 @@
     }
     
     function changeCheckbox(evt) {
-        var value = $(this).context.value; 
+        var value = 0;
+        if ($(this).context.checked) { 
+            value = 1;
+        }
         console.log("checkbox value", value);
         var id = parseInt($(this).context.id);
         B.api("/config", {
