@@ -42,11 +42,13 @@ class Sine(looping_shader_show.LoopingShaderShow):
 
     def custom_range_value_changed(self, range):
         if range == 0:
-            self.frequency = self.cm.ranges[0]
-            print "freq", self.frequency
-        if range == 1:
-            self.amplitude = self.cm.ranges[1]
+            print "old amp", self.amplitude
+            self.amplitude = self.cm.ranges[range]
             print "amp", self.amplitude
+        if range == 1:
+            print "old freq", self.frequency
+            self.frequency = self.cm.ranges[range]
+            print "freq", self.frequency
 
     def custom_checkbox_value_changed(self, checkbox):
         if checkbox==0:
@@ -113,7 +115,7 @@ class Sine(looping_shader_show.LoopingShaderShow):
     def update_at_progress(self, progress, new_loop, loop_instance):
 
         self.shift = progress * 2 * pi
-        self.laser_pos += pi/22 % (2*pi)
+        self.laser_pos += pi/22 
         self.laser_pos %= (2*pi)
         if self.rainbow:
             self.color = rainbow[int(((self.shift / (2 * pi)) * len(rainbow)) % len(rainbow))]

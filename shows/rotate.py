@@ -1,5 +1,6 @@
 from color import hsv, rgb_to_hsv, rainbow
 from math import pi, cos, sin, sqrt
+from collections import OrderedDict
 
 import looping_shader_show
 
@@ -7,10 +8,12 @@ class RotatingLine(looping_shader_show.LoopingShaderShow):
 
     name = "Rotating Line"
 
-    controls = { 'Trail Length': [0.1, 1, 0.5, 0.01], 
-                 'color': 'color',
-                 'rainbow': 'checkbox'}
-
+    controls = OrderedDict()
+    controls.update({ 'Trail Length': [0.1, 1, 0.3, 0.01]})
+    controls.update({'color': 'color'})
+    controls.update({'tilt change' : [0.001, 1, 0.005, 0.001]})
+    controls.update({'rainbow': 'checkbox'})
+                 
     # implicitly registered in super class
     # def set_controls_model(self,cm)
 
@@ -26,6 +29,11 @@ class RotatingLine(looping_shader_show.LoopingShaderShow):
         self.color = (50,50,255)
         self.background = (0,0,0)
         self.rainbow = 1
+        self.tilt = 0
+        self.tilt_change = 0.005
+
+        self.duration = 10
+
 
     def control_color_changed(self, c_ix):
         if c_ix == 0:       # use the primarty color
@@ -36,7 +44,10 @@ class RotatingLine(looping_shader_show.LoopingShaderShow):
             self.rainbow = self.cm.checkbox[checkbox]
 
     def custom_range_value_changed(self, range):
-        self.trail = self.cm.ranges[range]
+        if range ==0:
+            self.trail = self.cm.ranges[range]
+        if range ==1:
+            self.tilt_change = self.cm.ranges[range]
 
     def rotate_x_shader(self, p):
 
@@ -62,7 +73,6 @@ class RotatingLine(looping_shader_show.LoopingShaderShow):
 
     def shader_rotate_y(self, p):
 
-        self.tilt = pi/4
         z = p['point'][2]
         y = p['point'][1]
         x = p['point'][0]
@@ -88,7 +98,6 @@ class RotatingLine(looping_shader_show.LoopingShaderShow):
 
     def shader(self, p):
 
-        self.tilt = pi/4
         z = p['point'][2]
         y = p['point'][1]
         x = p['point'][0]
@@ -128,7 +137,10 @@ class RotatingLine(looping_shader_show.LoopingShaderShow):
 
     def update_at_progress(self, progress, new_loop, loop_instance):
 
-        self.angle = progress * 2*pi
+        self.angle = progress * pi * 2
+        self.tilt += self.tilt_change
+        #self.tilt = self.tilt % (pi / 3)
+
         # dz is from -1 to 1
         if (loop_instance % 2):
             # up
@@ -140,7 +152,7 @@ class RotatingLine(looping_shader_show.LoopingShaderShow):
             self.dy = - (1 - 2 * progress)
 
         if self.rainbow:
-            self.color = rainbow[int(progress*10%len(rainbow))]
+            self.color = rainbow[int(progress*len(rainbow))%len(rainbow)]
 
 __shows__ = [
               (RotatingLine.name, RotatingLine)

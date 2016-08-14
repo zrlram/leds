@@ -7,7 +7,7 @@ class RandomRotatingLine(looping_shader_show.LoopingShaderShow):
 
     name = "RandomRotating Line"
 
-    controls = { 'Trail Length': [0.1, 1, 0.5, 0.01], 
+    controls = { 'Trail Length': [0.1, 1, 0.3, 0.01], 
                  'color': 'color',
                  'rainbow': 'checkbox'}
 
@@ -27,6 +27,9 @@ class RandomRotatingLine(looping_shader_show.LoopingShaderShow):
         self.background = (0,0,0)
         self.rainbow = 1
 
+        self.duration = 10
+
+
     def control_color_changed(self, c_ix):
         if c_ix == 0:       # use the primarty color
             self.color = self.cm.chosen_colors[c_ix]
@@ -37,6 +40,10 @@ class RandomRotatingLine(looping_shader_show.LoopingShaderShow):
 
     def custom_range_value_changed(self, range):
         self.trail = self.cm.ranges[range]
+
+    #def control_speed_changed(self):
+    #    if (self.cm.speed_multi == 1.0): # such a hack :(
+    #        self.cm.speed_change_rel(0.4)
 
     def shader(self, p):
 
@@ -79,6 +86,7 @@ class RandomRotatingLine(looping_shader_show.LoopingShaderShow):
 
         self.angle = progress * 2*pi
         # dz is from -1 to 1
+
         if (loop_instance % 2):
             # up
             self.dz = 1 - 2 * progress

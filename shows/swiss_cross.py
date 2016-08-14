@@ -7,8 +7,6 @@ class SwissCross(looping_shader_show.LoopingShaderShow):
 
     name = "Swiss Cross"
 
-    red = (255, 0, 0)
-
     controls = OrderedDict()
     controls.update({'Rainbow': 'checkbox'})
 
@@ -20,7 +18,9 @@ class SwissCross(looping_shader_show.LoopingShaderShow):
         self.duration = 10
         self.angle = 0      # for rotation
         self.rainbow = 1
-        self.white = (230, 230, 230)
+        self.flag = (230, 230, 230)     # white
+        self.background = (255, 0, 0)   # red
+        self.duration = 2
 
     def custom_checkbox_value_changed(self, checkbox):
         if checkbox==0:
@@ -38,7 +38,7 @@ class SwissCross(looping_shader_show.LoopingShaderShow):
         x_ = x*cos(self.angle)-y*sin(self.angle)
         y_ = x*sin(self.angle)+y*cos(self.angle)
 
-        col = rgb_to_hsv(self.white)
+        col = rgb_to_hsv(self.flag)
 
         if (abs(x_)<0.3 and abs(z)<0.6 and y_>0):
             return hsv(col[0], col[1], 1-abs(x_))
@@ -48,14 +48,16 @@ class SwissCross(looping_shader_show.LoopingShaderShow):
             #return hsv(0.3, 0, 1-abs(z))
 
         # background
-        return SwissCross.red
+        return self.background
 
     def update_at_progress(self, progress, new_loop, loop_instance):
 
         self.angle = progress * 2*pi
+
         if self.rainbow:
-            self.white = rainbow[int(progress*len(rainbow))]
-            # print "setting white to: %s" % str(self.white)
+            self.background = rainbow[int(loop_instance % len(rainbow))]
+
+        # print "setting bg to: %s" % str(self.background)
 
 
 
