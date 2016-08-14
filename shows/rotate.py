@@ -11,7 +11,7 @@ class RotatingLine(looping_shader_show.LoopingShaderShow):
     controls = OrderedDict()
     controls.update({ 'Trail Length': [0.1, 1, 0.3, 0.01]})
     controls.update({'color': 'color'})
-    controls.update({'tilt change' : [0.001, 1, 0.005, 0.001]})
+    controls.update({'tilt change' : [0.001, 1, 0.2, 0.001]})
     controls.update({'rainbow': 'checkbox'})
                  
     # implicitly registered in super class
@@ -30,7 +30,7 @@ class RotatingLine(looping_shader_show.LoopingShaderShow):
         self.background = (0,0,0)
         self.rainbow = 1
         self.tilt = 0
-        self.tilt_change = 0.005
+        self.tilt_change = 0.2
 
         self.duration = 10
 
