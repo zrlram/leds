@@ -19,6 +19,7 @@ class Areas(looping_show.LoopingShow):
         self.background = self.foreground
         fg_H = (get_H(self.foreground) + 0.5) % 1
         set_H(self.background, absolute=fg_H)
+        self._list = []
 
     def clear(self):
         for i in range(model.numLEDs):
@@ -47,28 +48,28 @@ class Areas(looping_show.LoopingShow):
                 self.mode = (self.mode + 1) % 4
                 print "Changing mode to %s" % self.mode
 
-        
-        if self.mode == 0:
-            _list = [[x for x in range(model.numLEDs)]]
-        elif self.mode ==1:
-            _list = model.HOR_RINGS_TOP_DOWN
-        elif self.mode ==2:
-            _list = model.HOR_RINGS_MIDDLE_OUT
-        elif self.mode ==3:
-            _list = model.HOR_RINGS_TOP_DOWN
-        else:
-            _list = [[x for x in range(model.numLEDs)]]
+            if self.mode == 0:
+                self._list = [[x for x in range(model.numLEDs)]]
+            elif self.mode ==1:
+                self._list = model.HOR_RINGS_TOP_DOWN
+            elif self.mode ==2:
+                self._list = model.HOR_RINGS_MIDDLE_OUT
+            elif self.mode ==3:
+                self._list = model.HOR_RINGS_TOP_DOWN
+                self._list.reverse()
+            else:
+                self._list = [[x for x in range(model.numLEDs)]]
 
         # Because progress will never actually hit 1.0, this will always
         # produce a valid list index
-        to_light = int(progress * len(_list))
+        to_light = int(progress * len(self._list))
 
-        for i in range(0, len(_list)):
+        for i in range(0, len(self._list)):
             c = self.background
 
             if i <= to_light:
                 x = i
-                if len(_list) < len(self.color_list) / 2:
+                if len(self._list) < len(self.color_list) / 2:
                     x = i * 2
                 c_ix = x % len(self.color_list)
 
@@ -77,7 +78,7 @@ class Areas(looping_show.LoopingShow):
 
                 c = self.color_list[c_ix]
 
-            for i in _list[i]:
+            for i in self._list[i]:
                 self.geometry.set_pixel(i, c)
 
         self.geometry.draw()
