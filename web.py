@@ -20,6 +20,12 @@ class OrbWeb(object):
             if name in runner.random_eligible_shows:
                 s['random'] = True
 
+        for name in runner.overlay_shows:
+            show_library[name] = s = {
+                'type': "overlay",
+            }
+
+
     @cherrypy.expose
     def clear_show(self):
         self.queue.put("clear")
@@ -36,6 +42,29 @@ class OrbWeb(object):
             #probably a string... do nothing!
             pass
         return "<a href='.'/>Back</a>"
+
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    def run_overlay(self):
+        data = cherrypy.request.json
+        name = data.get("name")
+        if name:
+            self.queue.put("run_overlay:"+name)
+            print "Setting overlay to:", name
+        else:
+            print "Didn't get a overlay name"
+
+        return {'ok': True}
+
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def stop_overlay(self):
+
+        self.queue.put("stop_overlay")
+        print "Stopping all overlays"
+
+        return {'ok': True}
 
 
     @cherrypy.expose

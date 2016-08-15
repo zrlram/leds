@@ -50,11 +50,21 @@ class ShowRunner(threading.Thread):
         self.running = True
         self.max_show_time = max_showtime
 
-        self.shows = dict(shows.load_shows())
+        self.all_shows = dict(shows.load_shows())
+        self.shows = {}
+        self.overlay_shows = []
         self.random_eligible_shows = []
 
-        for name in self.shows:
-            _class = self.shows[name]
+        for name in self.all_shows:
+            _class = self.all_shows[name]
+
+            # Overlays are ONLY overlays            
+            if hasattr(_class, "show_type"):
+                if _class.show_type == "overlay":
+                    self.overlay_shows.append(name)
+                    continue
+
+            self.shows[name] = self.all_shows[name]
 
             ok_for_random = True
             if hasattr(_class, "ok_for_random"):
@@ -64,12 +74,18 @@ class ShowRunner(threading.Thread):
                 self.random_eligible_shows.append(name)
 
         print "Shows: %s" % ', '.join([s for s in self.shows])
+        print "Overlay shows: %s" % str(self.overlay_shows)
         print "Random eligible shows: %s" % str(self.random_eligible_shows)
 
         self.randseq = self.random_show_name()
         
         self.show = None                        # current show object 
         self.framegen = None                    # next frame... (next_frame)
+
+        # And then ALSO an overlay show - OMG, so many shows!
+        # This uses .model, the unmuted version
+        self.overlay_show = None
+        self.overlay_framegen = None
 
         # show speed multiplier - ranges from 0.5 to 2.0
         # 1.0 is normal speed
@@ -136,6 +152,37 @@ class ShowRunner(threading.Thread):
 
         self.cm.set_show_name(name)
 
+    def start_overlay(self, name):
+        print self.overlay_shows
+        if not name in self.overlay_shows:
+            print "Start Overlay show does not exist. Ignoring"
+            return
+
+        print "Start overlay show %s" % name
+
+        show_constructor = self.all_shows[name]
+
+        self.overlay_show = show_constructor(self.geometry)
+        self.overlay_framegen = self.overlay_show.next_frame()
+
+        try:
+            self.overlay_show.set_controls_model(self.cm)
+        except AttributeError:
+            pass
+
+        try:
+            self.overlay_show.control_refreshAll()
+        except AttributeError:
+            pass
+
+
+    def stop_overlay(self):
+
+        # This should sufficiently make them go away
+        self.overlay_show = None
+        self.overlay_framegen = None
+
+
 
     def get_next_frame(self):
         ''' returns a delay or None '''
@@ -143,6 +190,13 @@ class ShowRunner(threading.Thread):
             return self.framegen.next()
         except StopIteration:
             return None
+
+    def get_next_overlay_frame(self):
+        try:
+            return self.overlay_framegen.next()
+        except StopIteration:
+            return None
+
    
     def random_show_name(self):
         """
@@ -173,6 +227,8 @@ class ShowRunner(threading.Thread):
             self.next_show()
 
         next_frame_at = 0.0                           
+        next_overlay_frame_at = 0.0
+
         show_started_at = time.time()
 
         while self.running:
@@ -207,6 +263,14 @@ class ShowRunner(threading.Thread):
                     # print "%f not yet" % start
                     pass
 
+                if start >= next_overlay_frame_at and self.overlay_framegen:
+                    doverlay = self.get_next_overlay_frame()
+
+                    if doverlay:
+                        next_overlay_frame_at = time.time() + (doverlay * self.speed_x)
+
+
+
                 # Maybe this show is done?
                 if self.show_runtime > self.max_show_time:
                     print "Max show time elapsed, changing shows"
@@ -218,6 +282,11 @@ class ShowRunner(threading.Thread):
                     # of 44hz
 
                     until_next = next_frame_at - time.time()
+                    until_next_overlay = next_overlay_frame_at - time.time()
+
+                    if until_next_overlay < until_next and until_next_overlay > 0.001:
+                        until_next = until_next_overlay
+
 
                     # Cap until_next at the minimum
                     # The min to sleep time, which isn't necessarily the min
@@ -284,6 +353,11 @@ class ShowRunner(threading.Thread):
                 self.running = True
                 show_name = msg[9:]
                 self.next_show(show_name)
+            elif msg.startswith("run_overlay:"):
+                show_name = msg[12:]
+                self.start_overlay(show_name)
+            elif msg.startswith("stop_overlay"):
+                self.stop_overlay()
             elif msg.startswith("inc runtime"):
                 self.max_show_time = int(msg.split(':')[1])
 

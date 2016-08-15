@@ -1,6 +1,7 @@
 (function() {
     var shows = {};
     var showNames = [];
+    var overlayNames = [];
     var controls_initialized = 0;
 
     function loadShows() {
@@ -10,10 +11,17 @@
                 shows = data;
 
                 showNames = [];
+                overlayNames = [];
                 for(var name in shows) {
-                    showNames.push(name);
+                    if (shows[name].type=="master") {
+                        showNames.push(name);
+                    }
+                    else if (shows[name].type=="overlay") {
+                        overlayNames.push(name)
+                    }
                 }
                 showNames.sort();
+                overlayNames.sort();
 
                 makeShows();
             }
@@ -32,11 +40,19 @@
             var show = shows[name];
             s += "<a class='item show start' data-name='"+name+"'>"+name+"</a>";
         }
-
-
         $("#showList").append(s);
-
         $(".show.start").bind("click", startShow);
+
+        s = "";
+        for(var i=0; i<overlayNames.length; i++) {
+            var name = overlayNames[i];
+            var show = shows[name];
+            s += "<a class='item overlay start' data-name='"+name+"'>"+name+"</a>";
+        }
+        s += "<button class='ui effect button overlay stop'>Stop</button>";
+        $("#showOverlays").append(s);
+        $(".overlay.start").bind("click", startOverlay);
+        $(".overlay.stop").bind("click", stopOverlay);
     }
 
     function changeColor(evt) {
@@ -234,6 +250,31 @@
         });
 
 
+    }
+
+    function startOverlay(evt) {
+        console.log("start overlay this=",this," evt=",evt);
+        var el = $(this);
+        var name = el.data("name")
+
+        B.api("/run_overlay", {
+            data: {
+                name: name
+            }
+            , error: function(xhr, status, err) {
+                B.showError("Unable to run overlay: "+err);
+            }
+        });
+    }
+
+    function stopOverlay(evt) {
+        console.log("stop overlays");
+        B.api("/stop_overlay", {
+            data: {},
+            error: function(xhr, status, err) {
+                B.showError("Unable to stop overlays");
+            }
+        });
     }
 
     // some global parameters
