@@ -313,6 +313,11 @@
         loadShows();
         updateStatus();
 
+        // build shutdown button
+        $("#shutdown").click(function(value) {
+           B.api("/shutdown", { data:{ please: 1 } });
+        });
+
         /*
         $('#speed-plus').click(function(value) {
                 B.api("/config", {

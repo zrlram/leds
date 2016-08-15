@@ -25,7 +25,7 @@ class ControlsModel(object):
         self.time_limits = [10, 20 * 60]
         self.max_time = 42.0
 
-        self.brightness = 0.8
+        self.brightness = 0.7
 
         # The RGB values of the chosen colors. There are two
         # To keep things generic, there are two colors that can be set 

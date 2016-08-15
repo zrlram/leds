@@ -93,8 +93,30 @@ class OrbWeb(object):
     @cherrypy.expose
     @cherrypy.tools.json_in()
     @cherrypy.tools.json_out()
+    def shutdown(self):
+        try:
+            data = cherrypy.request.json
+        except:
+            return {"ok": False, "msg": "You didn't say please"}
+
+        if not data.get("please"):
+            return {"ok": False, "msg": "You didn't say please"}
+
+        import os
+        os.system("shutdown -h now")
+        print "SHUTDOWN"
+
+        return {"ok": True}
+
+
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
     def server_reset(self):
-        data = cherrypy.request.json
+        try:
+            data = cherrypy.request.json
+        except:
+            return {"ok": False, "msg": "You didn't say please"}
 
         if not data.get("please"):
             return {"ok": False, "msg": "You didn't say please"}
