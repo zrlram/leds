@@ -187,6 +187,17 @@ class ShowRunner(threading.Thread):
                     # print "%f next frame" % start
                     delta = self.get_next_frame()
 
+                    if isinstance(delta, tuple):
+                        if len(delta) > 1:
+                            frame_muted = delta[1]
+                        if len(delta) > 0:
+                            delta = delta[0]
+                        else:
+                            delta = 0.0001  # failsafe
+
+                    if delta < 0.023:
+                        delta = 0.023
+
                     # If they give us an advisory time, we will record it, otherwise
                     # we will keep asking for frames as quickly as we can
                     if delta:
@@ -206,12 +217,16 @@ class ShowRunner(threading.Thread):
                     # more that .023s which yields roughly the max DMX framerate
                     # of 44hz
 
-                    # TBD -- need to do some profiling here. Do we really have the luxury of sleepign ???
-                    to_sleep = 0.023 
                     until_next = next_frame_at - time.time()
 
-                    if until_next < to_sleep and until_next > 0.001:
-                        to_sleep = until_next
+                    # Cap until_next at the minimum
+                    # The min to sleep time, which isn't necessarily the min
+                    # frame rate, but if this is too low it's going to nuke the
+                    # cpu hard core. until_next could be negative at this point
+                    # if output took a long time in particular
+                    to_sleep = until_next
+                    if to_sleep < 0.005:
+                        to_sleep = 0.005
 
                     # print "toSleep = %s" % str(to_sleep)
                     time.sleep(to_sleep)
