@@ -109,6 +109,7 @@ class ShowRunner(threading.Thread):
             self.profile.enable()
 
         show = None
+        self.is_a_random_selection = False
         if name:
             if name in self.shows:
                 show = self.shows[name]
@@ -119,6 +120,7 @@ class ShowRunner(threading.Thread):
         if not show:
             print "Choosing random show"
             name = self.randseq.next()
+            self.is_a_random_selection = True
             show = self.shows[name]
 
         self.clear()
@@ -142,6 +144,8 @@ class ShowRunner(threading.Thread):
         self.cm.add_listener(self.show)
         try:
             self.show.set_controls_model(self.cm)
+            if self.is_a_random_selection:
+                self.show.was_selected_randomly()
         except AttributeError:
             pass
 

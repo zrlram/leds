@@ -15,7 +15,7 @@ class RYB(looping_show.LoopingShow):
 
     def __init__(self, sheep_sides):
         looping_show.LoopingShow.__init__(self, sheep_sides)
-        self.duration = 2
+        self.duration = 2 
         self.mode = 0
 
         # Setup a unique offset for each bird
@@ -24,13 +24,14 @@ class RYB(looping_show.LoopingShow):
             self.offsets.append(random.random())
             #self.offsets.append(0.01)
 
-    '''
-    def was_selected_randomly(self):
-        self.cm.reset_step_modifiers(random.randrange(3))
-        self.cm.set_modifier(3, (random.randrange(10) > 4))
-        self.cm.set_intensified((random.random() * 2.0) - 1.0)
+        self.was_selected_randomly()
 
-    '''
+    def was_selected_randomly(self):
+        self.mode = random.randrange(3)
+        print "Updating show mode to %s" % self.mode
+        #self.cm.set_modifier(3, (random.randrange(10) > 4))
+        #self.cm.set_intensified((random.random() * 2.0) - 1.0)
+
 
     def update_at_progress(self, progress, new_loop, loop_instance):
 
@@ -66,7 +67,7 @@ class RYB(looping_show.LoopingShow):
                 hsv = (hue, 1.0, 1.0)
 
                 rgbTuple = color2.hsvRYB_to_rgb(hsv)
-                rgbTuple = (int(rgbTuple[0]*255), int(rgbTuple[1]*255), int(rgbTuple[2]*255))
+                rgbTuple = (int(rgbTuple[0]), int(rgbTuple[1]), int(rgbTuple[2]))
 
                 for i in bird:
                     self.geometry.set_pixel(i, rgbTuple)
@@ -78,7 +79,7 @@ class RYB(looping_show.LoopingShow):
             hsv = (progress + self.offsets[0], 1.0, 1.0)
 
             rgbTuple = color2.hsvRYB_to_rgb(hsv)
-            rgbTuple = (int(rgbTuple[0]*255), int(rgbTuple[1]*255), int(rgbTuple[2]*255))
+            rgbTuple = (int(rgbTuple[0]), int(rgbTuple[1]), int(rgbTuple[2]))
 
             for i in range(self.geometry.get_nof_pixels()):
                 self.geometry.set_pixel(i, rgbTuple)

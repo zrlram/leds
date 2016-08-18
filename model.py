@@ -3,7 +3,7 @@ from connection import pixels, draw, row, numLEDs
 import operator
 from color import set_brightness_multiplier
 import multiprocessing 
-from math import ceil
+from math import ceil, sin, cos
 
 HALF_POINT = sum(row) - 1
 
@@ -63,6 +63,10 @@ class Model(object):
 	if len(self.shaders)<0: return
         for i in range(start, end):
             led = self.model[i]
+            # can rotate here!
+            #led['point'][0] = 
+            #led['point'][1] = 
+            #led['point'][0] = led['point'][1]*sin(0.3)+led['point'][0]*cos(0.3)
             pixels[i] = self.shaders[0](led)
             for shader in self.shaders[1:]:
                 values = shader(led) 
