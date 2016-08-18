@@ -1,4 +1,6 @@
 import colorsys
+import tween
+import color2
 
 # red, orange, yellow, green, blue, indigo, violet
 rainbow_simple =  [(255,0,0), (255,127,0), (255,255,0), (0,255,0),
@@ -87,4 +89,22 @@ def morph_color(color1, color2, fract):
     morph_v = c1[2] + ((c2[2] - c1[2]) * fract)
 
     return hsv(morph_h, morph_s, morph_v)
+
+def rainbow_(progress, step, brightness, numSlices=18):
+    # step chooses which color of the rainbow
+    # progress is the blender parameter from 0 to 1
+
+    v_range = tween.easeInQuad(0.1, 0.98, (brightness + 1.0)/2.0)
+    per_slice = v_range / numSlices
+            
+    hue = progress - (step % numSlices * per_slice) 
+    while hue > 1.0:
+        hue -= 1.0
+    while hue < 0.0:
+        hue += 1.0
+
+    hsv = (hue, 1.0, 1.0)
+
+    rgbTuple = color2.hsvRYB_to_rgb(hsv)
+    return (int(rgbTuple[0]), int(rgbTuple[1]), int(rgbTuple[2]))
 
