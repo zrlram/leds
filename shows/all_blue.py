@@ -4,6 +4,7 @@ import color as col
 class Blue(looping_show.LoopingShow):
 
     name = "Testing - All Blue"
+    ok_for_random = False       # this is covered by the ryb show
 
     red = (255, 0, 0)
     blue = (50, 50, 255)

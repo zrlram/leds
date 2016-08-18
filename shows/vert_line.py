@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-from color import hsv, rgb_to_hsv, rainbow
+from color import hsv, rgb_to_hsv, rainbow_
+import random
 
 import looping_shader_show
 
@@ -21,6 +22,7 @@ class VerticalLine(looping_shader_show.LoopingShaderShow):
         self.color = (50,50,255)
         self.background = (0,0,0)
         self.rainbow = 1
+        self.prog = 0
 
     def control_color_changed(self, c_ix):
         if c_ix == 0:       # use the primarty color
@@ -57,7 +59,9 @@ class VerticalLine(looping_shader_show.LoopingShaderShow):
             self.dx = - (1 - 2 * progress)
 
         if self.rainbow:
-            self.color = rainbow[int(loop_instance%len(rainbow))]
+            self.prog = self.prog + (random.random()*0.01) % 1
+            self.color = rainbow_(self.prog, loop_instance, self.cm.brightness)
+            #self.color = rainbow[int(loop_instance%len(rainbow))]
 
 
 __shows__ = [

@@ -1,4 +1,4 @@
-from color import hsv, rgb_to_hsv, rainbow
+from color import hsv, rgb_to_hsv, rainbow_
 
 import looping_shader_show
 
@@ -64,7 +64,7 @@ class HorizontalLine(looping_shader_show.LoopingShaderShow):
             self.dz = - (1 - 2 * progress)
 
         if self.rainbow:
-            self.color = rainbow[int(loop_instance%len(rainbow))]
+            self.color = rainbow_(progress, loop_instance, self.cm.brightness)
 
 __shows__ = [
               (HorizontalLine.name, HorizontalLine)

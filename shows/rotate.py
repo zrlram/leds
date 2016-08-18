@@ -1,4 +1,4 @@
-from color import hsv, rgb_to_hsv, rainbow
+from color import hsv, rgb_to_hsv, rainbow_
 from math import pi, cos, sin, sqrt
 from collections import OrderedDict
 
@@ -152,7 +152,7 @@ class RotatingLine(looping_shader_show.LoopingShaderShow):
             self.dy = - (1 - 2 * progress)
 
         if self.rainbow:
-            self.color = rainbow[int(progress*len(rainbow))%len(rainbow)]
+            self.color = rainbow_(progress, loop_instance, self.cm.brightness)
 
 __shows__ = [
               (RotatingLine.name, RotatingLine)

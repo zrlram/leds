@@ -1,4 +1,4 @@
-from color import hsv, rgb_to_hsv, rainbow
+from color import hsv, rgb_to_hsv, rainbow, rainbow_
 from math import pi, cos, sin, sqrt
 from collections import OrderedDict
 import random
@@ -185,8 +185,9 @@ class TwoRotatingLines(looping_shader_show.LoopingShaderShow):
             self.dy = - (1 - 2 * progress)
 
         if self.rainbow:
-            self.color = rainbow[int(progress*len(rainbow))%len(rainbow)]
-            self.color2 = rainbow[int((progress+0.3)*len(rainbow))%len(rainbow)]
+            self.color = rainbow_(progress, loop_instance, self.cm.brightness)
+            self.color2 = rainbow_(progress+0.3, loop_instance, self.cm.brightness)
+            #self.color2 = rainbow[int((progress+0.3)*len(rainbow))%len(rainbow)]
 
 __shows__ = [
               (TwoRotatingLines.name, TwoRotatingLines)

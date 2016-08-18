@@ -1,4 +1,4 @@
-from color import hsv, rgb_to_hsv, rainbow
+from color import hsv, rgb_to_hsv, rainbow_
 from math import pi, cos, sin, sqrt
 
 import looping_shader_show
@@ -97,7 +97,8 @@ class RandomRotatingLine(looping_shader_show.LoopingShaderShow):
             self.dy = - (1 - 2 * progress)
 
         if self.rainbow:
-            self.color = rainbow[int(progress*10%len(rainbow))]
+            #self.color = rainbow[int(progress*10%len(rainbow))]
+            self.color = rainbow_(progress, loop_instance, self.cm.brightness)
 
 __shows__ = [
               (RandomRotatingLine.name, RandomRotatingLine)
