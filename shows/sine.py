@@ -22,6 +22,8 @@ class Sine(looping_shader_show.LoopingShaderShow):
 
         # for rotating
         self.shift = 0
+        self.z_rotator = 1
+        self.x_rotator = 1
 
         # configurable controls
         self.color = (50,50,255)
@@ -33,6 +35,12 @@ class Sine(looping_shader_show.LoopingShaderShow):
         self.laser_pos = .0      # and what's its position?
 
         self.duration = 10       # make the show slower!
+
+    def update_parameters(self, state):
+        self.z_rotator = state % 2
+        # for now, leave the x_rotator just on
+        #self.x_rotator = (state+1) % 2 
+        print "running %s in mode %s" % (self.name, self.z_rotator)
 
     def control_color_changed(self, c_ix):
         if c_ix == 0:       # use the primarty color
@@ -66,9 +74,6 @@ class Sine(looping_shader_show.LoopingShaderShow):
                 z = (sin(phi*f) *a)
                 y = f(x,z) = 1 - x**2 - z**2;      # x^2+y^2+z^2 = 1
             for x=[0, 2pi]
-
-            
-
         '''
 
         x = p['point'][0]
@@ -76,14 +81,20 @@ class Sine(looping_shader_show.LoopingShaderShow):
         z = p['point'][2]
 
         phi = atan2(y, x) + pi      # from 0 to 2pi
-        z_ = sin(phi*self.frequency) * self.amplitude
+        if self.x_rotator:
+            z_ = sin((phi+self.shift)*self.frequency) * self.amplitude
+        else:
+            z_ = sin(phi*self.frequency) * self.amplitude
 
-        rotate = self.shift
-        x_rot = x * cos(rotate) - z_ * sin(rotate)
-        z_rot = x * sin(rotate) + z_ * cos(rotate)
+        x_rot = x
+        z_rot = z_
+        if self.z_rotator:
+            z_rot = x * sin(self.shift) + z_ * cos(self.shift)
+        #else:
+            #x_rot = x * cos(self.shift) - z_ * sin(self.shift)
 
-        #dist = sqrt( (z_rot - z)**2 + (x_rot - x)**2 )
-        dist = sqrt( (z_rot - z)**2 )
+        dist = sqrt( (z_rot - z)**2 + (x_rot - x)**2 )
+        #dist = sqrt( (z_rot - z)**2 )
 
         if dist < 0.2:
             intensity = 1-dist/0.2
