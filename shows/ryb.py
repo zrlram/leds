@@ -1,4 +1,3 @@
-#import geom
 import color2
 
 import random
@@ -17,13 +16,7 @@ class RYB(looping_show.LoopingShow):
         looping_show.LoopingShow.__init__(self, sheep_sides)
         self.duration = 2 
         self.mode = 0           # 0 by default if nobody called update_parameters()
-        self.range = HOR_RINGS_TOP_DOWN
-
-        # Setup a unique offset for each bird
-        self.offsets = []
-        for thing in self.range:
-            self.offsets.append(random.random())
-            #self.offsets.append(0.01)
+        self.range = []
 
         #self.was_selected_randomly()
 
@@ -35,6 +28,13 @@ class RYB(looping_show.LoopingShow):
         if state % 2:
             self.range = VERT_RINGS
             r = "VERT_RINGS"
+
+        # Setup a unique offset for each bird
+        self.offsets = []
+        for thing in self.range:
+            self.offsets.append(random.random())
+            #self.offsets.append(0.01)
+
         print "running %s in mode %s, range %s" % (self.name, self.mode, r)
 
     def was_selected_randomly(self):
