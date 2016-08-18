@@ -103,7 +103,7 @@ class Model(object):
     
     def worker(self, start, end):
 	if end>len(pixels)-1: end=len(pixels)-1
-	if len(self.shaders)<0: return
+	if len(self.shaders)<1: return
         for i in range(start, end):
             led = self.model[i]
             # can rotate here!
