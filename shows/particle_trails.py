@@ -57,7 +57,7 @@ class ParticleTrails(looping_shader_show.LoopingShaderShow):
             particles.append({
                 "point": [x, 0, y],
                 'intensity': 0.2 * s,
-                'falloff': 30,
+                'falloff': 50,
                 'color': hsv(hue, 0.8, 0.9)
             })
 
