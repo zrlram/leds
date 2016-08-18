@@ -153,7 +153,7 @@ class LoopingShow(object):
             self._pdns.append((cursor / total_time, time / total_time, name))
             cursor += time
 
-        print str(self._pdns)
+        #print str(self._pdns)
 
 
     def next_frame(self):
@@ -196,7 +196,7 @@ class LoopingShow(object):
 
             if self._pdns is None:
                 # No steps, normal update
-                self.update_at_progress(self._progress, is_new, self._loop_instance)
+                frame_muted = self.update_at_progress(self._progress, is_new, self._loop_instance)
             else:
                 # There are steps, so figure out where we are
                 # so that we can send in the right name and local
@@ -209,10 +209,14 @@ class LoopingShow(object):
                         name = n
                         break
 
-                self.update_at_progress_in_step(self._progress, is_new, self._loop_instance, local_progress, name)
+                frame_muted = self.update_at_progress_in_step(self._progress, is_new, self._loop_instance, local_progress, name)
 
 
             self._last_frame_at = now
             is_first_loop = False
 
-            yield 0.001
+            if frame_muted:
+                yield (0.001, True)
+            else:
+                yield 0.001
+
