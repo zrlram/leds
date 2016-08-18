@@ -1,4 +1,5 @@
 import json
+import copy
 from connection import pixels, draw, row, numLEDs
 import operator
 from color import set_brightness_multiplier
@@ -37,6 +38,45 @@ for h in range(0, len(row)):
     HOR_RINGS_MIDDLE_OUT.append(r)
     count += row[h]
 
+offsets = []
+offsets.append([1,1,1,1,1,1,0,0]) # 1
+offsets.append([1,1,1,1,0,0,1,1]) # 2
+offsets.append([1,1,1,0,1,1,0,0]) # 3
+offsets.append([1,1,1,1,1,1,1,0]) # 4
+offsets.append([1,1,1,1,1,0,0,0]) # 5
+offsets.append([1,1,0,1,0,1,1,1]) # 6
+offsets.append([1,1,1,1,1,0,0,0]) # 7
+offsets.append([1,1,1,1,1,1,1,0]) # 8
+offsets.append([1,1,1,0,1,1,0,0]) # 9
+offsets.append([1,1,1,1,0,0,1,1]) # 10
+offsets.append([1,1,1,1,1,1,0,0]) # 1
+#offsets.append([0,0,0,0,0,0,0,0]) # 0
+
+VERT_RINGS = []
+#row = [0, 44, 44, 40, 36, 32, 28, 20]
+temp = []
+temp.append(0)
+for i,el in enumerate(row[:-1]):
+    temp.append(temp[i]+row[i])
+for y in copy.copy(temp):   # bottom
+    addition = min(y+(numLEDs+12)/2, 499)
+    temp.append(addition)
+
+VERT_RINGS.append(temp)   # first vert_line
+
+#print VERT_RINGS
+
+for round in range(0,4):        # 0 to 4
+    for x,el in enumerate(offsets):
+        el2 = copy.copy(el)
+        el2.extend(el)    # add index to itself for top and bottom
+        new_ring = VERT_RINGS[x+round*len(offsets)]
+
+        new_vert = list(map(operator.add, el2, VERT_RINGS[x+round*len(offsets)]))
+
+        VERT_RINGS.append(new_vert)
+
+# print VERT_RINGS
 
 class Model(object):
 
@@ -118,6 +158,9 @@ class Model(object):
         self.model = data
 
     def set_pixel(self, pixel, color):
+        # safety
+        if pixel >= numLEDs:
+            return
         if self._brightness != 1.0:
             pixels[pixel] = set_brightness_multiplier(color, self._brightness)
         else:
