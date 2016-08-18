@@ -54,6 +54,7 @@ class ShowRunner(threading.Thread):
         self.shows = {}
         self.overlay_shows = []
         self.random_eligible_shows = []
+        self.show_states = {}
 
         for name in self.all_shows:
             _class = self.all_shows[name]
@@ -131,8 +132,19 @@ class ShowRunner(threading.Thread):
         # unregister shaders
         self.geometry.reset_shaders()
 
+
         self.show = show(self.geometry)
         print "Next show:" + self.show.name
+        # run with parameters if there is a function to take care of it
+        try:
+            # show states start with 0
+            state = self.show_states.get(self.show.name,-1)
+            state += 1
+            self.show.update_parameters(state)
+            self.show_states[self.show.name] = state
+        except AttributeError:
+            pass
+
         self.framegen = self.show.next_frame()
         try:
             self.show.start()    # if show has a start() call it. Registers shaders, etc.
