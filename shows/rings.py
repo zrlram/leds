@@ -10,18 +10,20 @@ class Rings(looping_shader_show.LoopingShaderShow):
     name = "Rings"
     ok_for_random = False
 
-    controls = OrderedDict()
-    controls.update({'scale': [0,1,0.1,0.1]})
-    controls.update({'ringScale': [0,5,2,0.25]})
+    #controls = OrderedDict()
+    #controls.update({'scale': [0,1,0.1,0.1]})
+    #controls.update({'ringScale': [0,5,2,0.25]})
 
     def __init__(self, geometry):
         looping_shader_show.LoopingShaderShow.__init__(self, geometry, 
             self.shader)
-        self.scale = 0.1
-        self.ringScale = 2
+        #self.scale = 0.1
+        self.scale = 0.02
+        #self.ringScale = 3.0
+        self.ringScale = 1.0
         self.speed = 0.002
         self.wspeed = 0.01
-        self.wanderSpeed = 0.0005
+        self.wanderSpeed = 0.00005
         self.dx = 0
         self.dz = 0
         self.dw = 0
@@ -61,7 +63,8 @@ class Rings(looping_shader_show.LoopingShaderShow):
     def shader(self, p):
         x = p['point'][0]
         y = p['point'][1]
-        z = p['point'][2]
+        #z = p['point'][2] 
+        z = p['point'][2] + 1
 
         distx = x - self.centerx
         disty = y - self.centery
@@ -93,7 +96,8 @@ class Rings(looping_shader_show.LoopingShaderShow):
 
     def update_at_progress(self, progress, new_loop, loop_instance):
 
-        now = time.time()       # millis
+        now = time.time() * 1000      # millis
+        #now = 1471552007.07 * 1000
 
         angle = sin(now * 0.001)
         self.hue = now * 1.0
