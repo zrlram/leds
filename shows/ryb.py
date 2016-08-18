@@ -13,30 +13,16 @@ class RYB(looping_show.LoopingShow):
     
     name = "RYB"
 
-    modifier_usage = {
-        "toggles": {
-            0: "Add 0.25 to brightness",
-            1: "Add second 0.25 to brightness",
-            3: "Increase speed 2x",
-        },
-        "step": {
-            0: "Birds are colored in order",
-            1: "Random colors per bird",
-            2: "All same color"
-        },
-        "intensified": "Length of hue range"
-    }
-
     def __init__(self, sheep_sides):
         looping_show.LoopingShow.__init__(self, sheep_sides)
-        self.duration = 2000
+        self.duration = 2
         self.mode = 0
 
         # Setup a unique offset for each bird
         self.offsets = []
         for thing in HOR_RINGS_TOP_DOWN:
-            #self.offsets.append(random.random())
-            self.offsets.append(0.01)
+            self.offsets.append(random.random())
+            #self.offsets.append(0.01)
 
     '''
     def was_selected_randomly(self):
@@ -63,7 +49,7 @@ class RYB(looping_show.LoopingShow):
                 hsv = (hue, 1.0, 1.0)
 
                 rgbTuple = color2.hsvRYB_to_rgb(hsv)
-                rgbTuple = (int(rgbTuple[0]*255), int(rgbTuple[1]*255), int(rgbTuple[2]*255))
+                rgbTuple = (int(rgbTuple[0]), int(rgbTuple[1]), int(rgbTuple[2]))
 
                 for i in sl:
                     self.geometry.set_pixel(i, rgbTuple)
