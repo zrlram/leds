@@ -94,6 +94,7 @@ class ShowRunner(threading.Thread):
         self.speed_x = 1.0
 
         self.cm.set_max_time(self.max_show_time)
+        self.geometry.set_brightness(self.cm.brightness)
 
     def next_show(self, name=None):
 
