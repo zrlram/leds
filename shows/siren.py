@@ -5,6 +5,7 @@ from math import pi, atan2
 class Siren(looping_shader_show.LoopingShaderShow):
 
     name = "Siren"
+    ok_for_random = False
 
     def __init__(self, geometry):
         looping_shader_show.LoopingShaderShow.__init__(self, geometry, self.Siren_shader)

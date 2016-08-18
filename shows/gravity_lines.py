@@ -6,6 +6,7 @@ import looping_shader_show
 class GravityLine(looping_shader_show.LoopingShaderShow):
 
     name = "Gravity Line"
+    ok_for_random = False
 
     controls = OrderedDict()
     controls.update( { 'Trail Length': [0.1, 1, 0.5, 0.01] } )

@@ -8,6 +8,7 @@ from collections import OrderedDict
 class Rings(looping_shader_show.LoopingShaderShow):
 
     name = "Rings"
+    ok_for_random = False
 
     controls = OrderedDict()
     controls.update({'scale': [0,1,0.1,0.1]})
