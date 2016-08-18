@@ -58,25 +58,28 @@ temp = []
 temp.append(0)
 for i,el in enumerate(row[:-1]):
     temp.append(temp[i]+row[i])
-for y in copy.copy(temp):   # bottom
+t = copy.copy(temp)
+temp.reverse()
+for y in t:   # bottom
     addition = min(y+(numLEDs+12)/2, 499)
     temp.append(addition)
 
 VERT_RINGS.append(temp)   # first vert_line
 
-#print VERT_RINGS
-
 for round in range(0,4):        # 0 to 4
     for x,el in enumerate(offsets):
+        # sorry, please forgive me!
         el2 = copy.copy(el)
-        el2.extend(el)    # add index to itself for top and bottom
+        el3 = copy.copy(el)
+        el3.reverse()        # need to invert top part
+        el3.extend(el2)    # add index to itself for top and bottom
         new_ring = VERT_RINGS[x+round*len(offsets)]
 
-        new_vert = list(map(operator.add, el2, VERT_RINGS[x+round*len(offsets)]))
+        new_vert = list(map(operator.add, el3, VERT_RINGS[x+round*len(offsets)]))
 
         VERT_RINGS.append(new_vert)
 
-# print VERT_RINGS
+#print VERT_RINGS
 
 class Model(object):
 
