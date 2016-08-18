@@ -32,7 +32,7 @@ class RYB(looping_show.LoopingShow):
         self.mode = state % 3
         self.range = HOR_RINGS_TOP_DOWN
         r = "HOR_RINGS_TOP_DOWN"
-        if state >= 3:
+        if state % 2:
             self.range = VERT_RINGS
             r = "VERT_RINGS"
         print "running %s in mode %s, range %s" % (self.name, self.mode, r)
