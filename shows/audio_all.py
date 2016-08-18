@@ -6,9 +6,10 @@ import analyse
 import time
 import math
 from matplotlib.mlab import find
-import matplotlib.pyplot as plt
 
 class Audio(looping_show.LoopingShow):
+
+    ok_for_random = False
 
     name = "Audio Ball"
     #max -10.9559531292 84.0577667883
