@@ -503,8 +503,8 @@ if __name__=='__main__':
         print ', '.join([s[0] for s in shows.load_shows()])
         sys.exit(0)
 
-    #geometry = Model('sphere_10.json')
-    geometry = Model('actual_sphere.json')
+    geometry = Model('sphere_10.json')
+    #geometry = Model('actual_sphere.json')
     app = Server(geometry, args)
 
     try:
