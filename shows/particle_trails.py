@@ -2,14 +2,20 @@ import time
 from color import hsv
 from math import sin, cos
 import looping_shader_show
+from collections import OrderedDict
 
 class ParticleTrails(looping_shader_show.LoopingShaderShow):
 
     name = "Particle Trails"
 
+    #controls = OrderedDict()
+    #controls.update({ 'move': 'checkbox'})
+    #controls.update({ 'Trail Length': [0.1, 1, 0.5, 0.01]})
+
     def __init__(self, geometry):
         looping_shader_show.LoopingShaderShow.__init__(self, geometry, self.shader)
-        self._particles = None
+        self._particles = []
+        self.numParticles = 20
 
     def shader(self, p):
         r = 0
@@ -28,20 +34,19 @@ class ParticleTrails(looping_shader_show.LoopingShaderShow):
             intensity = particle['intensity'] / (1+particle['falloff'] * dist2)
 
             r += particle['color'][0] * intensity
-            r += particle['color'][1] * intensity
-            r += particle['color'][2] * intensity
+            g += particle['color'][1] * intensity
+            b += particle['color'][2] * intensity
 
         return (int(r),int(g),int(b))
 
 
     def update_at_progress(self, progress, new_loop, loop_instance):
 
-        now = 0.003 * time.time() * 1000     # millis
-        numParticles = 20
-        particles = []
+        now = 0.002 * time.time() * 1000     # millis
 
-        for i in range(numParticles):
-            s = float(i) / numParticles
+        particles = []
+        for i in range(self.numParticles):
+            s = float(i) / self.numParticles
 
             radius = 0.2 + 1.5 * s
             theta = now + 0.04 * i
@@ -52,8 +57,8 @@ class ParticleTrails(looping_shader_show.LoopingShaderShow):
             particles.append({
                 "point": [x, 0, y],
                 'intensity': 0.2 * s,
-                'falloff': 60,
-                'color': hsv(hue, 0.5, 0.8)
+                'falloff': 30,
+                'color': hsv(hue, 0.8, 0.9)
             })
 
         self._particles = particles
