@@ -222,7 +222,7 @@ class ShowRunner(threading.Thread):
         """
         seq = self.random_eligible_shows
 
-        norepeat=int(len(seq)/3)
+        norepeat=int(len(seq)-1)
         if norepeat < 1:
             norepeat = 1
 
@@ -503,7 +503,8 @@ if __name__=='__main__':
         print ', '.join([s[0] for s in shows.load_shows()])
         sys.exit(0)
 
-    geometry = Model('sphere_10.json')
+    #geometry = Model('sphere_10.json')
+    geometry = Model('actual_sphere.json')
     app = Server(geometry, args)
 
     try:
