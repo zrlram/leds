@@ -23,6 +23,7 @@ class VerticalLine(looping_shader_show.LoopingShaderShow):
         self.background = (0,0,0)
         self.rainbow = 1
         self.prog = 0
+        self.sign = 1
 
     def control_color_changed(self, c_ix):
         if c_ix == 0:       # use the primarty color
@@ -57,6 +58,13 @@ class VerticalLine(looping_shader_show.LoopingShaderShow):
         else:
             # other side
             self.dx = - (1 - 2 * progress)
+
+        if self.trail > 0.85:
+            self.sign = -1
+        if self.trail < 0.05:
+            self.sign = 1
+
+        self.trail += random.random()*0.01 * self.sign
 
         if self.rainbow:
             self.prog = self.prog + (random.random()*0.01) % 1

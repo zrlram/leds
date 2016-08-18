@@ -1,4 +1,5 @@
 from color import hsv, rgb_to_hsv, rainbow_
+import random
 
 import looping_shader_show
 
@@ -26,6 +27,7 @@ class HorizontalLine(looping_shader_show.LoopingShaderShow):
         self.color = (50,50,255)
         self.background = (0,0,0)
         self.rainbow = 1
+        self.sign = 1
 
     def control_color_changed(self, c_ix):
         if c_ix == 0:       # use the primarty color
@@ -62,6 +64,14 @@ class HorizontalLine(looping_shader_show.LoopingShaderShow):
         else:
             # down
             self.dz = - (1 - 2 * progress)
+
+        if self.trail > 0.95:
+            self.sign = -1
+        if self.trail < 0.05:
+            self.sign = 1
+
+        self.trail += random.random()*0.01 * self.sign
+
 
         if self.rainbow:
             self.color = rainbow_(progress, loop_instance, self.cm.brightness)
