@@ -28,7 +28,7 @@ import itertools
 
 from math import ceil
 
-from color import hsv, rgb_to_hsv
+from color2 import Color, HSV
 
 __all__ = ['color_transition', 'multistep_color_transition']
 
@@ -91,15 +91,15 @@ def color_transition(start_color, end_color, steps=20):
     intermediate steps in the sequence.
     """
 
-    h1,s1,v1 = rgb_to_hsv(start_color)
-    h2,s2,v2 = rgb_to_hsv(end_color)
+    h1,s1,v1 = start_color.hsv
+    h2,s2,v2 = end_color.hsv
 
     h_seq = hsv_transition(h1,h2,steps,wrap=True)
     s_seq = hsv_transition(s1,s2,steps)
     v_seq = hsv_transition(v1,v2,steps)
 
     for (h,s,v) in itertools.izip(h_seq, s_seq, v_seq):
-        yield hsv(h%1, s, v)
+        yield HSV(h%1, s, v)
 
 def multistep_color_transition(color_list, steps=20, continuous=False):
     """

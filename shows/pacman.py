@@ -79,7 +79,8 @@ class PacMan(looping_shader_show.LoopingShaderShow):
             dist = abs(z-z_)
             intensity = 1
             if dist < 0.1:
-                intensity = 0.8
+                #intensity = 10*dist
+                intensity = 10*dist
             #if dist > 1: dist = 1
             # intensity = cos(dist)
             return hsv (color_hsv[0], color_hsv[1], intensity)

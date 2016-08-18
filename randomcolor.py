@@ -31,7 +31,7 @@ from numbers import Number
 import itertools
 import random
 
-from color import hsv
+from color2 import HSV
 
 __all__ = ['random_color']
 
@@ -190,4 +190,4 @@ def random_color(hue=None, luminosity=None):
     s = s / 100
     v = v / 100
 
-    return hsv(h,s,v)
+    return HSV(h,s,v)

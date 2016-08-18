@@ -1,4 +1,4 @@
-from color import set_H, get_H
+from color2 import hsv_to_rgb
 from randomcolor import random_color
 import morph
 import model
@@ -16,14 +16,14 @@ class Areas(looping_show.LoopingShow):
 
         self.mode = 2
         self.foreground = random_color(luminosity="light")
-        self.background = self.foreground
-        fg_H = (get_H(self.foreground) + 0.5) % 1
-        set_H(self.background, absolute=fg_H)
+        self.background = self.foreground.copy()
+        self.background.h += 0.5
         self._list = []
 
     def clear(self):
+        c = hsv_to_rgb(self.background.hsv)
         for i in range(model.numLEDs):
-            self.geometry.set_pixel(i, self.background)
+            self.geometry.set_pixel(i, c)
 
         self.geometry.draw()
 
@@ -36,8 +36,8 @@ class Areas(looping_show.LoopingShow):
         if new_loop:
             #self.foreground = random_color(luminosity="light")
             self.foreground = random_color()
-            self.background = self.foreground
-            self.background = set_H(self.background, absolute=(get_H(self.foreground) + 0.5) % 1)
+            self.background = self.foreground.copy()
+            self.background.h += 0.5
 
             self.color_list = morph.transition_list(self.foreground, self.background, steps=16)
 
@@ -78,6 +78,7 @@ class Areas(looping_show.LoopingShow):
 
                 c = self.color_list[c_ix]
 
+            c = hsv_to_rgb(c.hsv)
             for i in self._list[i]:
                 self.geometry.set_pixel(i, c)
 
