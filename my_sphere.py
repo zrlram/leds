@@ -52,123 +52,129 @@ row1_measures = [ [ 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 13],
                   [ 11, 11, 11, 11, 11, 14, 11, 11, 11, 11, 11], 
                   [ 11, 11, 11, 11, 14, 11, 11, 11, 11, 11, 14] ]
 
-# Upper sphere first 
-for up in range(0, height):
-  #z = (up+1) / float(height+1) - 0.07 		# equidistant, not on circumference
-  z = z_height[up] / 5.0      # 5 being the full height
-  phi = asin(z) 
+def main():
 
-  if up == 6:
-      l = len(row7_measures)
-      for i, quadrant in enumerate(row7_measures):
-          s = sum(quadrant) 
-          adding = 0
-          for distance in quadrant:
-              adding += distance
-              angle = ((pi/2) / s) * adding + i*pi/2
-              x = r*cos(phi)*sin(angle)
-              y = r*cos(phi)*cos(angle)
-              lines.append('  {"point": [%.2f, %.2f, %.2f]}' %
-                            (x, y, z))
-  elif up == 5:
-      l = len(row6_measures)
-      for i, quadrant in enumerate(row6_measures):
-          s = sum(quadrant) 
-          adding = 0
-          for distance in quadrant:
-              adding += distance
-              angle = ((pi/2) / s) * adding + i*pi/2
-              x = r*cos(phi)*sin(angle)
-              y = r*cos(phi)*cos(angle)
-              lines.append('  {"point": [%.2f, %.2f, %.2f]}' %
-                            (x, y, z))
-  elif up == 4:
-      l = len(row5_measures)
-      for i, quadrant in enumerate(row5_measures):
-          s = sum(quadrant) 
-          adding = 0
-          for distance in quadrant:
-              adding += distance
-              angle = ((pi/4) / s) * adding + i*pi/4
-              x = r*cos(phi)*sin(angle)
-              y = r*cos(phi)*cos(angle)
-              lines.append('  {"point": [%.2f, %.2f, %.2f]}' %
-                            (x, y, z))
-  elif up == 3:
-      l = len(row4_measures)
-      for i, quadrant in enumerate(row4_measures):
-          s = sum(quadrant) 
-          adding = 0
-          for distance in quadrant:
-              adding += distance
-              angle = ((pi/2) / s) * adding + i*pi/2
-              x = r*cos(phi)*sin(angle)
-              y = r*cos(phi)*cos(angle)
-              lines.append('  {"point": [%.2f, %.2f, %.2f]}' %
-                            (x, y, z))
-  elif up == 2:
-      l = len(row3_measures)
-      for i, quadrant in enumerate(row3_measures):
-          s = sum(quadrant) 
-          adding = 0
-          for distance in quadrant:
-              adding += distance
-              angle = ((pi/4) / s) * adding + i*pi/4
-              x = r*cos(phi)*sin(angle)
-              y = r*cos(phi)*cos(angle)
-              lines.append('  {"point": [%.2f, %.2f, %.2f]}' %
-                            (x, y, z))
-  elif up == 1:
-      l = len(row2_measures)
-      for i, quadrant in enumerate(row2_measures):
-          s = sum(quadrant) 
-          adding = 0
-          for distance in quadrant:
-              adding += distance
-              angle = ((pi/2) / s) * adding + i*pi/2
-              x = r*cos(phi)*sin(angle)
-              y = r*cos(phi)*cos(angle)
-              lines.append('  {"point": [%.2f, %.2f, %.2f]}' %
-                            (x, y, z))
-  elif up == 0:
-      l = len(row1_measures)
-      for i, quadrant in enumerate(row1_measures):
-          s = sum(quadrant) 
-          adding = 0
-          for distance in quadrant:
-              adding += distance
-              angle = ((pi/2) / s) * adding + i*pi/2
-              x = r*cos(phi)*sin(angle)
-              y = r*cos(phi)*cos(angle)
-              lines.append('  {"point": [%.2f, %.2f, %.2f]}' %
-                            (x, y, z))
-  else:
+    # Upper sphere first 
+    for up in range(0, height):
+      #z = (up+1) / float(height+1) - 0.07 		# equidistant, not on circumference
+      z = z_height[up] / 5.0      # 5 being the full height
+      phi = asin(z) 
 
-      # phi = ((pi / 2) / (height+1)) * (up+1)		# divide by 11 pieces
+      if up == 6:
+          l = len(row7_measures)
+          for i, quadrant in enumerate(row7_measures):
+              s = sum(quadrant) 
+              adding = 0
+              for distance in quadrant:
+                  adding += distance
+                  angle = ((pi/2) / s) * adding + i*pi/2
+                  x = r*cos(phi)*sin(angle)
+                  y = r*cos(phi)*cos(angle)
+                  lines.append('  {"point": [%.2f, %.2f, %.2f]}' %
+                                (x, y, z))
+      elif up == 5:
+          l = len(row6_measures)
+          for i, quadrant in enumerate(row6_measures):
+              s = sum(quadrant) 
+              adding = 0
+              for distance in quadrant:
+                  adding += distance
+                  angle = ((pi/2) / s) * adding + i*pi/2
+                  x = r*cos(phi)*sin(angle)
+                  y = r*cos(phi)*cos(angle)
+                  lines.append('  {"point": [%.2f, %.2f, %.2f]}' %
+                                (x, y, z))
+      elif up == 4:
+          l = len(row5_measures)
+          for i, quadrant in enumerate(row5_measures):
+              s = sum(quadrant) 
+              adding = 0
+              for distance in quadrant:
+                  adding += distance
+                  angle = ((pi/4) / s) * adding + i*pi/4
+                  x = r*cos(phi)*sin(angle)
+                  y = r*cos(phi)*cos(angle)
+                  lines.append('  {"point": [%.2f, %.2f, %.2f]}' %
+                                (x, y, z))
+      elif up == 3:
+          l = len(row4_measures)
+          for i, quadrant in enumerate(row4_measures):
+              s = sum(quadrant) 
+              adding = 0
+              for distance in quadrant:
+                  adding += distance
+                  angle = ((pi/2) / s) * adding + i*pi/2
+                  x = r*cos(phi)*sin(angle)
+                  y = r*cos(phi)*cos(angle)
+                  lines.append('  {"point": [%.2f, %.2f, %.2f]}' %
+                                (x, y, z))
+      elif up == 2:
+          l = len(row3_measures)
+          for i, quadrant in enumerate(row3_measures):
+              s = sum(quadrant) 
+              adding = 0
+              for distance in quadrant:
+                  adding += distance
+                  angle = ((pi/4) / s) * adding + i*pi/4
+                  x = r*cos(phi)*sin(angle)
+                  y = r*cos(phi)*cos(angle)
+                  lines.append('  {"point": [%.2f, %.2f, %.2f]}' %
+                                (x, y, z))
+      elif up == 1:
+          l = len(row2_measures)
+          for i, quadrant in enumerate(row2_measures):
+              s = sum(quadrant) 
+              adding = 0
+              for distance in quadrant:
+                  adding += distance
+                  angle = ((pi/2) / s) * adding + i*pi/2
+                  x = r*cos(phi)*sin(angle)
+                  y = r*cos(phi)*cos(angle)
+                  lines.append('  {"point": [%.2f, %.2f, %.2f]}' %
+                                (x, y, z))
+      elif up == 0:
+          l = len(row1_measures)
+          for i, quadrant in enumerate(row1_measures):
+              s = sum(quadrant) 
+              adding = 0
+              for distance in quadrant:
+                  adding += distance
+                  angle = ((pi/2) / s) * adding + i*pi/2
+                  x = r*cos(phi)*sin(angle)
+                  y = r*cos(phi)*cos(angle)
+                  lines.append('  {"point": [%.2f, %.2f, %.2f]}' %
+                                (x, y, z))
+      else:
+
+          # phi = ((pi / 2) / (height+1)) * (up+1)		# divide by 11 pieces
+          for over in range(0, row[up]):		# index starts at 0
+            theta = ((2 * pi) / row[up]) * over
+            # print phi, theta
+            x = r*cos((phi))*sin(theta)
+            y = r*cos((phi))*cos(theta)
+            #z = r*sin((phi)) - 0.07			# sphere height, not equally spaced
+            lines.append('  {"point": [%.2f, %.2f, %.2f]}' %
+                        (x, y, z))
+
+    # lower sphere
+    # MINUS one row here! We don't want the bottom one
+    for up in range(0, height-1):
+      z = z_height[up] / 5.0      # 5 being the full height
+      phi = asin(z) 
       for over in range(0, row[up]):		# index starts at 0
         theta = ((2 * pi) / row[up]) * over
         # print phi, theta
         x = r*cos((phi))*sin(theta)
         y = r*cos((phi))*cos(theta)
-        #z = r*sin((phi)) - 0.07			# sphere height, not equally spaced
         lines.append('  {"point": [%.2f, %.2f, %.2f]}' %
-                    (x, y, z))
+            (x, y, -z))
 
-# lower sphere
-# MINUS one row here! We don't want the bottom one
-for up in range(0, height-1):
-  z = z_height[up] / 5.0      # 5 being the full height
-  phi = asin(z) 
-  for over in range(0, row[up]):		# index starts at 0
-    theta = ((2 * pi) / row[up]) * over
-    # print phi, theta
-    x = r*cos((phi))*sin(theta)
-    y = r*cos((phi))*cos(theta)
-    lines.append('  {"point": [%.2f, %.2f, %.2f]}' %
-		(x, y, -z))
+    print '[\n' + ',\n'.join(lines) + '\n]'
 
-print '[\n' + ',\n'.join(lines) + '\n]'
+if __name__ == "__main__":
+    main()
 
+'''
 exit()
 # lower sphere - OLD!!
 for up in range(0, height):
@@ -183,3 +189,4 @@ for up in range(0, height):
 		(x, y, -z))
 
 print '[\n' + ',\n'.join(lines) + '\n]'
+'''
