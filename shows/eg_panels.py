@@ -7,7 +7,6 @@ from model import VERT_RINGS, HOR_RINGS_TOP_DOWN
 class EgPanels(looping_show.LoopingShow):
     # Because we extend LoopingShow we must explicitly override is_show to be True
     is_show = True
-    ok_for_random = False       # this is covered by the ryb show
     
     name = "Eg Panels"
 
