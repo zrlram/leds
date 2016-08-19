@@ -93,11 +93,13 @@ class Sine(looping_shader_show.LoopingShaderShow):
         #else:
             #x_rot = x * cos(self.shift) - z_ * sin(self.shift)
 
-        dist = sqrt( (z_rot - z)**2 + (x_rot - x)**2 )
+        #dist = sqrt( (z_rot - z)**2 + (x_rot - x)**2 )
+        dist = abs(z_rot - z) + abs(x_rot - x)
         #dist = sqrt( (z_rot - z)**2 )
 
-        if dist < 0.2:
-            intensity = 1-dist/0.2
+        if dist < 0.3:
+            #intensity = 1-dist/0.2
+            intensity = 1-dist/0.3
             return set_V(self.color, absolute=intensity)  # set the intesity to the distance
 
         else:
