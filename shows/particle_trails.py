@@ -3,6 +3,7 @@ from color import hsv
 from math import sin, cos
 import looping_shader_show
 from collections import OrderedDict
+import random
 
 class ParticleTrails(looping_shader_show.LoopingShaderShow):
 
@@ -16,6 +17,8 @@ class ParticleTrails(looping_shader_show.LoopingShaderShow):
         looping_shader_show.LoopingShaderShow.__init__(self, geometry, self.shader)
         self._particles = []
         self.numParticles = 20
+        self.z = 0
+        self.sign = 1
 
     def shader(self, p):
         r = 0
@@ -42,22 +45,34 @@ class ParticleTrails(looping_shader_show.LoopingShaderShow):
 
     def update_at_progress(self, progress, new_loop, loop_instance):
 
+        # now = 0.002 * time.time() * 1000     # millis
         now = 0.002 * time.time() * 1000     # millis
 
         particles = []
+        rand = random.random() * 0.005
         for i in range(self.numParticles):
             s = float(i) / self.numParticles
 
+            #radius = 0.2 + 1.5 * s
             radius = 0.2 + 1.5 * s
             theta = now + 0.04 * i
             x = radius * cos(theta)
             y = radius * sin(theta + 10.0 * sin(theta * 0.15))
             hue = (now * 0.01 + s * 0.2) % 1 
 
+            self.z += rand * self.sign
+            if self.z > 0.9: 
+                self.z=0.9
+                self.sign = -1
+            if self.z < -0.8: 
+                self.z=-0.8
+                self.sign = 1
+
+            # 'intensity': 0.2 * s,
             particles.append({
-                "point": [x, 0, y],
-                'intensity': 0.2 * s,
-                'falloff': 50,
+                "point": [x, y, self.z],
+                'intensity': s * 0.7,
+                'falloff': 60,
                 'color': hsv(hue, 0.8, 0.9)
             })
 
