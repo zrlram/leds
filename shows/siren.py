@@ -1,5 +1,6 @@
 import looping_shader_show
 from math import pi, atan2
+import color2
 
 
 class Siren(looping_shader_show.LoopingShaderShow):
@@ -17,7 +18,7 @@ class Siren(looping_shader_show.LoopingShaderShow):
         self.red = (200, 0, 0)
         self.blue = (50, 50, 250)
 
-        self.duration = 4       # make the show slower!
+        self.duration = 5       # make the show slower!
 
     def Siren_shader(self, p):
 
@@ -39,6 +40,11 @@ class Siren(looping_shader_show.LoopingShaderShow):
         self.shift = progress * pi * 2          # one full circle rotation
         # TBD - change color to rainbow over time
         # self.color = 
+        rgbTuple = color2.hsvRYB_to_rgb((progress, 0.9, 0.9))
+        self.red = rgbTuple = (int(rgbTuple[0]), int(rgbTuple[1]), int(rgbTuple[2]))
+        rgbTuple = color2.hsvRYB_to_rgb(((progress-0.5)%1, 0.8, 0.8))
+        self.blue = rgbTuple = (int(rgbTuple[0]), int(rgbTuple[1]), int(rgbTuple[2]))
+
         
 
 __shows__ = [
