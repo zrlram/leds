@@ -125,7 +125,7 @@ class Model(object):
     
         # print "active shaders: %s" % self.shaders
 
-        nprocs = 8
+        nprocs = 1
         chunksize = int(ceil(len(self.model) / float(nprocs)))
 
         # multiple_results = [pool.apply_async(os.getpid, ()) for i in range(4)]
