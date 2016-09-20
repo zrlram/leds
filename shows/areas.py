@@ -2,6 +2,7 @@ from color2 import hsv_to_rgb
 from randomcolor import random_color
 import morph
 import model
+# import audio
 
 import looping_show
 
@@ -20,6 +21,8 @@ class Areas(looping_show.LoopingShow):
         self.background.h += 0.5
         self._list = []
 
+	# self.audio = audio.Audio()
+
     def clear(self):
         c = hsv_to_rgb(self.background.hsv)
         for i in range(model.numLEDs):
@@ -32,6 +35,8 @@ class Areas(looping_show.LoopingShow):
         print "setting mode to", self.mode
 
     def update_at_progress(self, progress, new_loop, loop_instance):
+
+	# (loud, pitch) = self.audio.audio_input()
 
         if new_loop:
             #self.foreground = random_color(luminosity="light")
@@ -78,6 +83,7 @@ class Areas(looping_show.LoopingShow):
 
                 c = self.color_list[c_ix]
 
+	    c.v = loud
             c = hsv_to_rgb(c.hsv)
             for i in self._list[i]:
                 self.geometry.set_pixel(i, c)
