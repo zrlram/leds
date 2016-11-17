@@ -9,6 +9,7 @@ import looping_shader_show
 class Top_Beacon(looping_shader_show.LoopingShaderShow):
 
     name = "Top Beacon"
+    ok_for_random = False
 
     controls = OrderedDict()
     controls.update( { 'Color': 'color'})
