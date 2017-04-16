@@ -83,7 +83,6 @@ class Areas(looping_show.LoopingShow):
 
                 c = self.color_list[c_ix]
 
-	    c.v = loud
             c = hsv_to_rgb(c.hsv)
             for i in self._list[i]:
                 self.geometry.set_pixel(i, c)
