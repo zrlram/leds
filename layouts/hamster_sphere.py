@@ -9,6 +9,7 @@ radius = 1.0        # unit sphere
 
 lengths_top = [ 9, 6, 7, 6, 8, 6, 7, 6 ] 
 lengths_bottom = [5] * 8
+fillers = [0, 0, 0, 0, 3, 0, 0, 30]
 bottom = 4 * (pi/2) /9
 
 angles = [x for x in arange (-pi + bottom, 0, (pi / 2) / 9)]
@@ -30,7 +31,11 @@ for slice, over in enumerate(arange(0, 2*pi, pi / 16)):
         #print angle, x, y, z
         lines.append('  {"point": [%.2f, %.2f, %.2f]}' % 
                 (x, y, z))
-        
+
+    for r in range(fillers[slice % 8]):
+        lines.append('  {"point": [%.2f, %.2f, %.2f]}' % 
+                (0, 0, 0))
+
     direction ^= 1
         
 print '[\n' + ',\n'.join(lines) + '\n]'
