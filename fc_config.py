@@ -1,6 +1,16 @@
 import socket
 import struct
 
+'''
+Usage:
+ipython fc_config.py
+set_noInterp()
+# set it back
+noInterp = 0
+update()
+'''
+
+
 noDither = 0 #check("Disable dithering")
 noInterp = 0 #check("Disable interpolation")
 manualLED = 0 #check("Built-in LED under manual control")
