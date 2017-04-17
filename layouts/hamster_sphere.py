@@ -36,7 +36,10 @@ for slice, over in enumerate(arange(2*pi, 0, -(pi / 16))):
         lines.append('  {"point": [%.2f, %.2f, %.2f]}' % 
                 (0, 0, 0))
 
-    direction ^= 1
+    #print slice,
+    if slice not in [4, 7, 12, 15, 20, 23, 28, 31]: 
+        #print "change"
+        direction ^= 1
         
 print '[\n' + ',\n'.join(lines) + '\n]'
 
