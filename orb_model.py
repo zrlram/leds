@@ -14,24 +14,24 @@ class OrbModel(model.Model):
 
         HALF_POINT = sum(self.row) - 1
 
-	HOR_RINGS_TOP_DOWN = []
+	self.HOR_RINGS_TOP_DOWN = []
 	# top
 	count = 0
 	for h in range(len(self.row)-1, -1, -1):
 	    r = []
 	    for element in range(HALF_POINT-count,HALF_POINT-count-self.row[h],-1):
 		r.append(element)
-	    HOR_RINGS_TOP_DOWN.append(r)
+	    self.HOR_RINGS_TOP_DOWN.append(r)
 	    count += self.row[h]
 	# bottom
 	for h in range(0, len(self.row)-1):
 	    r = []
 	    for element in range(count,count+self.row[h]):
 		r.append(element)
-	    HOR_RINGS_TOP_DOWN.append(r)
+	    self.HOR_RINGS_TOP_DOWN.append(r)
 	    count += self.row[h]
 
-	HOR_RINGS_MIDDLE_OUT = []
+	self.HOR_RINGS_MIDDLE_OUT = []
 	count = 0
 	for h in range(0, len(self.row)):
 	    r = []
@@ -41,7 +41,7 @@ class OrbModel(model.Model):
 	    if h < 7:
 		for element in range(HALF_POINT+count+1,HALF_POINT+count+1+self.row[h]):
 		    r.append(element)
-	    HOR_RINGS_MIDDLE_OUT.append(r)
+	    self.HOR_RINGS_MIDDLE_OUT.append(r)
 	    count += self.row[h]
 
         offsets = []
