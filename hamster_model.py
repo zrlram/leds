@@ -1,29 +1,39 @@
-import opc
-import json
-import copy
 import operator
-from color import set_brightness_multiplier
-import multiprocessing 
-from ctypes import c_ubyte
-from math import ceil, sin, cos
-
 import model
 
 class HamsterModel(model.Model):
 
+    # defines HOR_RINGS_* and VERT_RINGS_*
+    # defines height
+    # defines row 
     def __init__(self, model_file):
         model.Model.__init__(self, model_file)
 
-        self.height = len(self.row)
+        # sort by z-coord
+        temp_model = sorted(self.model, key=operator.itemgetter(2), reverse=True)
 
-        self.temp_model = sorted(self.model, key=operator.itemgetter(2), reverse=True)
+        current_z = self.temp_model[0][2]
+        count = 0
+        self.row = []
+        for i, entry in enumerate(self.temp_model):
+            if entry == [0.0,0.0,0.0]: continue
+            z = entry[2]
+            if z != current_z:
+                self.row.append(count)
+                current_z = z
+                count = 0
+            count = count + 1
+        self.row.append(count)
+        print "rows: ", self.row
+
+        self.height = len(self.row)
         
         # HORIZONTAL RINGS TOP DOWN
         self.HOR_RINGS_TOP_DOWN = []
 
-        current_z = self.temp_model[0][2]
+        current_z = temp_model[0][2]
         row = []
-        for e in self.temp_model:
+        for e in temp_model:
             if e == [0.0,0.0,0.0]: continue
             z = e[2]
             if z != current_z:
@@ -43,10 +53,10 @@ class HamsterModel(model.Model):
         for ring in range(3,-1,-1):
             self.HOR_RINGS_MIDDLE_OUT.append(self.HOR_RINGS_TOP_DOWN[ring])
 
-        RINGS_AROUND = []
+        self.RINGS_AROUND = []
         for rings in range(32):
             meridian = [rings * self.height + x for x in range(self.height)]
-            RINGS_AROUND.append(meridian)
+            self.RINGS_AROUND.append(meridian)
 
         self.VERT_RINGS = []
         self.VERT_RINGS.append(RINGS_AROUND[8])
@@ -58,11 +68,3 @@ class HamsterModel(model.Model):
             self.VERT_RINGS.append(concat)
         self.VERT_RINGS.append(RINGS_AROUND[24])
         
-    def load_model(self, filename):
-
-        with open(filename) as data_file:    
-            data = json.load(data_file)
-        print "Loading model: %s" % filename
-
-        self.model = [x['point'] for x in data]          # making it a bit easier
-
