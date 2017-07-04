@@ -10,7 +10,8 @@ import signal
 import cProfile
 
 import shows
-from model import Model
+from orb_model import OrbModel
+from hamster_model import HamsterModel
 from web_controller import WebController
 import controls_model
 
@@ -504,8 +505,10 @@ if __name__=='__main__':
         print ', '.join([s[0] for s in shows.load_shows()])
         sys.exit(0)
 
-    geometry = Model('sphere_10.json')
-    #geometry = Model('actual_sphere.json')
+    #geometry = HamsterModel('layouts/hamster_sphere.json')
+    #geometry = OrbModel('layouts/disk_sphere.json')
+    geometry = OrbModel('layouts/sphere_10.json')
+    #geometry = OOrbModel('layouts/actual_sphere.json')
     app = Server(geometry, args)
 
     try:
