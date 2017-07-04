@@ -25,9 +25,9 @@ def create_rainbow():
 
 def hsv(h,s,v):
 
-    assert (h<=1) and (h>=0)
-    assert (s<=1) and (s>=0)
-    assert (v<=1) and (v>=0)
+    assert (h<=1.0) and (h>=0)
+    assert (s<=1.0) and (s>=0)
+    assert (v<=1.0) and (v>=0)
     #print h,s,v,colorsys.hsv_to_rgb(h,s,v)[:3], tuple([int(x*255) for x in colorsys.hsv_to_rgb(h,s,v)][:3])
     #import traceback
     #traceback.print_exc()
