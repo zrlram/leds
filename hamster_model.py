@@ -12,10 +12,10 @@ class HamsterModel(model.Model):
         # sort by z-coord
         temp_model = sorted(self.model, key=operator.itemgetter(2), reverse=True)
 
-        current_z = self.temp_model[0][2]
+        current_z = temp_model[0][2]
         count = 0
         self.row = []
-        for i, entry in enumerate(self.temp_model):
+        for i, entry in enumerate(temp_model):
             if entry == [0.0,0.0,0.0]: continue
             z = entry[2]
             if z != current_z:
@@ -53,18 +53,26 @@ class HamsterModel(model.Model):
         for ring in range(3,-1,-1):
             self.HOR_RINGS_MIDDLE_OUT.append(self.HOR_RINGS_TOP_DOWN[ring])
 
+        lengths_top = [ 9, 6, 7, 6, 8, 6, 7, 6 ] 
+        fillers = [0, 0, 0, 0, 3, 0, 0, 30]
         self.RINGS_AROUND = []
+        count = 0
         for rings in range(32):
-            meridian = [rings * self.height + x for x in range(self.height)]
+            meridian = []
+            for i in range(lengths_top[rings%8]+5):
+                meridian.append(count) 
+                count += 1
             self.RINGS_AROUND.append(meridian)
+            count += fillers[rings%8]
+        #print self.RINGS_AROUND
 
         self.VERT_RINGS = []
-        self.VERT_RINGS.append(RINGS_AROUND[8])
+        self.VERT_RINGS.append(self.RINGS_AROUND[8])
         for ring in range(7,-1,-1):
-            concat = sum([RINGS_AROUND[ring], RINGS_AROUND[16-ring]], [])
+            concat = sum([self.RINGS_AROUND[ring], self.RINGS_AROUND[16-ring]], [])
             self.VERT_RINGS.append(concat)
         for ring in range(8):
-            concat = sum([RINGS_AROUND[31-ring], RINGS_AROUND[17+ring]], [])
+            concat = sum([self.RINGS_AROUND[31-ring], self.RINGS_AROUND[17+ring]], [])
             self.VERT_RINGS.append(concat)
-        self.VERT_RINGS.append(RINGS_AROUND[24])
+        self.VERT_RINGS.append(self.RINGS_AROUND[24])
         
