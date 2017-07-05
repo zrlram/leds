@@ -1,7 +1,6 @@
 from color2 import hsv_to_rgb
 from randomcolor import random_color
 import morph
-import model
 # import audio
 
 import looping_show
@@ -25,7 +24,7 @@ class Areas(looping_show.LoopingShow):
 
     def clear(self):
         c = hsv_to_rgb(self.background.hsv)
-        for i in range(model.numLEDs):
+        for i in range(self.geometry.numLEDs):
             self.geometry.set_pixel(i, c)
 
         self.geometry.draw()
@@ -35,8 +34,6 @@ class Areas(looping_show.LoopingShow):
         print "setting mode to", self.mode
 
     def update_at_progress(self, progress, new_loop, loop_instance):
-
-	# (loud, pitch) = self.audio.audio_input()
 
         if new_loop:
             #self.foreground = random_color(luminosity="light")
@@ -54,16 +51,16 @@ class Areas(looping_show.LoopingShow):
                 print "Changing mode to %s" % self.mode
 
             if self.mode == 0:
-                self._list = [[x for x in range(model.numLEDs)]]
+                self._list = [[x for x in range(self.geometry.numLEDs)]]
             elif self.mode ==1:
-                self._list = model.HOR_RINGS_TOP_DOWN
+                self._list = self.geometry.HOR_RINGS_TOP_DOWN
             elif self.mode ==2:
-                self._list = model.HOR_RINGS_MIDDLE_OUT
+                self._list = self.geometry.HOR_RINGS_MIDDLE_OUT
             elif self.mode ==3:
-                self._list = model.HOR_RINGS_TOP_DOWN
+                self._list = self.geometry.HOR_RINGS_TOP_DOWN
                 self._list.reverse()
             else:
-                self._list = [[x for x in range(model.numLEDs)]]
+                self._list = [[x for x in range(self.geometry.numLEDs)]]
 
         # Because progress will never actually hit 1.0, this will always
         # produce a valid list index
