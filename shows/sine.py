@@ -76,9 +76,9 @@ class Sine(looping_shader_show.LoopingShaderShow):
             for x=[0, 2pi]
         '''
 
-        x = p['point'][0]
-        y = p['point'][1]
-        z = p['point'][2]
+        x = p[0]
+        y = p[1]
+        z = p[2]
 
         phi = atan2(y, x) + pi      # from 0 to 2pi
         if self.x_rotator:

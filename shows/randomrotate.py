@@ -48,9 +48,9 @@ class RandomRotatingLine(looping_shader_show.LoopingShaderShow):
     def shader(self, p):
 
         #self.angle = pi/4
-        z = p['point'][2]
-        y = p['point'][1]
-        x = p['point'][0]
+        z = p[2]
+        y = p[1]
+        x = p[0]
 
 
         x_ = x

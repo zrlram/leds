@@ -38,7 +38,7 @@ class VerticalLine(looping_shader_show.LoopingShaderShow):
 
     def shader(self, p):
 
-        x = p['point'][0]
+        x = p[0]
         dist_x = abs(x - self.dx)   # trail - small is large tail
 
         if dist_x < self.trail:

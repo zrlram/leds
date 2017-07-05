@@ -2,7 +2,6 @@ import looping_show
 from color2 import hsv_to_rgb
 from randomcolor import random_color
 import morph
-from model import VERT_RINGS, HOR_RINGS_TOP_DOWN 
 
 class EgPanels(looping_show.LoopingShow):
     # Because we extend LoopingShow we must explicitly override is_show to be True
@@ -47,9 +46,9 @@ class EgPanels(looping_show.LoopingShow):
         #mode = self.step_mode(5)
 
         if self.mode == 1:
-            _list = HOR_RINGS_TOP_DOWN
+            _list = self.geometry.HOR_RINGS_TOP_DOWN
         elif self.mode == 0:
-            _list = VERT_RINGS
+            _list = self.geometry.VERT_RINGS
 
         # Because progress will never actually hit 1.0, this will always
         # produce a valid list index

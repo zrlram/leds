@@ -22,8 +22,8 @@ class Siren(looping_shader_show.LoopingShaderShow):
 
     def Siren_shader(self, p):
 
-        x = p['point'][0]
-        y = p['point'][1]
+        x = p[0]
+        y = p[1]
 
         phi = atan2(y, x) + pi          # from 0 to 2pi
         phi = (phi + self.shift) % (2*pi)

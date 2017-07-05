@@ -8,7 +8,6 @@
 # 
 
 from random import randint
-from model import VERT_RINGS
 
 import looping_show
 from color import morph_color
@@ -46,8 +45,8 @@ class WhiteSnow(looping_show.LoopingShow):
     def update_at_progress(self, progress, new_loop, loop_instance):
             
         if len(self.paths) < self.max_paths:
-            over = randint(0, len(VERT_RINGS) - 1)
-            new_path = Path(self.geometry, VERT_RINGS[over], self.decay)
+            over = randint(0, len(self.geometry.VERT_RINGS) - 1)
+            new_path = Path(self.geometry, self.geometry.VERT_RINGS[over], self.decay)
             self.paths.append(new_path)
         
         # Set background cells

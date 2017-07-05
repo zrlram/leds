@@ -53,7 +53,7 @@ class GravityLine(looping_shader_show.LoopingShaderShow):
 
     def shader(self, p):
 
-        z = p['point'][2]
+        z = p[2]
         dist_z = abs(z - self.y)  
 
         if dist_z < self.trail:

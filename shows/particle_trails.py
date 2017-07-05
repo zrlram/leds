@@ -29,9 +29,9 @@ class ParticleTrails(looping_shader_show.LoopingShaderShow):
             return
 
         for particle in self._particles:
-            dx = (p['point'][0] - particle['point'][0]) or 0
-            dy = (p['point'][1] - particle['point'][1]) or 0
-            dz = (p['point'][2] - particle['point'][2]) or 0
+            dx = (p[0] - particle['point'][0]) or 0
+            dy = (p[1] - particle['point'][1]) or 0
+            dz = (p[2] - particle['point'][2]) or 0
             dist2 = dx**2 + dy**2 + dz**2
 
             intensity = particle['intensity'] / (1+particle['falloff'] * dist2)

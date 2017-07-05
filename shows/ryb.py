@@ -4,7 +4,6 @@ import random
 
 import looping_show
 import tween
-from model import HOR_RINGS_TOP_DOWN, VERT_RINGS
 
 class RYB(looping_show.LoopingShow):
     # Because we extend LoopingShow we must explicitly override is_show to be True
@@ -23,10 +22,10 @@ class RYB(looping_show.LoopingShow):
     def update_parameters(self, state):
         # mode: 0 = self.mode=0 and HOR_RINGS, 3 = self.mode=0 and VERT_RINGS
         self.mode = state % 3
-        self.range = HOR_RINGS_TOP_DOWN
+        self.range = self.geometry.HOR_RINGS_TOP_DOWN
         r = "HOR_RINGS_TOP_DOWN"
         if state % 2:
-            self.range = VERT_RINGS
+            self.range = self.geometry.VERT_RINGS
             r = "VERT_RINGS"
 
         # Setup a unique offset for each bird

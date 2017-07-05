@@ -51,8 +51,8 @@ class RotatingLine(looping_shader_show.LoopingShaderShow):
 
     def rotate_x_shader(self, p):
 
-        y = p['point'][1]
-        x = p['point'][0]
+        y = p[1]
+        x = p[0]
 
 
         # the shape itself
@@ -73,9 +73,9 @@ class RotatingLine(looping_shader_show.LoopingShaderShow):
 
     def shader_rotate_y(self, p):
 
-        z = p['point'][2]
-        y = p['point'][1]
-        x = p['point'][0]
+        z = p[2]
+        y = p[1]
+        x = p[0]
 
         # shape tilt
         z_ = z*sin(self.tilt)+x*cos(self.tilt)
@@ -98,9 +98,9 @@ class RotatingLine(looping_shader_show.LoopingShaderShow):
 
     def shader(self, p):
 
-        z = p['point'][2]
-        y = p['point'][1]
-        x = p['point'][0]
+        z = p[2]
+        y = p[1]
+        x = p[0]
 
         # shape tilt
         x_ = x*cos(self.tilt)-z*sin(self.tilt)

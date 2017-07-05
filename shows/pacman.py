@@ -47,9 +47,9 @@ class PacMan(looping_shader_show.LoopingShaderShow):
 
     def shader(self, p):
 
-        x = p['point'][0]
-        y = p['point'][1]
-        z = p['point'][2]
+        x = p[0]
+        y = p[1]
+        z = p[2]
      
         x_rot = x
         # y_rot = y                   # will hold the rotated variables

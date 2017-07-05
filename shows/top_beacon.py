@@ -40,9 +40,9 @@ class Top_Beacon(looping_shader_show.LoopingShaderShow):
             color_hsv = rgb_to_hsv(self.color)  
 
             if self.all:
-                dist_x = 1-abs(p['point'][0])
-                dist_y = 1-abs(p['point'][1])
-                dist_z = 1-abs(p['point'][2])
+                dist_x = 1-abs(p[0])
+                dist_y = 1-abs(p[1])
+                dist_z = 1-abs(p[2])
                 if dist_x < 0.02:
                     return hsv (color_hsv[0], color_hsv[1], 1-dist_x)
                 if dist_y < 0.02: 
@@ -52,7 +52,7 @@ class Top_Beacon(looping_shader_show.LoopingShaderShow):
                 return (0,0,0)
 
             else:
-                dist = abs(p['point'][2]-1)
+                dist = abs(p[2]-1)
                 if dist > 0.1:
                     dist=1
                 return hsv (color_hsv[0], color_hsv[1], 1-dist)

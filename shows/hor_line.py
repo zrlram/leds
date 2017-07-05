@@ -42,7 +42,7 @@ class HorizontalLine(looping_shader_show.LoopingShaderShow):
 
     def shader(self, p):
 
-        z = p['point'][2]
+        z = p[2]
         dist_z = abs(z - self.dz)  
 
         if dist_z < self.trail:
@@ -71,7 +71,6 @@ class HorizontalLine(looping_shader_show.LoopingShaderShow):
             self.sign = 1
 
         self.trail += random.random()*0.01 * self.sign
-
 
         if self.rainbow:
             self.color = rainbow_(progress, loop_instance, self.cm.brightness)
