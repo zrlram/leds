@@ -11,7 +11,6 @@
 
 from random import randint
 from color2 import RGB, HSV, hsv_to_rgb
-from model import VERT_RINGS
             
 # Interpolates between colors. Fract = 1 is all color 2
 def morph_color(color1, color2, fract):
@@ -79,8 +78,10 @@ class WhiteBounce(object):
                 self.decay = 1.0 / 8
                 self.geometry = geometry
                 self.paths = [] # List that holds paths objects
-                self.trajectories = (VERT_RINGS[2], VERT_RINGS[12],
-                                     VERT_RINGS[22], VERT_RINGS[32])
+
+                trajs = len(self.geometry.VERT_RINGS)
+                self.trajectories = (self.geometry.VERT_RINGS[2], self.geometry.VERT_RINGS[int(trajs/4)],
+                                     self.geometry.VERT_RINGS[int(3*trajs/4)], self.geometry.VERT_RINGS[trajs-2])
                 self.background  = RGB(0,0,0) # Always Black
                 self.foreground = RGB(255,255,255)      # White
                 
