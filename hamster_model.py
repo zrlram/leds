@@ -27,6 +27,7 @@ class HamsterModel(model.Model):
         print "rows: ", self.row
 
         self.height = len(self.row)
+        self.bottom_missing = 3     # how many rows are missing on the bottom of the globe
         
         # HORIZONTAL RINGS TOP DOWN
         self.HOR_RINGS_TOP_DOWN = []
@@ -57,11 +58,17 @@ class HamsterModel(model.Model):
         fillers = [0, 0, 0, 0, 3, 0, 0, 30]
         self.RINGS_AROUND = []
         count = 0
+        direction = 0
         for rings in range(32):
+            if rings not in [5, 8, 13, 16, 21, 24, 29, 32]: 
+                #print "change"
+                direction ^= 1
+
             meridian = []
             for i in range(lengths_top[rings%8]+5):
                 meridian.append(count) 
                 count += 1
+            if direction: meridian.reverse()
             self.RINGS_AROUND.append(meridian)
             count += fillers[rings%8]
         #print self.RINGS_AROUND
