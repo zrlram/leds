@@ -7,7 +7,7 @@ import struct
 from matplotlib.mlab import find
 import scipy.fftpack
 from scipy import pi, signal
-from scipy.fftpack import fft,rfft,rfftfreq,fftfreq
+from scipy.fftpack import fft,fftfreq
 
 SAMPLE_RATE = 44100
 BUFFER_SIZE = 2**11     
@@ -54,7 +54,81 @@ def get_fft(data):
     y = abs(FFT[0:len(FFT)/2])/1000
     y = scipy.log(y) - 2
     return (freqs,y)
-    
+
+def fft_lava(audio_stream):
+	def real_fft(im):
+		im = np.abs(np.fft.fft(im))
+		re = im[0:len(im)/2]
+		re[1:] += im[len(im)/2 + 1:][::-1]
+		return re
+	for l, r in audio_stream:
+		yield real_fft(l) + real_fft(r)
+
+def scale_samples(fft_stream, numleds):
+	for notes in fft_stream:
+		yield notes[0:numleds]
+
+def schur(array_stream, multipliers):
+	for array in array_stream:
+		yield array*multipliers
+
+def rolling_scale_to_max(stream, falloff):
+	avg_peak = 0.0
+	for array in stream:
+		peak = np.max(array)
+		if peak > avg_peak:
+			avg_peak = peak # Output never exceeds 1
+		else:
+			avg_peak *= falloff
+			avg_peak += peak * (1-falloff)
+		if avg_peak == 0:
+			yield array
+		else:
+			yield array / avg_peak
+
+def rolling_smooth(array_stream, falloff):
+	smooth = array_stream.next()
+	yield smooth
+	for array in array_stream:
+		smooth *= falloff
+		smooth += array * (1 - falloff)
+		yield smooth
+
+def exaggerate(array_stream, exponent):
+	for array in array_stream:
+		yield array ** exponent
+
+def add_white_noise(array_stream, amount):
+	for array in array_stream:
+		if sum(array) != 0:
+			yield array + amount
+		else:
+			yield array
+
+def human_hearing_multiplier(freq):
+	points = {0:-10, 50:-8, 100:-4, 200:0, 500:2, 1000:0, \
+				2000:2, 5000:4, 10000:-4, 15000:0, 20000:-4}
+	freqs = sorted(points.keys())
+	for i in range(len(freqs)-1):
+		if freq >= freqs[i] and freq < freqs[i+1]:
+			x1 = float(freqs[i])
+			x2 = float(freqs[i+1])
+			break
+	y1, y2 = points[x1], points[x2]
+	decibels = ((x2-freq)*y1 + (freq-x1)*y2)/(x2-x1)
+	return 10.0**(decibels/10.0)
+
+# Convert the audio data to numbers, num_samples at a time.
+def read_audio(audio_stream, num_samples):
+	while True:
+		# Read all the input data. 
+		samples = audio_stream.read(num_samples, exception_on_overflow=False)
+		# Convert input data to numbers
+		samples = np.fromstring(samples, dtype=np.int16).astype(np.float)
+		samples_l = samples[::2]        # get every second element
+		samples_r = samples[1::2]       # and the other ones
+		yield (samples_l, samples_r)
+
 class Audio():
 
     p = None
@@ -81,7 +155,7 @@ class Audio():
 
     def open_stream(self):
         self.stream = Audio.p.open(format=pyaudio.paInt16,
-                        channels=1,
+                        channels=2,
                         rate=SAMPLE_RATE,
                         #input_device_index = 2,
                         input=True,
@@ -123,24 +197,39 @@ class Audio():
         #print levels
         return levels
 
+    def lava_audio(self, num_leds = 32):
+
+        # num_leds  -- number of buckets to squeece colors into
+        buf_size = 512 # BUFFER_SIZE
+	frequencies = [float(SAMPLE_RATE*i)/buf_size for i in range(num_leds)]
+	human_ear_multipliers = np.array([human_hearing_multiplier(f) for f in frequencies])
+        audio_stream = read_audio (self.stream, num_samples=512)
+	notes = fft_lava(audio_stream)
+	notes = scale_samples(notes, num_leds)
+	notes = add_white_noise(notes, amount=8000)
+	notes = schur(notes, human_ear_multipliers)
+	notes = rolling_scale_to_max(notes, falloff=.98) # Range: 0-1
+	notes = exaggerate(notes, exponent=2)
+	notes = rolling_smooth(notes, falloff=.7)
+        return notes        
 
     def audio_input(self):
-        # read audio value 
-        #foo = self.stream.get_read_available()
 
         data = ""
         try:
             while self.stream.get_read_available<=BUFFER_SIZE:
                 time.sleep(0.05)
-            buf = self.stream.read(BUFFER_SIZE, exception_on_overflow=False)
-            data = scipy.array(struct.unpack("%dh"%(BUFFER_SIZE),buf))
+            # reads stereo 
+            buf = read_audio (self.stream, num_samples=BUFFER_SIZE)
+            #buf = self.stream.read(BUFFER_SIZE, exception_on_overflow=False)
+            #data = scipy.array(struct.unpack("%dh"%(BUFFER_SIZE),buf))
         except Exception as e:
             self.open_stream()
             #print "available", self.stream.get_read_available()
-            #pass
 
+        # deal with the generator and the stereo input
+        data = buf.next()[0].astype(int)
 
-        
         # Generate FFT
         freqs,y = get_fft(data)
 
@@ -151,7 +240,6 @@ class Audio():
         N = 25
         yy = [scipy.average(y[n:n+N]) for n in range(0, len(y), N)]
         yy = yy[:len(yy)/2] # Discard half of the samples, as they are mirrored
-
 
         # Loudness detection
         loudness = thresh(yy[Audio.CHANNEL] * Audio.GAIN, Audio.THRESHOLD)
