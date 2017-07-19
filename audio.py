@@ -155,9 +155,9 @@ class Audio():
 
     def open_stream(self):
         self.stream = Audio.p.open(format=pyaudio.paInt16,
-                        channels=2,
+                        channels=1,
                         rate=SAMPLE_RATE,
-                        #input_device_index = 2,
+                        #input_device_index = 1,
                         input=True,
                         output=False,
                         frames_per_buffer=BUFFER_SIZE)
@@ -275,15 +275,19 @@ class Audio():
         levels = self.calculate_levels(data, BUFFER_SIZE , SAMPLE_RATE)
 
         # Make it look better and send to serial
-        scale = 100
-        exponent = 7
+        scale = 25
+        exponent = 7 
+        new_levels = []
         for level in levels:
-                level = max(min(level / scale, 1.0), 0.0)
+                level = abs(level)
+	        level = max(min(level / scale, 1.0), 0.0)
                 level = level**exponent 
+                new_levels.append(level)
                 #level = int(level * 255)
                 #ser.write(chr(level))
                 #if level == 1.0: level =0
-
+        level = max ( new_levels ) 
+  
         #return (brightness, hue/360.0)
         #return (brightness, hue/360.0,yy )
         return (rms, level, yy)

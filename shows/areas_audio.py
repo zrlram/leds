@@ -76,6 +76,14 @@ class AreasAudio(looping_show.LoopingShow):
 
 	self.audio = audio.Audio()
 
+        if self.mode == 0:
+            self._list = self.geometry.HOR_RINGS_MIDDLE_OUT
+        elif self.mode in (1, 2, 3):
+            self._list = self.geometry.RINGS_AROUND
+
+        self.num_leds = len(self._list)   
+        self.colors = normalize_colors(generate_colors(self.num_leds))
+
         self.clear()
 
     def clear(self):
@@ -91,39 +99,38 @@ class AreasAudio(looping_show.LoopingShow):
 
     def update_at_progress(self, progress, new_loop, loop_instance):
 
+        if not new_loop:
+            return
+
         loud = 0.0
         pitch = 0.0
         yy = []
         if self.mode !=3:
             (loud, pitch, yy) = self.audio.audio_input()
+            if pitch == 0.0 or pitch == 1.1: return
 
-        if not new_loop:
-            return
         #pitch = yy[3]
 
-        if self.mode == 0:
-            self._list = self.geometry.HOR_RINGS_MIDDLE_OUT
-        elif self.mode in (1, 2, 3):
-            self._list = self.geometry.RINGS_AROUND
-
-        self.num_leds = len(self._list)   
-        self.colors = normalize_colors(generate_colors(self.num_leds))
-
+        #print pitch, loud
         to_light = int(pitch * len(self._list))
 
-        # 
+        # horizontal rings up / down based on pitch, color intensity = loud, color = pitch
         if self.mode == 0:
+	    loud = min(loud * 20, 1.0)
             for i in range(0, len(self._list)):
 
+                #print to_light, len(self._list[i])
+		#to_light = min(to_light, len(self._list[i]))
                 if i <= to_light:
+                    #c = color.hsv(pitch,loud*5%1.0,loud)
                     c = color.hsv(pitch,1.0,loud)
                 else:
                     c = self.background.hsv
 
-                #print self._list
                 # all around
                 for k in self._list[i]:
                     self.geometry.set_pixel(k, c)
+
 
         # each ring is a differnt frequency and they are all lit up the ame amount based on the overall pitch
         elif self.mode ==1:
@@ -133,11 +140,15 @@ class AreasAudio(looping_show.LoopingShow):
             #print pitch, to_light
             for round, l in enumerate(self._list):
                 #print yy[round % len(l)]
+                #print len (yy), len(l)
                 for i, k in enumerate(l):
                     if i <= to_light/2:
                         # TBD: PICK a color from a decent palette!!
                         # Use tween?
-                        c = color.hsv(abs(yy[round % len(l)]) / 1.1, 1.0, loud)
+                        if len(l)<len(yy): index = round % len(l)
+                        else: index = round % len(yy)
+                        #c = color.hsv(abs(yy[index]) / 1.1, 1.0, loud)
+                        c = color.hsv(abs(yy[index]) / 1.1, 1.0, min(loud*30, 1.0))
                     else:
                         c = (0,0,0)
                     self.geometry.set_pixel(k, c)
@@ -165,16 +176,14 @@ class AreasAudio(looping_show.LoopingShow):
         elif self.mode == 3:
 
             # from: http://yager.io/LEDStrip/LED.html
-            # TBD
+            # TBD - there is noise - turn off music and it flickers a lot
             notes = self.audio.lava_audio(self.num_leds)
             colors = multiply_colors(self.colors, notes, scalar = 255.0)
-	    colors = cap_colors(colors, cap = 250.0)
+	    colors = cap_colors(colors, cap = 255.0)
             # returns 32 (r,g,b) values)
             color_list = colors.next()
 
             for round, l in enumerate(self._list):
-                #to_light = (abs(yy[round % len(yy)]) / 2.5) * len(self._list)
-                # print "r", round, round % len(yy), yy[round % len(yy)]
                 for i, k in enumerate(l):
                     c = color_list[round % self.num_leds]
                     self.geometry.set_pixel(k, c)
