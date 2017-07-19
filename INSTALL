@@ -8,11 +8,20 @@ sudo mv fcserver /usr/local/bin
 sudo vi /etc/rc.local
     #  /usr/local/bin/fcserver /usr/local/bin/fcserver.json >/var/log/fcserver.log 2>&1 &
 sudo cp ~/led/fadecandy/ram.json /usr/local/bin/fcserver.json
-sudo apt-get install python-pyaudio
-sudo apt-get install python-numpy
+#sudo apt-get install python-pyaudio
+sudo apt-get install python-numpy python-scipy
 sudo pip install -U cherrypy
 
 sudo apt-get install python-dev
-pip install http://pypi.python.org/packages/source/S/SoundAnalyse/SoundAnalyse-0.1.1.tar.gz
+# getting portaudio for the pi
+	wget http://www.portaudio.com/archives/pa_stable_v19_20140130.tgz
+	tar xf pa_stable_v19_20140130.tgz 
+	cd portaudio/
+	./configure
+	make
+	sudo make install
+pip insall pyaudio
+#pip install http://pypi.python.org/packages/source/S/SoundAnalyse/SoundAnalyse-0.1.1.tar.gz
 pip install python-matplotlib
+
 
