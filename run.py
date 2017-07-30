@@ -505,9 +505,9 @@ if __name__=='__main__':
         print ', '.join([s[0] for s in shows.load_shows()])
         sys.exit(0)
 
-    #geometry = HamsterModel('layouts/hamster_sphere.json')
+    geometry = HamsterModel('layouts/hamster_sphere.json')
     #geometry = OrbModel('layouts/disk_sphere.json')
-    geometry = OrbModel('layouts/sphere_10.json')
+    #geometry = OrbModel('layouts/sphere_10.json')
     #geometry = OOrbModel('layouts/actual_sphere.json')
     app = Server(geometry, args)
 
