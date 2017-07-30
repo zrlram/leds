@@ -68,7 +68,7 @@ class HamsterModel(model.Model):
             for i in range(lengths_top[rings%8]+5):
                 meridian.append(count) 
                 count += 1
-            if direction: meridian.reverse()
+            if not direction: meridian.reverse()      # making it bottom to top
             self.RINGS_AROUND.append(meridian)
             count += fillers[rings%8]
         #print self.RINGS_AROUND
