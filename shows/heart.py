@@ -4,17 +4,26 @@ import random
 
 import looping_show
 import tween
+import audio
 
-class Mapping(looping_show.LoopingShow):
+class Heart(looping_show.LoopingShow):
     # Because we extend LoopingShow we must explicitly override is_show to be True
     is_show = True
     
-    name = "Mapping"
+    name = "Heart"
+
+    def update_parameters(self, state):
+        # mode: 0 = self.mode=0 and HOR_RINGS, 3 = self.mode=0 and VERT_RINGS
+        self.mode = state % 2
+        if self.mode == 1: print "Running Heart in Audio mode"
+        else: print "Running Heart in Beating mode"
 
     def __init__(self, sheep_sides):
         looping_show.LoopingShow.__init__(self, sheep_sides)
         self.range = self.geometry.RINGS_AROUND
         self.duration = 1.0
+
+	self.audio = audio.Audio()
 
         self.picture = []
         row_1=[0,0,1,1,0,0,0,1,1,0,0,0,0,0,0,0]
@@ -66,15 +75,23 @@ class Mapping(looping_show.LoopingShow):
         fg_bright = color.hsv(0.1, 0.5, 1.0)
         fg = color.hsv(0.0, 1.0, 1.0)
         bg = color.hsv(0.0, 0.0, 0.0)
+        boost = 20
 
-        color_state = tween.easeInQuad(0.98, 0.3, progress)
+        where = progress
+        if self.mode == 1:          # audio
+            (loud, pitch, yy) = self.audio.audio_input()
+            loud = min(loud * boost, 1.0)
+            #where = 1.0 - loud
+            where = tween.easeOutQuad(0.0, 1.0, loud)
+            
+        color_state = tween.easeInQuad(0.98, 0.3, where)
 
         # 32/2 x 14 images
         # 16 over, 14 up
         height = 14
         width = 16
         image = self.picture 
-        if progress < 0.5:
+        if where < 0.5:
             image = self.heart_big
 
         #print "LLL", len(self.picture), len(self.picture[0])
@@ -102,6 +119,7 @@ class Mapping(looping_show.LoopingShow):
                     continue
                 self.geometry.set_pixel(led, c)
                 
+                '''
                 # other side
                 led = 0
                 try:
@@ -110,10 +128,11 @@ class Mapping(looping_show.LoopingShow):
                     #print "except:", x,y
                     continue
                 self.geometry.set_pixel(led, c)
+                '''
 
         self.geometry.draw()
 
 __shows__ = [
-              (Mapping.name, Mapping)
+              (Heart.name, Heart)
             ]
  
