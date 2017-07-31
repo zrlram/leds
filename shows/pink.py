@@ -1,4 +1,5 @@
 import color2
+import color
 
 import random
 
@@ -34,7 +35,8 @@ class Pink(looping_show.LoopingShow):
         if self.mode == 0:
 
             # Color striped from top to bottom by slices
-            v_range = tween.easeInQuad(0.1, 0.98, (self.cm.brightness + 1.0)/2.0)
+            #v_range = tween.easeInQuad(0.0, 1.0, (self.cm.brightness + 1.0)/2.0)
+            v_range = tween.easeInQuad(0.0, 1.0, 1.0)
             per_slice = v_range / len(self.range)
 
             for idx, sl in enumerate(self.range):
@@ -44,13 +46,10 @@ class Pink(looping_show.LoopingShow):
                 while hue < 0.0:
                     hue += 1.0
 
-                hsv = (hue, 1.0, 1.0)
-
-                rgbTuple = color2.hsv_to_rgb(hsv)
-                rgbTuple = (int(rgbTuple[0]), int(rgbTuple[1]), int(rgbTuple[2]))
+                hsv = color.hsv(hue, 1.0, 1.0)
 
                 for i in sl:
-                    self.geometry.set_pixel(i, rgbTuple)
+                    self.geometry.set_pixel(i, hsv)
 
         elif self.mode == 1:
 
