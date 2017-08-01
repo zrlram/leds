@@ -119,7 +119,6 @@ class Heart(looping_show.LoopingShow):
                     continue
                 self.geometry.set_pixel(led, c)
                 
-                '''
                 # other side
                 led = 0
                 try:
@@ -128,7 +127,6 @@ class Heart(looping_show.LoopingShow):
                     #print "except:", x,y
                     continue
                 self.geometry.set_pixel(led, c)
-                '''
 
         self.geometry.draw()
 
