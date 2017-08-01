@@ -20,14 +20,18 @@ class Model(object):
         self.numLEDs = len(self.model)
         print "LEDs: ", self.numLEDs
         self.client = opc.Client('192.168.56.150:7890')
+        #self.client = opc.Client('localhost:7890')
         self.pixels = multiprocessing.Array((c_ubyte * 3), self.numLEDs, lock=False)
 
         self.position = {}  # coords -> position
         for i, entry in enumerate(self.model):
             self.position[str(entry)] = i
 
-    def set_pixel(self,pos, color):
+    def set_pixel(self, pos, color):
         self.pixels[pos] = color
+
+    def get_pixel(self, pos):
+        return self.pixels[pos] 
 
     def draw(self):
         self.client.put_pixels(self.pixels)
@@ -66,7 +70,7 @@ class Model(object):
     
         # print "active shaders: %s" % self.shaders
 
-        nprocs = 1
+        nprocs = 2
         chunksize = int(ceil(len(self.model) / float(nprocs)))
 
         # multiple_results = [pool.apply_async(os.getpid, ()) for i in range(4)]
@@ -81,6 +85,9 @@ class Model(object):
             p.start()
 
         self.draw()
+
+    def get_brightness(self):
+        return self._brightness 
 
     def set_brightness(self, val):
         self._brightness = val
