@@ -132,6 +132,7 @@ def read_audio(audio_stream, num_samples):
 class Audio():
 
     p = None
+    stream = None
 
     # With ideas from https://github.com/jorticus/audiovis/blob/master/audiovis.py
     # Loudness detect:
@@ -154,7 +155,7 @@ class Audio():
         self.max_bright = 1
 
     def open_stream(self):
-        self.stream = Audio.p.open(format=pyaudio.paInt16,
+        Audio.stream = Audio.p.open(format=pyaudio.paInt16,
                         channels=1,
                         rate=SAMPLE_RATE,
                         #input_device_index = 1,
@@ -164,8 +165,8 @@ class Audio():
 
     def clear(self):
         #print "clear"
-        self.stream.stop_stream()
-        self.stream.close()
+        Audio.stream.stop_stream()
+        Audio.stream.close()
 
     def calculate_levels(self, data, chunk, samplerate):
         # Use FFT to calculate volume for each frequency
@@ -203,7 +204,7 @@ class Audio():
         buf_size = 512 # BUFFER_SIZE
 	frequencies = [float(SAMPLE_RATE*i)/buf_size for i in range(num_leds)]
 	human_ear_multipliers = np.array([human_hearing_multiplier(f) for f in frequencies])
-        audio_stream = read_audio (self.stream, num_samples=512)
+        audio_stream = read_audio (Audio.stream, num_samples=512)
 	notes = fft_lava(audio_stream)
 	notes = scale_samples(notes, num_leds)
 	notes = add_white_noise(notes, amount=8000)
@@ -217,15 +218,15 @@ class Audio():
 
         data = ""
         try:
-            while self.stream.get_read_available<=BUFFER_SIZE:
+            while Audio.stream.get_read_available<=BUFFER_SIZE:
                 time.sleep(0.05)
             # reads stereo 
-            buf = read_audio (self.stream, num_samples=BUFFER_SIZE)
-            #buf = self.stream.read(BUFFER_SIZE, exception_on_overflow=False)
+            buf = read_audio (Audio.stream, num_samples=BUFFER_SIZE)
+            #buf = Audio.stream.read(BUFFER_SIZE, exception_on_overflow=False)
             #data = scipy.array(struct.unpack("%dh"%(BUFFER_SIZE),buf))
         except Exception as e:
             self.open_stream()
-            #print "available", self.stream.get_read_available()
+            #print "available", Audio.stream.get_read_available()
 
         # deal with the generator and the stereo input
         data = buf.next()[0].astype(int)
