@@ -45,7 +45,6 @@ class TwoRotatingLines(looping_shader_show.LoopingShaderShow):
         # mode: 0 = rings
         # mode: 1 = small patch to rings grow, shrink
         self.mode = state % 3
-        self.mode = 3
 
     def control_color_changed(self, c_ix):
         if c_ix == 0:       # use the primarty color
