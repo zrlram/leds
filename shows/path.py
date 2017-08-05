@@ -18,6 +18,7 @@ class Path(looping_show.LoopingShow):
         self.path = [ (0,5), (1,6), (1,5), (2,7), (2,5), (3,8), (3,5), (4,9), (4,5), (5,10),
                       (5,5), (6,11), (6,5), (7,12), (7,5)
                     ]
+        self.geometry.clear()
 
 
     def update_at_progress(self, progress, new_loop, loop_instance):
