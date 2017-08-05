@@ -8,6 +8,8 @@ class LeapLine(looping_shader_show.LoopingShaderShow):
 
     name = "Leap Line"
 
+    ok_for_random = False
+
     controls = OrderedDict()
     controls.update({ 'Trail Length': [0.1, 1, 0.3, 0.01]})
     controls.update({'rainbow': 'checkbox'})
