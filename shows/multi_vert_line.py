@@ -14,6 +14,7 @@ class MultiVerticalLine(looping_shader_show.LoopingShaderShow):
                  'rainbow': 'checkbox'
                  }
     
+    # not ready
     ok_for_random = False
 
 
