@@ -23,6 +23,8 @@ class Heart(looping_show.LoopingShow):
         self.range = self.geometry.RINGS_AROUND
         self.duration = 1.0
 
+        self.rotate = 0
+
 	self.audio = audio.Audio()
 
         self.picture = []
@@ -96,6 +98,9 @@ class Heart(looping_show.LoopingShow):
 
         #print "LLL", len(self.picture), len(self.picture[0])
 
+        if loop_instance % 5 == 1:
+            self.rotate += 1
+    
         for x in range(width):
             for y in range(height):
 
@@ -112,8 +117,9 @@ class Heart(looping_show.LoopingShow):
 
                 # first side
                 led = 0
+                l = len(self.range)
                 try:
-                    led = self.range[len(self.range)-1-x][y]
+                    led = self.range[(l-1-x+self.rotate) % l][y]
                 except:
                     #print "except:", x,y
                     continue
@@ -122,11 +128,13 @@ class Heart(looping_show.LoopingShow):
                 # other side
                 led = 0
                 try:
-                    led = self.range[len(self.range)/2-1-x][y]
+                    led = self.range[(l/2-1-x+self.rotate) % l][y]
                 except:
                     #print "except:", x,y
                     continue
                 self.geometry.set_pixel(led, c)
+
+
 
         self.geometry.draw()
 
