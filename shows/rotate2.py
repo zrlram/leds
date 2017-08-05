@@ -1,4 +1,4 @@
-from color import hsv, rgb_to_hsv, rainbow, rainbow_
+from color import hsv, rgb_to_hsv, rainbow, rainbow_, set_S, set_H
 from math import pi, cos, sin, sqrt
 from collections import OrderedDict
 import random
@@ -28,15 +28,24 @@ class TwoRotatingLines(looping_shader_show.LoopingShaderShow):
 
         # configurable controls
         self.trail = 0.2
-        self.color = (50,50,255)
+        #self.color = (50,50,255)
         self.background = (0,0,0)
         self.rainbow = 1
         self.tilt = 0
-        self.tilt2 = 0.4
+        self.tilt2 = 0.3
         self.tilt_change = 0.2
+        self.sign = 1
+
+        self.color = hsv(0.8, 0.65, 1.0)    # pink
+        self.color2 = hsv(0.7, 0.8, 1.0)    # blue
 
         self.duration = 10
 
+    def update_parameters(self, state):
+        # mode: 0 = rings
+        # mode: 1 = small patch to rings grow, shrink
+        self.mode = state % 3
+        self.mode = 3
 
     def control_color_changed(self, c_ix):
         if c_ix == 0:       # use the primarty color
@@ -115,7 +124,9 @@ class TwoRotatingLines(looping_shader_show.LoopingShaderShow):
         y__ = y_*cos(self.angle)-z_*sin(self.angle)
         z__ = y_*sin(self.angle)+z_*cos(self.angle)
 
-        self.dz = 0
+        # rings
+        if self.mode == 0:
+            self.dz = 0
         dist_z = abs(z__ - self.dz)  
 
         x_ = x*cos(self.tilt2)-z*sin(self.tilt2)
@@ -168,25 +179,40 @@ class TwoRotatingLines(looping_shader_show.LoopingShaderShow):
 
     def update_at_progress(self, progress, new_loop, loop_instance):
 
-        self.angle = progress * pi * 2
+        self.angle = progress * pi * 2 
         self.angle2 = (1.0-progress) * pi * 2
         self.tilt += random.random()*self.tilt_change
-        self.tilt2 += self.tilt_change
+        # turn negative every now and then
+        if random.random() > 0.99:
+            self.sign ^= 1
+        if self.sign:
+            self.tilt2 += self.tilt_change * random.random() 
+        else:
+            self.tilt2 -= self.tilt_change * random.random() 
         #self.tilt = self.tilt % (pi / 3)
 
-        # dz is from -1 to 1
-        if (loop_instance % 2):
-            # up
+        if self.mode == 1:
             self.dz = 1 - 2 * progress
-            self.dy = 1 - 2 * progress
-        else:
-            # down
-            self.dz = - (1 - 2 * progress)
-            self.dy = - (1 - 2 * progress)
+            #self.dy = 1 - 2 * progress
 
-        if self.rainbow:
-            self.color = rainbow_(progress, loop_instance, self.cm.brightness)
-            self.color2 = rainbow_(progress+0.3, loop_instance, self.cm.brightness)
+        if self.mode == 2:
+            # dz is from -1 to 1
+            if (loop_instance % 2):
+                # up
+                self.dz = 1 - 2 * progress
+                self.dy = 1 - 2 * progress
+            else:
+                # down
+                self.dz = - (1 - 2 * progress)
+                self.dy = - (1 - 2 * progress)
+
+        if self.mode == 3:
+            self.color = set_S(self.color, absolute=progress)
+            self.color2 = set_S(self.color2, absolute=(progress + 0.2) % 1.0)
+            self.color2 = set_H(self.color2, absolute=(progress + 0.2) % 1.0)
+        elif self.rainbow:
+            self.color = rainbow_(progress, loop_instance, 1.0)
+            self.color2 = rainbow_(progress+random.random(), loop_instance, 1.0)
             #self.color2 = rainbow[int((progress+0.3)*len(rainbow))%len(rainbow)]
 
 __shows__ = [
