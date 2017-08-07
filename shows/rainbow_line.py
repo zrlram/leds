@@ -17,6 +17,7 @@ class RainbowLine(looping_shader_show.LoopingShaderShow):
         looping_shader_show.LoopingShaderShow.__init__(self, geometry, self.shader)
 
         self.dz = 1.0
+        self.mode = 0
 
         # configurable controls
         self.trail = 0.5
@@ -43,9 +44,12 @@ class RainbowLine(looping_shader_show.LoopingShaderShow):
         if dist_z/self.trail <= 1.0 and dist_z/self.trail >= 0.0:
 
             # TBD: Introduce modes for these
-            self.color = rainbow_(1, z*16, self.cm.brightness)
-            self.color = rainbow_(self.trail, x*16, self.cm.brightness)
-            self.color = rainbow_(self.progress, x*8+y*8+self.progress*20, self.cm.brightness)
+            if self.mode == 0:
+                self.color = rainbow_(1, z*13, self.cm.brightness)
+            elif self.mode == 1:
+                self.color = rainbow_(self.trail, x*16, self.cm.brightness)
+            elif self.mode == 2:
+                self.color = rainbow_(self.progress, x*6+y*6+self.progress, self.cm.brightness)
             color_hsv = rgb_to_hsv(self.color)  # set the intesity to the distance
             dist_z = dist_z / self.trail
     
@@ -64,6 +68,11 @@ class RainbowLine(looping_shader_show.LoopingShaderShow):
         else:
             # down
             self.dz = - (1 - 2 * progress)
+
+        if loop_instance % 5 == 0 and new_loop :
+            self.mode = (self.mode + 1) % 3
+            self.mode = 2
+            print self.mode
 
         '''
         if self.trail > 0.95:

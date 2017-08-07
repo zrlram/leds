@@ -110,7 +110,7 @@ def rainbow_(progress, step, brightness, numSlices=18):
     v_range = tween.easeInQuad(0.1, 0.98, (brightness + 1.0)/2.0)
     per_slice = v_range / numSlices
             
-    hue = progress - (step % numSlices * per_slice) 
+    hue = (progress - (step % numSlices)) * per_slice
     while hue > 1.0:
         hue -= 1.0
     while hue < 0.0:

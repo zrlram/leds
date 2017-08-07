@@ -35,6 +35,7 @@ class TwoRotatingLines(looping_shader_show.LoopingShaderShow):
         self.tilt2 = 0.3
         self.tilt_change = 0.2
         self.sign = 1
+        self.rand = random.randint(1,18)    # used as a random number
 
         self.color = hsv(0.8, 0.65, 1.0)    # pink
         self.color2 = hsv(0.7, 0.8, 1.0)    # blue
@@ -45,6 +46,7 @@ class TwoRotatingLines(looping_shader_show.LoopingShaderShow):
         # mode: 0 = rings
         # mode: 1 = small patch to rings grow, shrink
         self.mode = state % 3
+        print "Running Random Rotating Linesin mode", self.mode, "random", self.rand
 
     def control_color_changed(self, c_ix):
         if c_ix == 0:       # use the primarty color
@@ -210,8 +212,9 @@ class TwoRotatingLines(looping_shader_show.LoopingShaderShow):
             self.color2 = set_S(self.color2, absolute=(progress + 0.2) % 1.0)
             self.color2 = set_H(self.color2, absolute=(progress + 0.2) % 1.0)
         elif self.rainbow:
-            self.color = rainbow_(progress, loop_instance, 1.0)
-            self.color2 = rainbow_(progress+random.random(), loop_instance, 1.0)
+            self.color = rainbow_(progress, loop_instance+progress*5, 1.0)
+            self.color2 = rainbow_(progress, loop_instance+progress*5+self.rand, 1.0)
+            print self.color, self.color2
             #self.color2 = rainbow[int((progress+0.3)*len(rainbow))%len(rainbow)]
 
 __shows__ = [

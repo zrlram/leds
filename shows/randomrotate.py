@@ -98,7 +98,7 @@ class RandomRotatingLine(looping_shader_show.LoopingShaderShow):
 
         if self.rainbow:
             #self.color = rainbow[int(progress*10%len(rainbow))]
-            self.color = rainbow_(progress, loop_instance, self.cm.brightness)
+            self.color = rainbow_(progress, loop_instance+progress*10, self.cm.brightness)
 
 __shows__ = [
               (RandomRotatingLine.name, RandomRotatingLine)
