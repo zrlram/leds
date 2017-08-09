@@ -214,7 +214,7 @@ class TwoRotatingLines(looping_shader_show.LoopingShaderShow):
         elif self.rainbow:
             self.color = rainbow_(progress, loop_instance+progress*5, 1.0)
             self.color2 = rainbow_(progress, loop_instance+progress*5+self.rand, 1.0)
-            print self.color, self.color2
+            #print self.color, self.color2
             #self.color2 = rainbow[int((progress+0.3)*len(rainbow))%len(rainbow)]
 
 __shows__ = [
