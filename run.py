@@ -315,7 +315,7 @@ class ShowRunner(threading.Thread):
                     if to_sleep < 0.005:
                         to_sleep = 0.005
 
-                    # print "toSleep = %s" % str(to_sleep)
+                    #print "toSleep = %s" % str(to_sleep)
                     time.sleep(to_sleep)
 
             except Exception:
@@ -363,6 +363,12 @@ class ShowRunner(threading.Thread):
         if isinstance(msg, basestring):
             if msg == "shutdown":
                 self.running = False
+
+                # dump profile if it was running
+                if self.profile:
+                    self.profile.disable()
+                    self.profile.dump_stats("Stats")
+
                 print "ShowRunner shutting down"
             elif msg == "clear":
                 self.clear()
