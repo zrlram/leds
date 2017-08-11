@@ -55,7 +55,9 @@ class Model(object):
             #led['point'][0] = 
             #led['point'][1] = 
             #led['point'][0] = led['point'][1]*sin(0.3)+led['point'][0]*cos(0.3)
-            self.pixels[i] = self.shaders[0](led)
+            out = self.shaders[0](led)
+            if not out: continue
+            self.pixels[i] = out
             for shader in self.shaders[1:]:
                 values = shader(led) 
                 self.pixels[i] = tuple(map(operator.add, self.pixels[i], values))
