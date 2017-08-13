@@ -1,12 +1,9 @@
 import pyaudio
 import numpy as np
-import math
 import time
 import scipy
 import struct
-from matplotlib.mlab import find
-import scipy.fftpack
-from scipy import pi, signal
+#import scipy.fftpack
 from scipy.fftpack import fft,fftfreq
 
 SAMPLE_RATE = 44100
