@@ -69,7 +69,7 @@ class Text(looping_show.LoopingShow):
                     led = self.range[x][y]
                     col = pixels[led]
                     # rotate x by 'how_much'
-                    new_x = (x+how_much) % len(self.range)
+                    new_x = (x-how_much) % len(self.range)
                 
                     led = self.range[new_x][y]
                     #print str(col)
@@ -107,11 +107,11 @@ class Text(looping_show.LoopingShow):
             start = len(self.range) 
             for x in range(1, self.width+1):
                 for y in range(1, 7):
-                    led = self.range[start-1-x][y+2]
+                    led = self.range[x][y+2]
                     self.geometry.set_pixel(led,bg)
 
             for (x,y) in path:
-                led = self.range[start-1-x][y+2]
+                led = self.range[x][y+2]
                 self.geometry.set_pixel(led, fg)
 
 
