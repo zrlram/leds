@@ -16,7 +16,7 @@ angles = [x for x in arange (-pi + bottom, 0, (pi / 2) / 9)]
 
 lines = []
 direction = 0
-for slice, over in enumerate(arange(2*pi, 0, -(pi / 16))):
+for slice, over in enumerate(arange(0, 2*pi, (pi / 16))):
     top = lengths_top[slice % 8]
     bottom = lengths_bottom[slice%8]
 

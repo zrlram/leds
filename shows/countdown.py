@@ -75,14 +75,15 @@ class CountDown(looping_shader_show.LoopingShaderShow):
 
         if loop_instance<9 and new_loop:
             self.geometry.clear()
+            path = self.digit(str(9-(loop_instance % 10)))
             for mirror in range(1,5):
-                path = self.digit(str(9-(loop_instance % 10)))
                 for dot in path:
                     start = mirror * len(self.range) / 4
                     (x,y) = dot
                     y = y + 2
                     # x = x + loop_instance
-                    led = self.range[start-1-x][y]
+                    new_x = (start + x) % len(self.range)
+                    led = self.range[new_x][y]
                     self.geometry.set_pixel(led, fg)
 
             self.geometry.draw()

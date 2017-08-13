@@ -24,6 +24,5 @@ sudo apt-get install python-dev
 	sudo make install
 pip insall pyaudio
 #pip install http://pypi.python.org/packages/source/S/SoundAnalyse/SoundAnalyse-0.1.1.tar.gz
-pip install python-matplotlib
 
 
