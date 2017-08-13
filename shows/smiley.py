@@ -81,6 +81,7 @@ class Smiley(looping_show.LoopingShow):
         self.tongue[3] = [0,0,1,0,0,0,1,2,2,1,1,0,0,0,1,0,0,0]
         self.tongue[2] = [0,0,0,1,0,0,0,0,2,2,0,0,0,1,0,0,0,0]
 
+	self.geometry.clear()
 
     def update_at_progress(self, progress, new_loop, loop_instance):
 
