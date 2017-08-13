@@ -69,7 +69,7 @@ class AreasAudio(looping_show.LoopingShow):
         looping_show.LoopingShow.__init__(self, geometry)
 
         self.background = RGB(0,0,0)
-        self.mode = 3
+        self.mode = 2
 
         self.round = 0
         self.duration = 0.05
@@ -116,13 +116,14 @@ class AreasAudio(looping_show.LoopingShow):
 
         # horizontal rings up / down based on pitch, color intensity = loud, color = pitch
         if self.mode == 0:
-	    loud = min(loud * 20, 1.0)
+	    loud = min(loud * 2, 1.0)
             for i in range(0, len(self._list)):
 
                 #print to_light, len(self._list[i])
 		#to_light = min(to_light, len(self._list[i]))
                 if i <= to_light:
                     #c = color.hsv(pitch,loud*5%1.0,loud)
+                    print pitch
                     c = color.hsv(pitch,1.0,loud)
                 else:
                     c = self.background.hsv
