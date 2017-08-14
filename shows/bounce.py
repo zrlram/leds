@@ -52,6 +52,7 @@ class Path(object):
         
         def set_decay(self, decay):
                 self.decay = decay
+
         def draw_path(self, foreground, background):
                 for f in self.faders:
                         f.draw_fader(foreground, background)
@@ -87,7 +88,8 @@ class WhiteBounce(object):
                 
                 # Set up 3 balls on low, medium, and high levels
                 
-                for i in range(4):
+                num_of_bouncers = 8
+                for i in range(num_of_bouncers):
                         new_path = Path(self.geometry, self.trajectories[i], self.decay)
                         self.paths.append(new_path)
                         
