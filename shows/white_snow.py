@@ -24,7 +24,7 @@ class WhiteSnow(looping_show.LoopingShow):
 
         self.paths = [] # List that holds paths objects
         self.geometry = geometry
-        self.max_paths = 6
+        self.max_paths = 8
         self.decay = 1.0 / 3
         self.background  = (0,0,0) # Always Black
         self.foreground = (255,255,255)  # Always White
