@@ -43,7 +43,6 @@ class RainbowLine(looping_shader_show.LoopingShaderShow):
         #if dist_z < self.trail:
         if dist_z/self.trail <= 1.0 and dist_z/self.trail >= 0.0:
 
-            # TBD: Introduce modes for these
             if self.mode == 0:
                 self.color = rainbow_(1, z*13, self.cm.brightness)
             elif self.mode == 1:
@@ -71,8 +70,6 @@ class RainbowLine(looping_shader_show.LoopingShaderShow):
 
         if loop_instance % 5 == 0 and new_loop :
             self.mode = (self.mode + 1) % 3
-            self.mode = 2
-            print self.mode
 
         '''
         if self.trail > 0.95:
