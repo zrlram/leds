@@ -24,7 +24,7 @@ class Text(looping_show.LoopingShow):
 
     def digit(self,digit):
 
-        over = 1
+        over = 0
         dots = []
 
         char = ord(digit) 
@@ -61,14 +61,14 @@ class Text(looping_show.LoopingShow):
 
         korrektur = 0
         if drop_end:
-            korrektur = drop_end
-        for x in range(len(self.range) - korrektur):
+            korrektur = how_much
+        for x in range(korrektur, len(self.range)):
             for y in range(14):
                 try:
                     # read current value
                     led = self.range[x][y]
                     col = pixels[led]
-                    # rotate x by 'how_much'
+                    # rotate x by 'how_much' 
                     new_x = (x-how_much) % len(self.range)
                 
                     led = self.range[new_x][y]
@@ -82,12 +82,13 @@ class Text(looping_show.LoopingShow):
 
             self.geometry.draw()
 
+
         self.geometry.set_brightness(bright)
 
     def update_at_progress(self, progress, new_loop, loop_instance):
 
-        fg_bright = color.hsv(0.1, 0.5, 1.0)
-        fg = color.hsv(0.2, 0.4, 1.0)
+        fg_bright = color.hsv(0.1, 0.5, 0.5)
+        fg = color.hsv(0.5, 0.4, 1.0)
         bg = color.hsv(0.0, 0.0, 0.0)
 
         if new_loop:
@@ -96,22 +97,34 @@ class Text(looping_show.LoopingShow):
             letter = loop_instance%len(self.text)
             path = self.digit(self.text[letter])
 
-            self.rotate(self.width)
+            # remember how wide old character is to delete after rotate
+            # necessary after one rotation
+            old_width = self.width
 
+            # calculate width of current character to delete after
             if self.text[letter] == " ":
-                self.width = 2      # for space
+                self.width = 1      # for space
             else:
                 self.width = max([x for (x,y) in path]) + 1
 
-            # clear letter area
-            start = len(self.range) 
-            for x in range(1, self.width+1):
-                for y in range(1, 7):
-                    led = self.range[x][y+2]
-                    self.geometry.set_pixel(led,bg)
+            print "letter, ", self.text[letter], self.width, old_width
 
+            # twirl me - one more time - by how much the current letter is wide plus 1 for the space
+            self.rotate(self.width+1)
+
+            start = len(self.range) - self.width
+            old_start = len(self.range) - old_width
+
+            # clear letter area - needed after a full rotation
+            for x in range(old_width):
+                for y in range(1,7):
+                    led = self.range[old_start+x][y+1]
+                    self.geometry.set_pixel(led, fg_bright)
+
+            # write in the negative area for rotational - drop purposes
+            print path
             for (x,y) in path:
-                led = self.range[x][y+2]
+                led = self.range[start+x][y+1]
                 self.geometry.set_pixel(led, fg)
 
 
