@@ -71,7 +71,7 @@ class GGBridge(looping_show.LoopingShow):
                     c = yellow
                 elif image[y][x] == 4:        # sun
                     c = yellow
-                    sun = abs(0.5 * sin(loop_instance + progress))
+                    sun = abs(0.8 * sin(loop_instance + progress))
                     c = color.set_V(c, absolute=sun)  
                 elif image[y][x] == 1:      # bridge
                     c = red                        
@@ -79,7 +79,7 @@ class GGBridge(looping_show.LoopingShow):
                     c = blue                     
                 elif image[y][wave_random] == 5:      # waves
                     c = blue                     
-                    wave_height = abs(0.4 * sin((loop_instance + progress)*8))
+                    wave_height = abs(0.6 * sin((loop_instance + progress)*8))
                     c = color.set_V(c, absolute=(wave_height)) 
                 else:
                     c = bg
