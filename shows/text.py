@@ -19,9 +19,32 @@ class Text(looping_show.LoopingShow):
         self.width = 0
 
         self.duration = 0.5
-        self.text = "HELLO RAFFY "
+
+        self.text_pixels = self.pixelate ("HELLO RAFFY ")
 
         self.geometry.clear()
+
+    def pixelate(self, text):
+
+        matrix = []
+        for letter in text:
+            path = self.digit(letter)
+
+            # calculate width of current character to delete after
+            if self.text[letter] == " ":
+                width = 1      # for space
+            else:
+                width = max([x for (x,y) in path]) + 1
+
+            for col in range(width):
+                column = [0,0,0,0,0]         # letter height
+                for (x,y) in path:
+                    column[x] = 1
+                matrix.append(column)
+            
+            print matrix
+
+
 
     def digit(self,digit):
 
@@ -101,12 +124,7 @@ class Text(looping_show.LoopingShow):
             # necessary after one rotation
             old_width = self.width
 
-            # calculate width of current character to delete after
-            if self.text[letter] == " ":
-                self.width = 1      # for space
-            else:
-                self.width = max([x for (x,y) in path]) + 1
-
+            return 
             print "letter, width, old_width", self.text[letter], self.width, old_width
 
             # twirl me - one more time - by how much the current letter is wide plus 1 for the space
