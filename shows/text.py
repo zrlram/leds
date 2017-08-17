@@ -1,6 +1,7 @@
 import color
 
 import random
+import time
 
 import looping_show
 import tween
@@ -17,8 +18,8 @@ class Text(looping_show.LoopingShow):
         self.range = self.geometry.RINGS_AROUND
         self.width = 0
 
-        self.duration = 1.0
-        self.text = "HELLO RAFFY"
+        self.duration = 0.5
+        self.text = "HELLO RAFFY "
 
         self.geometry.clear()
 
@@ -48,28 +49,29 @@ class Text(looping_show.LoopingShow):
 
         return dots
                         
-    def rotate(self, how_much, drop_end = True):
+    def rotate(self, how_much):
 
         # read all - make a quick copy to not change in place
+
+        bright = self.geometry.get_brightness()
+        self.geometry.set_brightness(1.0)
+
         pixels = []
         for idx in range(self.geometry.get_nof_pixels()):
             temp = self.geometry.pixels[idx]
             pixels.append((temp[0], temp[1],temp[2]))
 
-        bright = self.geometry.get_brightness()
-        self.geometry.set_brightness(1.0)
-
-        korrektur = 0
-        if drop_end:
-            korrektur = how_much
-        for x in range(korrektur, len(self.range)):
+        self.geometry.clear()
+        for x in range(len(self.range)):
             for y in range(14):
                 try:
                     # read current value
                     led = self.range[x][y]
                     col = pixels[led]
                     # rotate x by 'how_much' 
-                    new_x = (x-how_much) % len(self.range)
+                    # new_x = (x-how_much) % len(self.range)
+                    new_x = (x-1)               # will be done "how_much" times
+                    if new_x < 0: continue      # drop end
                 
                     led = self.range[new_x][y]
                     #print str(col)
@@ -80,19 +82,17 @@ class Text(looping_show.LoopingShow):
                     #traceback.print_exc()
                     continue
 
-            self.geometry.draw()
-
+        self.geometry.draw()
 
         self.geometry.set_brightness(bright)
 
     def update_at_progress(self, progress, new_loop, loop_instance):
 
-        fg_bright = color.hsv(0.1, 0.5, 0.5)
+        fg_bright = color.hsv(0.1, 0.5, 0.2)
         fg = color.hsv(0.5, 0.4, 1.0)
         bg = color.hsv(0.0, 0.0, 0.0)
 
         if new_loop:
-            #self.geometry.clear()
             #path = self.digit(str(loop_instance % 10))
             letter = loop_instance%len(self.text)
             path = self.digit(self.text[letter])
@@ -107,10 +107,12 @@ class Text(looping_show.LoopingShow):
             else:
                 self.width = max([x for (x,y) in path]) + 1
 
-            print "letter, ", self.text[letter], self.width, old_width
+            print "letter, width, old_width", self.text[letter], self.width, old_width
 
             # twirl me - one more time - by how much the current letter is wide plus 1 for the space
-            self.rotate(self.width+1)
+            for iter in range(self.width + 1):
+                self.rotate(1)
+                time.sleep(0.2)
 
             start = len(self.range) - self.width
             old_start = len(self.range) - old_width
