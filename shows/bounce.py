@@ -90,7 +90,7 @@ class WhiteBounce(object):
                 
                 num_of_bouncers = 8
                 for i in range(num_of_bouncers):
-                        new_path = Path(self.geometry, self.trajectories[i], self.decay)
+                        new_path = Path(self.geometry, self.trajectories[i % len(self.trajectories)], self.decay)
                         self.paths.append(new_path)
                         
                 self.speed = 0.1
