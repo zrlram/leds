@@ -69,12 +69,26 @@ class AreasAudio(looping_show.LoopingShow):
         looping_show.LoopingShow.__init__(self, geometry)
 
         self.background = RGB(0,0,0)
-        self.mode = 2
 
         self.round = 0
         self.duration = 0.05
+	self.mode = 0
+	self.num_leds = 0
+	self._list = []
+	self.colors = []
 
 	self.audio = audio.Audio()
+
+
+        c = hsv_to_rgb(self.background.hsv)
+        for i in range(self.geometry.numLEDs):
+            self.geometry.set_pixel(i, c)
+
+        self.geometry.draw()
+
+    def update_parameters(self, state):
+
+        self.mode = state % 4
 
         if self.mode == 0:
             self._list = self.geometry.HOR_RINGS_MIDDLE_OUT
@@ -84,14 +98,12 @@ class AreasAudio(looping_show.LoopingShow):
         self.num_leds = len(self._list)   
         self.colors = normalize_colors(generate_colors(self.num_leds))
 
-        self.clear()
+        print "running %s in mode %s" % (self.name, self.mode)
 
     def clear(self):
-        c = hsv_to_rgb(self.background.hsv)
-        for i in range(self.geometry.numLEDs):
-            self.geometry.set_pixel(i, c)
+	# called in the end!
 
-        self.geometry.draw()
+	self.audio.clear()
 
     def custom_range_value_changed(self, range):
         self.mode = self.cm.ranges[range]
@@ -116,14 +128,14 @@ class AreasAudio(looping_show.LoopingShow):
 
         # horizontal rings up / down based on pitch, color intensity = loud, color = pitch
         if self.mode == 0:
-	    loud = min(loud * 2, 1.0)
+	    loud = min(loud * 10, 1.0)
             for i in range(0, len(self._list)):
 
                 #print to_light, len(self._list[i])
 		#to_light = min(to_light, len(self._list[i]))
                 if i <= to_light:
                     #c = color.hsv(pitch,loud*5%1.0,loud)
-                    print pitch
+                    #print pitch
                     c = color.hsv(pitch,1.0,loud)
                 else:
                     c = self.background.hsv
@@ -143,7 +155,7 @@ class AreasAudio(looping_show.LoopingShow):
                 #print yy[round % len(l)]
                 #print len (yy), len(l)
                 for i, k in enumerate(l):
-                    if i <= to_light/2:
+                    if i <= to_light:
                         # TBD: PICK a color from a decent palette!!
                         # Use tween?
                         if len(l)<len(yy): index = round % len(l)
@@ -167,9 +179,9 @@ class AreasAudio(looping_show.LoopingShow):
             for round, l in enumerate(self._list):
                 to_light = (abs(yy[round % len(yy)]) / 2.5) * len(self._list)
                 # print "r", round, round % len(yy), yy[round % len(yy)]
-                for i, k in enumerate(l):
-                    if i <= to_light:
-                        c = color.rainbow_(1, round, loud)
+                for i, k in enumerate(reversed(l)):
+                    if i >= to_light:
+                        c = color.rainbow_(1, round*4, loud)
                     else:
                         c = (0,0,0)
                     self.geometry.set_pixel(k, c)

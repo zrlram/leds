@@ -126,6 +126,7 @@ def read_audio(audio_stream, num_samples):
 		samples_r = samples[1::2]       # and the other ones
 		yield (samples_l, samples_r)
 
+
 class Audio():
 
     p = None
@@ -152,18 +153,30 @@ class Audio():
         self.max_bright = 1
 
     def open_stream(self):
-        Audio.stream = Audio.p.open(format=pyaudio.paInt16,
-                        channels=1,
-                        rate=SAMPLE_RATE,
-                        #input_device_index = 1,
-                        input=True,
-                        output=False,
-                        frames_per_buffer=BUFFER_SIZE)
+	try:
+		Audio.stream = Audio.p.open(format=pyaudio.paInt16,
+			channels=1,
+			rate=SAMPLE_RATE,
+			input_device_index = 2,
+			input=True,
+			output=False,
+			frames_per_buffer=BUFFER_SIZE)
+	except:
+		self.clear()
+		Audio.stream = Audio.p.open(format=pyaudio.paInt16,
+			channels=1,
+			rate=SAMPLE_RATE,
+			input_device_index = 2,
+			input=True,
+			output=False,
+			frames_per_buffer=BUFFER_SIZE)
+
 
     def clear(self):
-        #print "clear"
+        print "Audio clear"
         Audio.stream.stop_stream()
         Audio.stream.close()
+	Audio.p.terminate()
 
     def calculate_levels(self, data, chunk, samplerate):
         # Use FFT to calculate volume for each frequency
