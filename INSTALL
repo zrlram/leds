@@ -7,7 +7,7 @@ make
 sudo mv fcserver /usr/local/bin
 sudo vi /etc/rc.local
     #  /usr/local/bin/fcserver /usr/local/bin/fcserver.json >/var/log/fcserver.log 2>&1 &
-    #  /usr/bin/python /home/pi/leds/run.py
+    #  /usr/bin/python /home/pi/leds/run.py &
 
 sudo cp ~/leds/fadecandy/ram.json /usr/local/bin/fcserver.json
 #sudo apt-get install python-pyaudio
