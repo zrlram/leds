@@ -26,3 +26,19 @@ sudo apt-get install python-dev
 	sudo make install
 sudo pip install pyaudio
 #pip install http://pypi.python.org/packages/source/S/SoundAnalyse/SoundAnalyse-0.1.1.tar.gz
+
+## Installing the raw Pi
+Login: pi / raspberry
+sudo useradd -m -G users,sudo ram
+passwd ram
+Login as: ram
+usermod -L pi
+
+raspi-config (change wifi country)
+sudo vi /etc/wpa_supplicant/wpa_supplicant.conf
+network={
+   ssid="Test Wifi Network"
+   psk="SecretPassWord"
+}
+
+
